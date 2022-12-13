@@ -1,0 +1,16 @@
+{
+	"name": "KQL script 2",
+	"properties": {
+		"content": {
+			"query": ".ingest into table StormEvents (\n    h'https://kustosamples.blob.core.windows.net/samplefiles/StormEvents.csv'\n)\n\nStormEvents | getschema \n\n.show table StormEvents cslschema | project strcat(\".create table \",TableName,\" (\", Schema , \")\")\n\n.create table StormEvents (StartTime:datetime,EndTime:datetime,EpisodeId:int,EventId:int,State:string,EventType:string,InjuriesDirect:int,InjuriesIndirect:int,DeathsDirect:int,DeathsIndirect:int,DamageProperty:int,DamageCrops:int,Source:string,BeginLocation:string,EndLocation:string,BeginLat:real,BeginLon:real,EndLat:real,EndLon:real,EpisodeNarrative:string,EventNarrative:string,StormSummary:dynamic)\n\n.ingest into table StormEvents (\n    h'https://kustosamples.blob.core.windows.net/samplefiles/StormEvents.csv'\n)\n\n.ingest into Table123 (@\"source1\")\n    with\n    (\n        format=\"csv\"\n    )\n\n    let options = dynamic({\n  'StorageContainers': [\n    h@'https://pomboadlsgen22.blob.core.windows.net/pombofs/folder;LT2RMtW/fRPQjMIqmcDWpomaGvKjCMB3sqeWJWo5OwnYId6u6yFEE6idW1hmro8azxZys7KWhvPBJ5AGxlfKAA=='\n  ],\n  'FileExtension': '.parquet',\n  'DataFormat': 'parquet'\n});\nevaluate infer_storage_schema(options)\n\n.create external table MobileEvents(\n    current_year:int, rides_per_year:int\n)\nkind=blob\ndataformat = parquet\n(\n    h@'https://pomboadlsgen22.blob.core.windows.net/pombofs/folder;LT2RMtW/fRPQjMIqmcDWpomaGvKjCMB3sqeWJWo5OwnYId6u6yFEE6idW1hmro8azxZys7KWhvPBJ5AGxlfKAA=='\n)\n\nexternal_table('MobileEvents')\n\nStormEvents\n\n\n.alter table StormEvents folder \"updatedFolderStorm\"\n\n.show table StormEvents details\n",
+			"metadata": {
+				"language": "kql"
+			},
+			"currentConnection": {
+				"poolName": "adxpooltest1",
+				"databaseName": "KustoDatabase8"
+			}
+		},
+		"type": "KqlQuery"
+	}
+}

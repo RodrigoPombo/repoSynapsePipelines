@@ -1,0 +1,17 @@
+{
+	"name": "AzureSynapseAnalyticsTable2",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "pombosynapse1-WorkspaceDefaultSqlServer",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlDWTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "$schema",
+			"table": "$table"
+		}
+	},
+	"type": "Microsoft.Synapse/workspaces/datasets"
+}

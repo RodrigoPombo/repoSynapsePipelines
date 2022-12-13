@@ -1,0 +1,17 @@
+{
+	"name": "DEMOCSHARP",
+	"properties": {
+		"content": {
+			"query": "SELECT command\nFROM sys.dm_pdw_exec_requests\nORDER BY submit_time DESC;\n\n\nCREATE TABLE #temp ( [model] [varbinary](max) ) WITH ( DISTRIBUTION = ROUND_ROBIN, HEAP )\nCOPY INTO #temp ( model ) FROM 'https://pomboadlsgen22.dfs.core.windows.net/blobtest/outputcsharp1.tmp' WITH ( FILE_TYPE = 'CSV' )\ninsert into democsharpcheck ([ID],[name],[model]) select 'pomboModel','modelCheck', [model] from #temp\nselect * from democsharpcheck\n\n-- Create a stored procedure for storing the scoring script.\ndrop PROCEDURE storedProcFinalDemocshard;\nCREATE PROCEDURE storedProcFinalDemocshard\nAS\nBEGIN\n-- Select input scoring data and assign aliases.\nWITH InputData AS\n(\n    SELECT\n        CAST([fareAmount] AS [real]) AS [fareAmount],\n        CAST([paymentType] AS [bigint]) AS [paymentType],\n        CAST([passengerCount] AS [bigint]) AS [passengerCount],\n        CAST([tripDistance] AS [real]) AS [tripDistance],\n        CAST([tripDistance] AS [bigint]) AS [tripTimeSecs],\n        CAST([tpepPickupDateTime] AS [varchar]) AS [pickupTimeBin]\n    FROM [dbo].[NYCdata]\n)\n-- Using T-SQL Predict command to score machine learning models. \nSELECT *\nFROM PREDICT (MODEL = (SELECT [model] FROM democsharpcheck WHERE [ID] = 'pombosynapse1-tablenyc-20221124065701-Best:1'),\n              DATA = InputData,\n              RUNTIME = ONNX) WITH ([label] [bigint])\nEND\nGO\n\n-- Execute the above stored procedure.\nEXEC storedProcFinalDemocshard",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "mypool",
+				"poolName": "mypool"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

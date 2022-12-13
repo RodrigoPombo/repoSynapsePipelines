@@ -1,0 +1,20 @@
+{
+	"name": "SQL script 6",
+	"properties": {
+		"folder": {
+			"name": "dummy"
+		},
+		"content": {
+			"query": " while(exists(select 1 from INFORMATION_SCHEMA.TABLES \n             where TABLE_NAME != '__MigrationHistory' \n             AND TABLE_TYPE = 'BASE TABLE'))\nbegin\n declare @sql nvarchar(2000)\n SELECT TOP 1 @sql=('IF OBJECT_ID(''dbo.' + name + ''', ''U'')' + ' IS NOT NULL DROP TABLE dbo.' + name+';')\n FROM sysobjects\n WHERE xtype = 'U'\nexec (@sql)\n /* you dont need this line, it just shows what was executed */\n PRINT @sql\n end\n\nselect * \nfrom sysobjects \n WHERE xtype = 'U'",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "mypool",
+				"poolName": "mypool"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

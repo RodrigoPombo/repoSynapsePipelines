@@ -1,0 +1,17 @@
+{
+	"name": "Demo_serverless",
+	"properties": {
+		"content": {
+			"query": "CREATE CREDENTIAL ServiceIdentity_rodrigo WITH IDENTITY = 'Managed Identity';\nGO\n\ndrop external data source my_source;\ncreate external data source my_source_1\nwith (\n    LOCATION = 'abfss://blobtest@pomboadlsgen22.dfs.core.windows.net',\n    credential = ServiceIdentity_rodrigo\n)\n\ndrop EXTERNAL FILE FORMAT file_format_name11;\nCREATE EXTERNAL FILE FORMAT file_format_name11\nWITH (  \n         FORMAT_TYPE = PARQUET \n    );\n    \n\ndrop EXTERNAL table xx3;\nCREATE EXTERNAL TABLE xx1_\n  WITH (\n        LOCATION = '/output6',\n        DATA_SOURCE = my_source_1,  \n        FILE_FORMAT = file_format_name11  \n) as \nSELECT *\nFROM\n    OPENROWSET(\n        BULK 'https://azureopendatastorage.blob.core.windows.net/nyctlc/yellow/puYear=2014/puMonth=2/*.parquet',\n        FORMAT='PARQUET'\n    ) AS [nyc]\n\n\nCREATE EXTERNAL TABLE xx2_\n  WITH (\n        LOCATION = '/output7',  \n        DATA_SOURCE = my_source_1,  \n        FILE_FORMAT = file_format_name11  \n) as \nSELECT *\nfrom xx1_ join (select vendorID as vend_ from xx3) as xx3_\non xx1_.vendorID = xx3_.vend_ \n\nselect *\nfrom xx2_\n\n\n\n\n\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "Built-In",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

@@ -1,0 +1,1050 @@
+{
+	"name": "Notebook 1",
+	"properties": {
+		"folder": {
+			"name": "dummy"
+		},
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"bigDataPool": {
+			"referenceName": "sparkpool",
+			"type": "BigDataPoolReference"
+		},
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
+			"runAsWorkspaceSystemIdentity": false,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"synapse_widget": {
+				"version": "0.1"
+			},
+			"kernelspec": {
+				"name": "synapse_spark",
+				"display_name": "Synapse Spark"
+			},
+			"language_info": {
+				"name": "scala"
+			},
+			"a365ComputeOptions": {
+				"id": "/subscriptions/fd75343a-2f47-43cd-bd82-c1ba01988d56/resourceGroups/pomboRG/providers/Microsoft.Synapse/workspaces/pombosynapse1/bigDataPools/sparkpool",
+				"name": "sparkpool",
+				"type": "Spark",
+				"endpoint": "https://pombosynapse1.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/sparkpool",
+				"auth": {
+					"type": "AAD",
+					"authResource": "https://dev.azuresynapse.net",
+					"authHeader": null
+				},
+				"sparkVersion": "2.4",
+				"nodeCount": 3,
+				"cores": 4,
+				"memory": 28,
+				"extraHeader": null
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "sparksql"
+					},
+					"collapsed": false
+				},
+				"source": [
+					"%%sql\r\n",
+					"select * from y"
+				],
+				"execution_count": 18
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "scala"
+					},
+					"collapsed": true
+				},
+				"source": [
+					"%%spark\r\n",
+					"val metastoreURL = spark.sparkContext.hadoopConfiguration.get(\"javax.jdo.option.ConnectionURL\")\r\n",
+					"val metastoreUser = spark.sparkContext.hadoopConfiguration.get(\"javax.jdo.option.ConnectionUserName\")\r\n",
+					"val metastorePassword = spark.sparkContext.hadoopConfiguration.get(\"javax.jdo.option.ConnectionPassword\")\r\n",
+					"\r\n",
+					"print(metastoreURL)\r\n",
+					"print(metastoreUser)\r\n",
+					"print(metastorePassword)"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "scala"
+					},
+					"collapsed": true
+				},
+				"source": [
+					"%%spark\r\n",
+					"import java.sql.Connection\r\n",
+					"import java.sql.DriverManager\r\n",
+					"import java.sql.ResultSet\r\n",
+					"import java.sql.SQLException\r\n",
+					"import java.util.regex.Pattern\r\n",
+					"\r\n",
+					"\r\n",
+					"/**\r\n",
+					" * For details on what this query means, checkout https://dev.mysql.com/doc/refman/8.0/en/processlist-table.html\r\n",
+					"**/\r\n",
+					"\r\n",
+					"def executeQuery(query:String): Unit = {\r\n",
+					" val metastoreURL = spark.sparkContext.hadoopConfiguration.get(\"javax.jdo.option.ConnectionURL\")\r\n",
+					" val metastoreUser = spark.sparkContext.hadoopConfiguration.get(\"javax.jdo.option.ConnectionUserName\")\r\n",
+					" val metastorePassword = spark.sparkContext.hadoopConfiguration.get(\"javax.jdo.option.ConnectionPassword\")\r\n",
+					"  \r\n",
+					" //print(metastoreURL)\r\n",
+					" //print(metastoreUser)\r\n",
+					"\r\n",
+					" val connection = DriverManager.getConnection(metastoreURL, metastoreUser, metastorePassword)\r\n",
+					" val statement = connection.createStatement()\r\n",
+					" val resultSet = statement.executeQuery(query)\r\n",
+					"\r\n",
+					" val rsmd = resultSet.getMetaData();\r\n",
+					" val columnsNumber = rsmd.getColumnCount();\r\n",
+					" (1 to columnsNumber).foreach { i =>\r\n",
+					"   //print(rsmd.getColumnName(i) + \"\\t\\t\\t\\t\\t\\t\\t\")\r\n",
+					" }\r\n",
+					" println();\r\n",
+					" while (resultSet.next()) {\r\n",
+					"     var cumulativeLength = 0\r\n",
+					"     (1 to columnsNumber).foreach { i =>\r\n",
+					"         val data = if (resultSet.getString(i) != null) resultSet.getString(i).trim() else \"\"\r\n",
+					"         print(data + \"\\t\\t\\t\\t\\t\\t\");\r\n",
+					"     }\r\n",
+					"     println();\r\n",
+					" }\r\n",
+					" statement.close\r\n",
+					" connection.close\r\n",
+					"}\r\n",
+					"\r\n",
+					"\r\n",
+					""
+				],
+				"execution_count": 1
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "scala"
+					},
+					"collapsed": true
+				},
+				"source": [
+					"%%spark\r\n",
+					"executeQuery(\"select * from version\")"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "scala"
+					},
+					"collapsed": true
+				},
+				"source": [
+					"%%spark\r\n",
+					"spark.conf.get(\"spark.sql.hive.metastore.version\")"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "scala"
+					},
+					"collapsed": true
+				},
+				"source": [
+					"%%spark\r\n",
+					"val x = spark.sparkContext.hadoopConfiguration.get(\"javax.jdo.option.ConnectionURL\")\r\n",
+					"print(x)"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "python"
+					},
+					"collapsed": true
+				},
+				"source": [
+					"%%pyspark\r\n",
+					"import subprocess\r\n",
+					"command = 'pip3 list'\r\n",
+					"r = subprocess.check_output(command, shell=True, executable='/bin/bash')\r\n",
+					"print(r)\r\n",
+					""
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "scala"
+					},
+					"collapsed": true
+				},
+				"source": [
+					"%%spark\r\n",
+					"import sys.process._\r\n",
+					"\"ls -al\" !"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": true
+				},
+				"source": [
+					"%scala\r\n",
+					"executeQuery(\"select * from version\")"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "python"
+					},
+					"collapsed": true
+				},
+				"source": [
+					"%%pyspark\r\n",
+					"import pandas as pd"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "scala"
+					},
+					"collapsed": true
+				},
+				"source": [
+					"%%spark\r\n",
+					"mssparkutils.fs.ls(\"/\")"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "python"
+					},
+					"collapsed": true
+				},
+				"source": [
+					"%%pyspark\r\n",
+					"mssparkutils.fs.ls(\"/\")"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "python"
+					},
+					"collapsed": true
+				},
+				"source": [
+					"%%pyspark\r\n",
+					"import subprocess\r\n",
+					"import azure.storage.blob as pd\r\n",
+					"#command = 'head /usr/local/lib/python2.7/site-packages'\r\n",
+					"#r = subprocess.check_output(command, shell=True, executable='/bin/bash')\r\n",
+					"#print(r)\r\n",
+					"print(pd.__version__)\r\n",
+					""
+				],
+				"execution_count": 30
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "python"
+					},
+					"collapsed": true
+				},
+				"source": [
+					"%%pyspark\r\n",
+					"import subprocess\r\n",
+					"import azure.storage.filedatalake as pd\r\n",
+					"#command = 'head /usr/local/lib/python2.7/site-packages'\r\n",
+					"#r = subprocess.check_output(command, shell=True, executable='/bin/bash')\r\n",
+					"#print(r)\r\n",
+					"print(pd.__version__)\r\n",
+					""
+				],
+				"execution_count": 1
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "scala"
+					},
+					"collapsed": true
+				},
+				"source": [
+					"%%spark\r\n",
+					"import sys.process._\r\n",
+					"\"ls /\" !"
+				],
+				"execution_count": 4
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "python"
+					},
+					"collapsed": true
+				},
+				"source": [
+					"%%pyspark\r\n",
+					"import os\r\n",
+					""
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "scala"
+					},
+					"collapsed": true
+				},
+				"source": [
+					"%%spark\r\n",
+					"\r\n",
+					"import org.apache.hadoop.fs.FileSystem;\r\n",
+					"\r\n",
+					"import org.apache.hadoop.fs.Path;\r\n",
+					"\r\n",
+					"import org.apache.hadoop.fs.FileStatus;\r\n",
+					"\r\n",
+					"val fs: FileSystem = FileSystem.get(sc.hadoopConfiguration);\r\n",
+					"\r\n",
+					"\r\n",
+					"fs.copyFromLocalFile(new Path(\"/home/trusted-service-user/cluster-env/env/lib/python3.6/site-packages/notebookutils\"),fs.resolvePath(new Path(\"/\")));\r\n",
+					"\r\n",
+					""
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "python"
+					},
+					"collapsed": true
+				},
+				"source": [
+					"%%pyspark\r\n",
+					"import subprocess\r\n",
+					"command = 'pip install pandas'\r\n",
+					"r = subprocess.check_output(command, shell=True, executable='/bin/bash')\r\n",
+					"print(r)\r\n",
+					""
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "python"
+					},
+					"collapsed": true
+				},
+				"source": [
+					"%%pyspark\r\n",
+					"import site\r\n",
+					"print(site.getsitepackages())"
+				],
+				"execution_count": 3
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "python"
+					},
+					"collapsed": false
+				},
+				"source": [
+					"%%pyspark\r\n",
+					"from pyspark.sql.types import *\r\n",
+					"\r\n",
+					"inputPath = \"/streaming_test/\"\r\n",
+					"\r\n",
+					"# Since we know the data format already, let's define the schema to speed up processing (no need for Spark to infer schema)\r\n",
+					"jsonSchema = StructType([ StructField(\"time\", TimestampType(), True), StructField(\"action\", StringType(), True) ])\r\n",
+					"\r\n",
+					"# Static DataFrame representing data in the JSON files\r\n",
+					"staticInputDF = (\r\n",
+					"  spark\r\n",
+					"    .read\r\n",
+					"    .schema(jsonSchema)\r\n",
+					"    .json(inputPath)\r\n",
+					")\r\n",
+					"\r\n",
+					"display(staticInputDF)"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "python"
+					},
+					"collapsed": true
+				},
+				"source": [
+					"%%pyspark\r\n",
+					"from pyspark.sql.functions import *\r\n",
+					"\r\n",
+					"# Similar to definition of staticInputDF above, just using `readStream` instead of `read`\r\n",
+					"streamingInputDF = (\r\n",
+					"  spark\r\n",
+					"    .readStream                       \r\n",
+					"    .schema(jsonSchema)               # Set the schema of the JSON data\r\n",
+					"    .option(\"maxFilesPerTrigger\", 1)  # Treat a sequence of files as a stream by picking one file at a time\r\n",
+					"    .json(inputPath)\r\n",
+					")\r\n",
+					"\r\n",
+					"# Same query as staticInputDF\r\n",
+					"streamingCountsDF = (                 \r\n",
+					"  streamingInputDF\r\n",
+					"    .groupBy(\r\n",
+					"      streamingInputDF.action, \r\n",
+					"      window(streamingInputDF.time, \"1 hour\"))\r\n",
+					"    .count()\r\n",
+					")\r\n",
+					"\r\n",
+					"# Is this DF actually a streaming DF?\r\n",
+					"streamingCountsDF.isStreaming\r\n",
+					""
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "python"
+					},
+					"collapsed": true
+				},
+				"source": [
+					"%%pyspark\r\n",
+					"spark.conf.set(\"spark.sql.shuffle.partitions\", \"2\")  # keep the size of shuffles small\r\n",
+					"\r\n",
+					"query = (\r\n",
+					"  streamingCountsDF\r\n",
+					"    .writeStream\r\n",
+					"    .format(\"memory\")        # memory = store in-memory table \r\n",
+					"    .queryName(\"counts2\")     # counts = name of the in-memory table\r\n",
+					"    .outputMode(\"complete\")  # complete = all the counts should be in the table\r\n",
+					"    .start()\r\n",
+					")"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "sparksql"
+					},
+					"collapsed": false
+				},
+				"source": [
+					"%%sql \r\n",
+					"select action, date_format(window.end, \"MMM-dd HH:mm\") as time, count from counts2 order by time, action"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "python"
+					},
+					"collapsed": true
+				},
+				"source": [
+					"%%pyspark\r\n",
+					"import site\r\n",
+					"print(site.getsitepackages())"
+				],
+				"execution_count": 5
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "python"
+					},
+					"collapsed": true
+				},
+				"source": [
+					"%%pyspark\r\n",
+					"##check metastore file!!\r\n",
+					"import os \r\n",
+					"os.listdir(\"/home/trusted-service-user/cluster-env/env/lib/python3.6/site-packages\")"
+				],
+				"execution_count": 4
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "python"
+					},
+					"collapsed": true
+				},
+				"source": [
+					"%%pyspark\r\n",
+					"from notebookutils import mssparkutils\r\n",
+					"mssparkutils.fs.put(\"/synapse/workspaces/pombosynapse1/x.txt\",\"xxxx\",True)\r\n",
+					"#mssparkutils.fs.cp(\"/synapse/workspaces/pombosynapse1/warehouse\",<an abfss output location configured previously>)"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "python"
+					},
+					"collapsed": true
+				},
+				"source": [
+					"%%pyspark\r\n",
+					"import mssparkutils\r\n",
+					"x = mssparkutils.getSecret(\"pomboKV\",\"myKey\")"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "python"
+					},
+					"collapsed": true
+				},
+				"source": [
+					"%%pyspark\r\n",
+					"import os, uuid, sys\r\n",
+					"from azure.storage.filedatalake import DataLakeServiceClient\r\n",
+					"from azure.core._match_conditions import MatchConditions\r\n",
+					"from azure.storage.filedatalake._models import ContentSettings\r\n",
+					"try:  \r\n",
+					"    global service_client\r\n",
+					"        \r\n",
+					"    service_client = DataLakeServiceClient(account_url=\"{}://{}.dfs.core.windows.net\".format(\"https\", \"pomboadlsgen22\"), credential=\"LT2RMtW/fRPQjMIqmcDWpomaGvKjCMB3sqeWJWo5OwnYId6u6yFEE6idW1hmro8azxZys7KWhvPBJ5AGxlfKAA==\")\r\n",
+					"    \r\n",
+					"except Exception as e:\r\n",
+					"    print(e)\r\n",
+					"\r\n",
+					"\r\n",
+					"file_system_client = service_client.get_file_system_client(file_system=\"blobtest\")\r\n",
+					"\r\n",
+					"directory_client = file_system_client.get_directory_client(\"file\")\r\n",
+					"        \r\n",
+					"local_file = open(\"/home/trusted-service-user/fails.txt\",'wb')\r\n",
+					"\r\n",
+					"file_client = directory_client.get_file_client(\"jobs_failures.txt\")\r\n",
+					"\r\n",
+					"download = file_client.download_file()\r\n",
+					"\r\n",
+					"downloaded_bytes = download.readall()\r\n",
+					"\r\n",
+					"local_file.write(downloaded_bytes)\r\n",
+					"\r\n",
+					"local_file.close()\r\n",
+					""
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "python"
+					},
+					"collapsed": true
+				},
+				"source": [
+					"%%pyspark\r\n",
+					"import os \r\n",
+					"os.listdir(\"/home/trusted-service-user\")"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "python"
+					},
+					"collapsed": true
+				},
+				"source": [
+					"%%pyspark\r\n",
+					"f = open(\"/home/trusted-service-user/fails.txt\", \"r\")\r\n",
+					"print(f.read())"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "scala"
+					},
+					"collapsed": true
+				},
+				"source": [
+					"%%spark\r\n",
+					"import org.apache.hadoop.conf.Configuration\r\n",
+					"import org.apache.hadoop.fs.azure.NativeAzureFileSystem\r\n",
+					"import java.net.URI\r\n",
+					"import org.apache.hadoop.fs.Path\r\n",
+					"val x = new org.apache.hadoop.conf.Configuration()\r\n",
+					"x.set(\"fs.azure.account.key.pomboadlsgen22.dfs.core.windows.net\",\"LT2RMtW/fRPQjMIqmcDWpomaGvKjCMB3sqeWJWo5OwnYId6u6yFEE6idW1hmro8azxZys7KWhvPBJ5AGxlfKAA==\")\r\n",
+					"val y = new org.apache.hadoop.fs.azure.NativeAzureFileSystem()\r\n",
+					"y.initialize(new URI(\"https://pomboadlsgen22.dfs.core.windows.net\"),x)\r\n",
+					"\r\n",
+					"val pathremote = new org.apache.hadoop.fs.Path(\"https://pomboadlsgen22.dfs.core.windows.net/\")\r\n",
+					"val pathlocal = new org.apache.hadoop.fs.Path(\"/home/trusted-service-user/\")\r\n",
+					"\r\n",
+					"println(pathremote)\r\n",
+					"\r\n",
+					"val path = y.getWorkingDirectory()\r\n",
+					"\r\n",
+					"print(path)\r\n",
+					"\r\n",
+					"//print(pathremote)\r\n",
+					"\r\n",
+					"y.listFiles(path,true)\r\n",
+					"\r\n",
+					"//y.copyToLocalFile(pathremote,pathlocal)"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": true
+				},
+				"source": [
+					"\r\n",
+					"\r\n",
+					"import org.apache.hadoop.fs.FileSystem;\r\n",
+					"\r\n",
+					"import org.apache.hadoop.fs.Path;\r\n",
+					"\r\n",
+					"import org.apache.hadoop.fs.FileStatus;\r\n",
+					"\r\n",
+					"val fs: FileSystem = FileSystem.get(sc.hadoopConfiguration);\r\n",
+					"\r\n",
+					"for (f <- fs.listStatus(new Path(\"/synapse/workspaces/rachallasynapse/sparkpools/rachallapool/libraries/\"))) {​​​​​​​​\r\n",
+					"\r\n",
+					"    print (f.getPath());\r\n",
+					"\r\n",
+					"    fs.copyToLocalFile(f.getPath(), new Path(\"/tmp/\"));\r\n",
+					"\r\n",
+					"}​​​​​​​​\r\n",
+					"\r\n",
+					""
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "python"
+					},
+					"collapsed": true
+				},
+				"source": [
+					"%%pyspark\r\n",
+					"from notebookutils import mssparkutils\r\n",
+					"#trying to copy using mssparkutils does not work (does not recignize the second location prefix (file://))\r\n",
+					"mssparkutils.fs.ls(\"/synapse/workspaces/pombosynapse1/x.txt\")"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "python"
+					},
+					"collapsed": true
+				},
+				"source": [
+					"%%pyspark\r\n",
+					"#list local file system directory\r\n",
+					"import os\r\n",
+					"os.mkdir()"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "python"
+					},
+					"collapsed": true
+				},
+				"source": [
+					"%%pyspark\r\n",
+					"spark.conf.set(\"spark.x\",\"x\")"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": true
+				},
+				"source": [
+					""
+				]
+			}
+		]
+	}
+}

@@ -1,0 +1,26 @@
+{
+	"name": "relationship-vqfwktizee",
+	"properties": {
+		"Name": "relationship-vqfwktizee",
+		"EntityType": "RELATIONSHIP",
+		"Namespace": {
+			"DatabaseName": "Database 1"
+		},
+		"Origin": {
+			"Type": "SPARK"
+		},
+		"FromTableName": "Table_1",
+		"ToTableName": "Table_2",
+		"ColumnRelationshipInformations": [
+			{
+				"FromColumnName": "Column_1",
+				"ToColumnName": "Column_1"
+			}
+		],
+		"RelationshipType": 0,
+		"PublishStatus": "PUBLISHED",
+		"ObjectVersion": 1,
+		"ObjectId": "52e00e10-7ed7-4efb-a529-e223895abf38"
+	},
+	"type": "RELATIONSHIP"
+}

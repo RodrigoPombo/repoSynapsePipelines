@@ -1,0 +1,20 @@
+{
+	"name": "PredictionONNX",
+	"properties": {
+		"folder": {
+			"name": "ONNX_predictions"
+		},
+		"content": {
+			"query": "SELECT command\nFROM sys.dm_pdw_exec_requests\nORDER BY submit_time DESC;\n\nselect * from tableXX \n\nset @folder = 'https://cstestwss.blob.core.windows.net/csetestws/delta/demo/'\nset @credential  = 'IDENTITY= ''Shared Access Signature'', SECRET = ''___SECRET____''';\nSET @credential = ' CREDENTIAL = (' + @credential + ')'\nset @tsql = '\n\tcopy into  #last_checkpoint (info)\n\tfrom ''' + @folder + '_delta_log/_last_checkpoint''\n\twith ('',FILE_TYPE = ''CSV'',fieldterminator =''0x0b''    ,fieldquote = ''0x0b''     ,rowterminator = ''0x0d'' )'\n\nCREATE TABLE #temp ( [x1] [varbinary](max), [x2] [varbinary](max),[x3] [varbinary](max) ) WITH ( DISTRIBUTION = ROUND_ROBIN, HEAP )\n\ncopy into  #temp (x1,x2,x3)\nfrom 'https://pomboadlsgen22.blob.core.windows.net/blobtest/synapse/model.onnx'\n with (\n     CREDENTIAL = (IDENTITY= 'Shared Access Signature', SECRET = '2BV8IP%2ByW3t08od5C7RAFEdEon9qHgIlwgK2Toe5UE'),\n     FILE_TYPE = 'CSV',fieldterminator = '0x0b'    ,fieldquote = '0x0b'     ,rowterminator = '0x0d'\n ) \n\n----\nCREATE TABLE #temp ( [model] [varbinary](max) ) WITH ( DISTRIBUTION = ROUND_ROBIN, HEAP ) \n\nCOPY INTO #temp ( model ) \nFROM 'https://pomboadlsgen22.blob.core.windows.net/blobtest/synapse/model.onnx' \nWITH ( FILE_TYPE = 'CSV' ) \n\n\n---\n\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "mypool",
+				"poolName": "mypool"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

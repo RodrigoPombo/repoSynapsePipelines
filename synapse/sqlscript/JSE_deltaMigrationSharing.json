@@ -1,0 +1,17 @@
+{
+	"name": "JSE_deltaMigrationSharing",
+	"properties": {
+		"content": {
+			"query": "CREATE database scoped CREDENTIAL ServiceIdentity_rodrigo WITH IDENTITY = 'Managed Identity';\nGO\n\ndrop external data source my_source;\ncreate external data source my_source_2\nwith (\n    LOCATION = 'abfss://testdeltadump@pomboadlsgen22.dfs.core.windows.net',\n    credential = ServiceIdentity_rodrigo\n)\n\nCREATE EXTERNAL FILE FORMAT ParquetFormat1 WITH (  FORMAT_TYPE = PARQUET );\nGO\n\nCREATE EXTERNAL TABLE hdfsCustomer  \nWITH (  \n        LOCATION='customer/',  \n        DATA_SOURCE = my_source_2,  \n        FILE_FORMAT = ParquetFormat1  \n) AS SELECT yearID FROM [testdrive].[AllstarFull];  \n\nSELECT * \n FROM [dbo].[NYCdata]\n\n\n\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "mypool",
+				"poolName": "mypool"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

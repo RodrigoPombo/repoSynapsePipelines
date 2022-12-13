@@ -1,0 +1,29 @@
+{
+	"name": "relationship-ckqybihpob",
+	"properties": {
+		"Name": "relationship-ckqybihpob",
+		"EntityType": "RELATIONSHIP",
+		"Namespace": {
+			"DatabaseName": "Database 1"
+		},
+		"Origin": {
+			"Type": "SPARK"
+		},
+		"FromTableName": "Auditor",
+		"ToTableName": "AuditorReport",
+		"ColumnRelationshipInformations": [
+			{
+				"FromColumnName": "AuditorId",
+				"ToColumnName": "AuditorId"
+			}
+		],
+		"RelationshipType": 0,
+		"Properties": {
+			"DerivedModelRelationshipInfo": "{\"baseRelationship\":{\"fromEntity\":\"Auditor.cdm.json/Auditor\",\"toEntity\":\"AuditorReport.cdm.json/AuditorReport\",\"joinPairs\":[{\"fromAttribute\":\"AuditorId\",\"toAttribute\":\"AuditorId\"}]}}"
+		},
+		"PublishStatus": "PUBLISHED",
+		"ObjectVersion": 1,
+		"ObjectId": "92f71df2-6583-4f3b-a284-5f3000a84011"
+	},
+	"type": "RELATIONSHIP"
+}

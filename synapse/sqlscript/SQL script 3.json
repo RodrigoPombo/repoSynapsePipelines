@@ -1,0 +1,20 @@
+{
+	"name": "SQL script 3",
+	"properties": {
+		"folder": {
+			"name": "dummy"
+		},
+		"content": {
+			"query": "SELECT TOP (100) [x]\n FROM [my_test_sql].[dbo].[y]",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "my_test_sql",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

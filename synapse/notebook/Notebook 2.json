@@ -1,0 +1,75 @@
+{
+	"name": "Notebook 2",
+	"properties": {
+		"folder": {
+			"name": "dummy"
+		},
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"bigDataPool": {
+			"referenceName": "sparkpool",
+			"type": "BigDataPoolReference"
+		},
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
+			"runAsWorkspaceSystemIdentity": false,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"language_info": {
+				"name": "python"
+			},
+			"a365ComputeOptions": {
+				"id": "/subscriptions/fd75343a-2f47-43cd-bd82-c1ba01988d56/resourceGroups/pomboRG/providers/Microsoft.Synapse/workspaces/pombosynapse1/bigDataPools/sparkpool",
+				"name": "sparkpool",
+				"type": "Spark",
+				"endpoint": "https://pombosynapse1.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/sparkpool",
+				"auth": {
+					"type": "AAD",
+					"authResource": "https://dev.azuresynapse.net",
+					"authHeader": null
+				},
+				"sparkVersion": "2.4",
+				"nodeCount": 3,
+				"cores": 4,
+				"memory": 28,
+				"extraHeader": null
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\r\n",
+					"from notebookutils import mssparkutils\r\n",
+					"try:\r\n",
+					"    if 'abfss://blobtest@pomboadlsgen22.dfs.core.windows.net/synapse/workspaces/pombosynapse1/warehouse' in [\r\n",
+					"        elem.name for elem in mssparkutils.fs.ls(spark.conf.get('spark.sql.warehouse.dir'))\r\n",
+					"    ]:\r\n",
+					"        print('Deleting old database and streaming checkpoints bacause it was written to the wrong location')\r\n",
+					"    print(\"b\")\r\n",
+					"    for elem in mssparkutils.fs.ls(spark.conf.get('spark.sql.warehouse.dir')):\r\n",
+					"            print(elem.name)\r\n",
+					"except Exception as e:\r\n",
+					"    print(e)"
+				],
+				"execution_count": 1
+			}
+		]
+	}
+}

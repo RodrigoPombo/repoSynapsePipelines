@@ -1,0 +1,17 @@
+{
+	"name": "LakeDB",
+	"properties": {
+		"content": {
+			"query": "INSERT INTO Customer VALUES (1,'2021-02-18',1022,557,101,'Tailspin Toys (Head Office)','Waldemar Fisar',90410,466);\n\n\nselect *\nfrom Customer;",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "Database1",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

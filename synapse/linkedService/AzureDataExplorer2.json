@@ -1,0 +1,20 @@
+{
+	"name": "AzureDataExplorer2",
+	"type": "Microsoft.Synapse/workspaces/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureDataExplorer",
+		"typeProperties": {
+			"endpoint": "https://igniteadxsource.eastus2.kusto.windows.net",
+			"database": "Occupancy",
+			"credential": {
+				"referenceName": "Credential1",
+				"type": "CredentialReference"
+			}
+		},
+		"connectVia": {
+			"referenceName": "AutoResolveIntegrationRuntime",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

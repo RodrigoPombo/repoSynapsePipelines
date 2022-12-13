@@ -1,0 +1,17 @@
+{
+	"name": "jsonquery",
+	"properties": {
+		"content": {
+			"query": "/****** Object:  ExternalDataSource [my_source_1]    Script Date: 16/06/2022 11:46:58 ******/\nCREATE EXTERNAL DATA SOURCE [my_source_1_json] WITH (LOCATION = N'abfss://containerjson@pomboadlsgen22.dfs.core.windows.net', CREDENTIAL = [ServiceIdentity_rodrigo])\nGO\n\ndrop view allFiles;\ncreate view allFiles as\nselect  *\nfrom openrowset(\n        bulk 'folderFilesGranular/',\n        data_source = 'my_source_1_json',\n        format = 'csv',\n        fieldterminator ='0x0b',\n        fieldquote = '0x0b'\n    ) with (doc nvarchar(max)) as rows\n\nselect *\nfrom allFiles;\n\ncreate view oneFile as\nselect  *\nfrom openrowset(\n        bulk 'allinone/',\n        data_source = 'my_source_1_json',\n        format = 'csv',\n        fieldterminator ='0x0b',\n        fieldquote = '0x0b'\n    ) with (doc nvarchar(max)) as rows\n\nselect count(*)\nfrom oneFile;\n\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "Built-In",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

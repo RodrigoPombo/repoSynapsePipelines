@@ -1,0 +1,10 @@
+{
+	"name": "AzureBlobStorage1",
+	"properties": {
+		"privateLinkResourceId": "/subscriptions/fd75343a-2f47-43cd-bd82-c1ba01988d56/resourceGroups/pomboRG/providers/Microsoft.Storage/storageAccounts/sqlvaljnrqzxsbcfl4",
+		"groupId": "blob",
+		"fqdns": [
+			"sqlvaljnrqzxsbcfl4.blob.core.windows.net"
+		]
+	}
+}

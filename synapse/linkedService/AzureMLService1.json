@@ -1,0 +1,18 @@
+{
+	"name": "AzureMLService1",
+	"type": "Microsoft.Synapse/workspaces/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureMLService",
+		"typeProperties": {
+			"subscriptionId": "fd75343a-2f47-43cd-bd82-c1ba01988d56",
+			"resourceGroupName": "pomboRG",
+			"mlWorkspaceName": "pomboMLworkspace",
+			"authentication": "MSI"
+		},
+		"connectVia": {
+			"referenceName": "AutoResolveIntegrationRuntime",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

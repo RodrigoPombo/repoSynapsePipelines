@@ -1,0 +1,26 @@
+{
+	"name": "relationship-dhfxozyonn",
+	"properties": {
+		"Name": "relationship-dhfxozyonn",
+		"EntityType": "RELATIONSHIP",
+		"Namespace": {
+			"DatabaseName": "Database 1"
+		},
+		"Origin": {
+			"Type": "SPARK"
+		},
+		"FromTableName": "Table_2",
+		"ToTableName": "",
+		"ColumnRelationshipInformations": [
+			{
+				"FromColumnName": "",
+				"ToColumnName": ""
+			}
+		],
+		"RelationshipType": 0,
+		"PublishStatus": "PUBLISHED",
+		"ObjectVersion": 1,
+		"ObjectId": "2bdb80ce-9520-48f7-802f-bf96d4ef2738"
+	},
+	"type": "RELATIONSHIP"
+}

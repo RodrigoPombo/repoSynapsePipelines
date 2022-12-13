@@ -1,0 +1,17 @@
+{
+	"name": "SQL script 15",
+	"properties": {
+		"content": {
+			"query": "SELECT TOP (100) [tipped]\n,[fareAmount]\n,[paymentType]\n,[passengerCount]\n,[tripDistance]\n,[tripTimeSecs]\n,[pickupTimeBin]\n FROM [default].[dbo].[tablenyc]",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "default",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

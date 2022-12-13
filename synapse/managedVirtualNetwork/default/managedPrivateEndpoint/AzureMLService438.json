@@ -1,0 +1,11 @@
+{
+	"name": "AzureMLService438",
+	"properties": {
+		"privateLinkResourceId": "/subscriptions/416bbf1d-40e1-4f37-855d-cf7e1f73e5bd/resourceGroups/myrg/providers/Microsoft.MachineLearningServices/workspaces/pomboMLTenant",
+		"groupId": "amlworkspace",
+		"fqdns": [
+			"f2dd619b-0ecb-4645-88ce-aa6d2459e15d.workspace.westeurope.api.azureml.ms",
+			"f2dd619b-0ecb-4645-88ce-aa6d2459e15d.workspace.westeurope.cert.api.azureml.ms"
+		]
+	}
+}

@@ -1,0 +1,16 @@
+{
+	"name": "KQL script 3",
+	"properties": {
+		"content": {
+			"query": "StormEvents\n| mv-expand StormSummary\n| extend \n    serialNumber=tostring(StormSummary.TotalDamages)\n| ",
+			"metadata": {
+				"language": "kql"
+			},
+			"currentConnection": {
+				"poolName": "adxpooltest1",
+				"databaseName": "KustoDatabase8"
+			}
+		},
+		"type": "KqlQuery"
+	}
+}

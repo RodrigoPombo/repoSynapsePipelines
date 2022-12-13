@@ -1,0 +1,20 @@
+{
+	"name": "SQL script 4",
+	"properties": {
+		"folder": {
+			"name": "dummy"
+		},
+		"content": {
+			"query": "--CREATE MASTER KEY ENCRYPTION BY PASSWORD ='Dp@mbo123456';\n\nCREATE DATABASE SCOPED CREDENTIAL [ADLS_credential1]\nWITH IDENTITY='SHARED ACCESS SIGNATURE',  \nSECRET = '?sv=2020-02-10&ss=bfqt&srt=sco&sp=rwdlacupx&se=2021-06-30T20:02:57Z&st=2021-06-01T12:02:57Z&spr=https&sig=7JRTgRQtq6g029Kr84qi%2FEmNXJ4iudpyVLSFXun1Hfc%3D'\nGO\n\nCREATE EXTERNAL DATA SOURCE AzureDataLakeStore1\nWITH\n  -- Please note the abfss endpoint when your account has secure transfer enabled\n  ( LOCATION = 'abfss://blobtest@pomboadlsgen22.dfs.core.windows.net' ,\n    CREDENTIAL = ADLS_credential1 \n  ) ;\n\n\nCREATE EXTERNAL FILE FORMAT skipHeader_CSV\nWITH (FORMAT_TYPE = DELIMITEDTEXT,\n      FORMAT_OPTIONS(\n          FIELD_TERMINATOR = ',',\n          STRING_DELIMITER = '\"',\n          FIRST_ROW = 1, \n          USE_TYPE_DEFAULT = True)\n)\n\n\nCREATE EXTERNAL TABLE ClickStream1 (\n    x varchar(50)\n)\nWITH (\n        LOCATION='SQL1.csv',\n        DATA_SOURCE = AzureDataLakeStore1,\n        FILE_FORMAT = skipHeader_CSV\n    )\n;\n\n\nselect * from ClickStream1;\n\n\n\nselect *\nfrom my_test_sql.dbo.y\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "my_test_sql",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

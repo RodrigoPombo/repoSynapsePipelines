@@ -1,0 +1,17 @@
+{
+	"name": "SQL script 10",
+	"properties": {
+		"content": {
+			"query": "SELECT TOP (100) [body]\n,[partition]\n,[offset]\n,[sequenceNumber]\n,[enqueuedTime]\n,[publisher]\n,[partitionKey]\n,[properties]\n,[systemProperties]\n FROM [default].[dbo].[eventhubdata]",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "default",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

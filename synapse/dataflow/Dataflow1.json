@@ -1,0 +1,97 @@
+{
+	"name": "Dataflow1",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "RestResource1",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "Parquet1",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Flatten1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          body as (clusters as (autoscale as (max_workers as short, min_workers as short), autotermination_minutes as short, azure_attributes as (availability as string, first_on_demand as boolean, spot_bid_max_price as double), cluster_cores as double, cluster_id as string, cluster_log_conf as (dbfs as (destination as string)), cluster_log_status as (last_attempted as long), cluster_memory_mb as integer, cluster_name as string, cluster_source as string, creator_user_name as string, custom_tags as ({Model-Serving-Cluster} as boolean, ResourceClass as string), default_tags as (ClusterId as string, ClusterName as string, Creator as string, Vendor as string), driver as (host_private_ip as string, instance_id as string, node_id as string, private_ip as string, public_dns as string, start_timestamp as long), driver_instance_source as (node_type_id as string), driver_node_type_id as string, enable_elastic_disk as boolean, enable_local_disk_encryption as boolean, executors as (host_private_ip as string, instance_id as string, node_id as string, private_ip as string, public_dns as string, start_timestamp as long)[], init_scripts as (dbfs as (destination as string))[], init_scripts_safe_mode as boolean, instance_source as (node_type_id as string), jdbc_port as short, last_restarted_time as long, last_state_loss_time as long, no_driver_daemon as boolean, node_type_id as string, num_workers as short, pinned_by_user_name as long, policy_id as string, single_user_name as string, spark_conf as ({#fs.azure.account.auth.type.pomboadlsgen22.dfs.core.windows.net} as string, {#fs.azure.account.oauth.provider.type.pomboadlsgen22.dfs.core.windows.net} as string, {#fs.azure.account.oauth2.client.endpoint.pomboadlsgen22.dfs.core.windows.net} as string, {#fs.azure.account.oauth2.client.secret.pomboadlsgen22.dfs.core.windows.net} as string, {#spark.databricks.delta.preview.enabled} as boolean, {#spark.driver.extraJavaOptions} as string, {#spark.executor.extraJavaOptions} as string, {#spark.hadoop.fs.azure.account.key.pomboadlsgen22.dfs.core.windows.net} as string, {fs.azure.account.oauth2.client.id.pomboadlsgen22.dfs.core.windows.net} as string, {spark.databricks.acl.dfAclsEnabled} as boolean, {spark.databricks.cluster.profile} as string, {spark.databricks.delta.preview.enabled} as boolean, {spark.databricks.passthrough.enabled} as boolean, {spark.databricks.pyspark.enableProcessIsolation} as boolean, {spark.databricks.repl.allowedLanguages} as string, {spark.hadoop.javax.jdo.option.ConnectionDriverName} as string, {spark.hadoop.javax.jdo.option.ConnectionPassword} as string, {spark.hadoop.javax.jdo.option.ConnectionURL} as string, {spark.hadoop.javax.jdo.option.ConnectionUserName} as string, {spark.sql.hive.metastore.jars} as string, {spark.sql.hive.metastore.version} as string), spark_context_id as long, spark_env_vars as (AZURE_CLIENT_ID as string, AZURE_CLIENT_SECRET as string, AZURE_TENANT_ID as string, KEY_VAULT_NAME as string, TEST_ENV as string), spark_version as string, start_time as long, state as string, state_message as string, terminated_time as long, termination_reason as (code as string, parameters as (azure_error_code as string, azure_error_message as string, databricks_error_message as string, inactivity_duration_min as short, username as string), type as string))[]),",
+				"          headers as [string,string]",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     httpMethod: 'GET',",
+				"     timeout: 30,",
+				"     requestInterval: 0,",
+				"     paginationRules: ['supportRFC5988' -> 'true'],",
+				"     responseFormat: ['type' -> 'json', 'documentForm' -> 'documentPerLine']) ~> source1",
+				"source1 foldDown(unroll(body.clusters),",
+				"     mapColumn(",
+				"          autoscale = body.clusters.autoscale,",
+				"          autotermination_minutes = body.clusters.autotermination_minutes,",
+				"          azure_attributes = body.clusters.azure_attributes,",
+				"          cluster_cores = body.clusters.cluster_cores,",
+				"          cluster_id = body.clusters.cluster_id,",
+				"          cluster_log_conf = body.clusters.cluster_log_conf,",
+				"          cluster_log_status = body.clusters.cluster_log_status,",
+				"          cluster_memory_mb = body.clusters.cluster_memory_mb,",
+				"          cluster_name = body.clusters.cluster_name,",
+				"          cluster_source = body.clusters.cluster_source,",
+				"          creator_user_name = body.clusters.creator_user_name,",
+				"          custom_tags = body.clusters.custom_tags,",
+				"          default_tags = body.clusters.default_tags,",
+				"          driver = body.clusters.driver,",
+				"          driver_instance_source = body.clusters.driver_instance_source,",
+				"          driver_node_type_id = body.clusters.driver_node_type_id,",
+				"          enable_elastic_disk = body.clusters.enable_elastic_disk,",
+				"          enable_local_disk_encryption = body.clusters.enable_local_disk_encryption,",
+				"          executors = body.clusters.executors,",
+				"          init_scripts = body.clusters.init_scripts,",
+				"          init_scripts_safe_mode = body.clusters.init_scripts_safe_mode,",
+				"          instance_source = body.clusters.instance_source,",
+				"          jdbc_port = body.clusters.jdbc_port,",
+				"          last_restarted_time = body.clusters.last_restarted_time,",
+				"          last_state_loss_time = body.clusters.last_state_loss_time,",
+				"          no_driver_daemon = body.clusters.no_driver_daemon,",
+				"          node_type_id = body.clusters.node_type_id,",
+				"          num_workers = body.clusters.num_workers,",
+				"          pinned_by_user_name = body.clusters.pinned_by_user_name,",
+				"          policy_id = body.clusters.policy_id,",
+				"          single_user_name = body.clusters.single_user_name,",
+				"          spark_conf = body.clusters.spark_conf,",
+				"          spark_context_id = body.clusters.spark_context_id,",
+				"          spark_env_vars = body.clusters.spark_env_vars,",
+				"          spark_version = body.clusters.spark_version,",
+				"          start_time = body.clusters.start_time,",
+				"          state = body.clusters.state,",
+				"          state_message = body.clusters.state_message,",
+				"          terminated_time = body.clusters.terminated_time,",
+				"          termination_reason = body.clusters.termination_reason",
+				"     ),",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: false) ~> Flatten1",
+				"Flatten1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink1"
+			]
+		}
+	}
+}

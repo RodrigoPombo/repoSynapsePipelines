@@ -1,0 +1,10 @@
+{
+	"name": "synapse-ws-kusto-3e08f2101e-v2",
+	"properties": {
+		"privateLinkResourceId": "/subscriptions/fd75343a-2f47-43cd-bd82-c1ba01988d56/resourceGroups/pomboRG/providers/Microsoft.Synapse/workspaces/pombosynapse1",
+		"groupId": "Kusto",
+		"fqdns": [
+			"adxpooltest1.pombosynapse1.kusto.azuresynapse.net"
+		]
+	}
+}

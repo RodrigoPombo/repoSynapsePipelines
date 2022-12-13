@@ -1,0 +1,132 @@
+{
+	"name": "CopySynapseTable",
+	"properties": {
+		"activities": [
+			{
+				"name": "ForEachTables",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "GetControlTable",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('GetControlTable').output.value",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "CopyIntoTables",
+							"type": "SqlPoolStoredProcedure",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [
+								{
+									"name": "TableName",
+									"value": "@item().TableName"
+								}
+							],
+							"sqlPool": {
+								"referenceName": "mypool",
+								"type": "SqlPoolReference"
+							},
+							"typeProperties": {
+								"storedProcedureName": "[dbo].[DataLakeToSynapse_CopyIntoTable]",
+								"storedProcedureParameters": {
+									"FileFormat": {
+										"value": {
+											"value": "@item().FileFormat",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"FilePath": {
+										"value": {
+											"value": "@item().DataLocation",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"TableName": {
+										"value": {
+											"value": "@item().TableName",
+											"type": "Expression"
+										},
+										"type": "String"
+									}
+								}
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "GetControlTable",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlPoolSource",
+						"sqlReaderStoredProcedureName": "[dbo].[DataLakeToSynapse_GetControlTableForCopy]",
+						"storedProcedureParameters": {
+							"schema": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().parameters.Schema",
+									"type": "Expression"
+								}
+							},
+							"TableList": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().parameters.TableList",
+									"type": "Expression"
+								}
+							}
+						}
+					},
+					"dataset": {
+						"referenceName": "SqlPoolTable",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			}
+		],
+		"parameters": {
+			"Schema": {
+				"type": "string",
+				"defaultValue": "dbo"
+			},
+			"TableList": {
+				"type": "string",
+				"defaultValue": "AssetTable,AssetGroupGlobal"
+			}
+		},
+		"folder": {
+			"name": "SynapseDedicatedTransform"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-09-30T19:46:37Z"
+	},
+	"type": "Microsoft.Synapse/workspaces/pipelines"
+}
