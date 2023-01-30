@@ -1,0 +1,62 @@
+{
+	"name": "DS_AstsrequestresultSRC",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_DataLakeEnriched",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "AstuteOnline/ASTS/AstsRequestResult",
+				"fileSystem": "immersive"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "AstsRequestResultId",
+				"type": "UTF8"
+			},
+			{
+				"name": "AstsStatusCodeId",
+				"type": "INT32"
+			},
+			{
+				"name": "EntryDate",
+				"type": "INT96"
+			},
+			{
+				"name": "Published",
+				"type": "INT96"
+			},
+			{
+				"name": "Exception",
+				"type": "UTF8"
+			},
+			{
+				"name": "ErrorTypeId",
+				"type": "INT32"
+			},
+			{
+				"name": "AstsRequestId",
+				"type": "INT32"
+			},
+			{
+				"name": "CurrentRetryCount",
+				"type": "INT32"
+			},
+			{
+				"name": "AIModifiedDateTime",
+				"type": "INT96"
+			},
+			{
+				"name": "RequestFlag",
+				"type": "UTF8"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

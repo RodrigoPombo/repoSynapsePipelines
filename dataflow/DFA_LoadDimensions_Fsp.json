@@ -1,0 +1,64 @@
+{
+	"name": "DFA_LoadDimensions_Fsp",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_FspSRC",
+						"type": "DatasetReference"
+					},
+					"name": "SourceFsp"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimFsp",
+						"type": "DatasetReference"
+					},
+					"name": "DimFsp"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimSubsriptionList",
+						"type": "DatasetReference"
+					},
+					"name": "DimSubscriptionList"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_DimFsp",
+						"type": "DatasetReference"
+					},
+					"name": "SinkFSP"
+				}
+			],
+			"transformations": [
+				{
+					"name": "SetDefaultFields"
+				},
+				{
+					"name": "AllowUpserts"
+				},
+				{
+					"name": "DoesNotExist"
+				},
+				{
+					"name": "selectDimFsp"
+				},
+				{
+					"name": "SelectDimSubscriptionList"
+				},
+				{
+					"name": "JoinDimSubscriptionList"
+				},
+				{
+					"name": "FixDimSubscriptionList"
+				}
+			],
+			"script": "source(output(\n\t\tFspId as integer,\n\t\tFspNumber as string,\n\t\tName as string,\n\t\tTradeName as string,\n\t\tLegalCapacity as string,\n\t\tRegNo as string,\n\t\tStatus as string,\n\t\tActive as boolean,\n\t\tCompanyType as string,\n\t\tContactPersonTitle as string,\n\t\tContactPersonInitials as string,\n\t\tContactPersonSurname as string,\n\t\tContactPersonEmail as string,\n\t\tPhysicalAddress1 as string,\n\t\tPhysicalAddress2 as string,\n\t\tPhysicalAddress3 as string,\n\t\tPhysicalAddressCode as string,\n\t\tPostalAddress1 as string,\n\t\tPostalAddress2 as string,\n\t\tPostalAddress3 as string,\n\t\tPostalAddressCode as string,\n\t\tTelCode as string,\n\t\tTelNo as string,\n\t\tFaxCode as string,\n\t\tFaxNo as string,\n\t\tWebSite as string,\n\t\tFinYearEnd as string,\n\t\tCompliancePracticeName as string,\n\t\tComplianceOfficerName as string,\n\t\tComplianceOfficeDateAppointed as timestamp,\n\t\tComplianceOfficerTelNo as string,\n\t\tMedicalAccreditationNo as string,\n\t\tRecordHash as string,\n\t\tIsDeleted as boolean,\n\t\tDeleteReasonId as integer,\n\t\tDeletionDate as timestamp,\n\t\tAIModifiedDateTime as timestamp,\n\t\tRequestFlag as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: true,\n\tformat: 'parquet',\n\twildcardPaths:['AstuteOnline/FSPE/FSP/**/*']) ~> SourceFsp\nsource(output(\n\t\tFspKey as integer,\n\t\tFspId as integer,\n\t\tLegalCapacity as string,\n\t\tStatus as string,\n\t\tCompanyType as string,\n\t\tFspNumber as string,\n\t\tSubscriptionListKey as integer,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimFsp\nsource(output(\n\t\tSubscriptionListKey as integer,\n\t\tSubscriptionListId as integer,\n\t\tCompanyKey as integer,\n\t\tFspNumber as string,\n\t\tIsActive as boolean,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimSubscriptionList\nDoesNotExist derive(IsDeleted = false(),\n\t\tIsCurrent = true(),\n\t\tUpdatedDateDW = currentTimestamp(),\n\t\tCreatedDateDW = currentTimestamp(),\n\t\tCreatedByDW = 'AzureDataFactory',\n\t\tSourceSystem = 'AstuteOnline') ~> SetDefaultFields\nFixDimSubscriptionList alterRow(upsertIf(true())) ~> AllowUpserts\nSourceFsp, selectDimFsp exists(SourceFsp@FspId==selectDimFsp@FspId,\n\tnegate:true,\n\tbroadcast: 'auto')~> DoesNotExist\nDimFsp select(mapColumn(\n\t\tFspKey,\n\t\tFspId,\n\t\tIsCurrent\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> selectDimFsp\nDimSubscriptionList select(mapColumn(\n\t\tSubscriptionListKey,\n\t\tSubscriptionListId,\n\t\tFspNumber,\n\t\tIsCurrent\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectDimSubscriptionList\nSetDefaultFields, SelectDimSubscriptionList join(SourceFsp@FspNumber == SelectDimSubscriptionList@FspNumber,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinDimSubscriptionList\nJoinDimSubscriptionList select(mapColumn(\n\t\tFspId,\n\t\tFspNumber = SourceFsp@FspNumber,\n\t\tName,\n\t\tTradeName,\n\t\tLegalCapacity,\n\t\tRegNo,\n\t\tStatus,\n\t\tActive,\n\t\tCompanyType,\n\t\tContactPersonTitle,\n\t\tContactPersonInitials,\n\t\tContactPersonSurname,\n\t\tContactPersonEmail,\n\t\tPhysicalAddress1,\n\t\tPhysicalAddress2,\n\t\tPhysicalAddress3,\n\t\tPhysicalAddressCode,\n\t\tPostalAddress1,\n\t\tPostalAddress2,\n\t\tPostalAddress3,\n\t\tPostalAddressCode,\n\t\tTelCode,\n\t\tTelNo,\n\t\tFaxCode,\n\t\tFaxNo,\n\t\tWebSite,\n\t\tFinYearEnd,\n\t\tCompliancePracticeName,\n\t\tComplianceOfficerName,\n\t\tComplianceOfficeDateAppointed,\n\t\tComplianceOfficerTelNo,\n\t\tMedicalAccreditationNo,\n\t\tRecordHash,\n\t\tIsDeleted,\n\t\tDeleteReasonId,\n\t\tDeletionDate,\n\t\tAIModifiedDateTime,\n\t\tRequestFlag,\n\t\tIsCurrent = SetDefaultFields@IsCurrent,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tCreatedByDW,\n\t\tSourceSystem,\n\t\tSubscriptionListKey,\n\t\tSubscriptionListId\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixDimSubscriptionList\nAllowUpserts sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tFspKey as integer,\n\t\tFspId as integer,\n\t\tLegalCapacity as string,\n\t\tStatus as string,\n\t\tCompanyType as string,\n\t\tFspNumber as string,\n\t\tSubscriptionListKey as integer,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:false,\n\tupsertable:true,\n\tkeys:['FspId'],\n\tformat: 'table',\n\tstaged: true,\n\tallowCopyCommand: true,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tFspId,\n\t\tLegalCapacity,\n\t\tStatus,\n\t\tCompanyType,\n\t\tFspNumber,\n\t\tSubscriptionListKey,\n\t\tIsDeleted,\n\t\tIsCurrent,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tCreatedByDW,\n\t\tSourceSystem\n\t),\n\tpreCommands: [],\n\tpostCommands: []) ~> SinkFSP"
+		}
+	}
+}

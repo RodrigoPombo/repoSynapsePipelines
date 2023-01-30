@@ -1,0 +1,86 @@
+{
+	"name": "DF_LoadFacts_RmsEvent",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_RmsEvent",
+						"type": "DatasetReference"
+					},
+					"name": "SRCRmsEventSRC"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimCompany",
+						"type": "DatasetReference"
+					},
+					"name": "DimCompany"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimRmsEventType",
+						"type": "DatasetReference"
+					},
+					"name": "DimRmsEventType"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimRmsPartyRole",
+						"type": "DatasetReference"
+					},
+					"name": "DimRmsPartyRole"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_FactRmsEvent",
+						"type": "DatasetReference"
+					},
+					"name": "FactRms"
+				}
+			],
+			"transformations": [
+				{
+					"name": "SetisCurrentDefault"
+				},
+				{
+					"name": "FixRmsEventColumns"
+				},
+				{
+					"name": "SelectDimcompany"
+				},
+				{
+					"name": "SelectDimRmsEventType"
+				},
+				{
+					"name": "SelectDimRmsPartyRole"
+				},
+				{
+					"name": "JoinCompany"
+				},
+				{
+					"name": "FixCompanyColumns"
+				},
+				{
+					"name": "JoinRmsEventType"
+				},
+				{
+					"name": "FixRmsEventType"
+				},
+				{
+					"name": "JoinRmsPartyRole"
+				},
+				{
+					"name": "FixRmsPartyRole"
+				},
+				{
+					"name": "DefaultColumns"
+				}
+			],
+			"script": "source(output(\n\t\tRmsEventId as long,\n\t\tEventIdentifier as string,\n\t\tTransactionReference as string,\n\t\tClientReference as string,\n\t\tEventDateTime as timestamp,\n\t\tRmsEventTypeId as integer,\n\t\tRmsPolicyTypeId as integer,\n\t\tRmsEventStatusId as integer,\n\t\tOrganizationID as integer,\n\t\tGroupId as integer,\n\t\tProfileId as integer,\n\t\tIsDeleted as boolean,\n\t\tDeleteReasonId as integer,\n\t\tDeletionDate as timestamp,\n\t\tLastChangedBy as string,\n\t\tLastChangedDate as timestamp,\n\t\tCreationDate as timestamp,\n\t\tRmsRequestSourceId as integer,\n\t\tOldSystemKeyId as long,\n\t\tDataSourceId as integer,\n\t\tCompanyId as integer,\n\t\tAIModifiedDateTime as timestamp,\n\t\tRequestFlag as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: true,\n\tformat: 'parquet',\n\twildcardPaths:['staging/RmsEvent/*']) ~> SRCRmsEventSRC\nsource(output(\n\t\tCompanyKey as integer,\n\t\tCompanyId as integer,\n\t\tName as string,\n\t\tDebtorNumber as string,\n\t\tCrmReferenceNumber as string,\n\t\tDebitOrderDay as integer,\n\t\tEntityStatus as string,\n\t\tEntityStatusReasonKey as integer,\n\t\tStatusChangeDate as timestamp,\n\t\tDeletionDate as timestamp,\n\t\tLastChangedBy as string,\n\t\tLastChangedDate as timestamp,\n\t\tCreationDate as timestamp,\n\t\tConsolidateInvoices as boolean,\n\t\tNote as string,\n\t\tCompanyGuid as string,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimCompany\nsource(output(\n\t\tRmsEventTypeKey as integer,\n\t\tRmsEventTypeId as integer,\n\t\tDescription as string,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimRmsEventType\nsource(output(\n\t\tRmsPartyRoleKey as integer,\n\t\tRmsPartyRoleId as long,\n\t\tRmsPartyTypeId as integer,\n\t\tRmsPartyId as integer,\n\t\tRmsEventId as integer,\n\t\tPartyType as string,\n\t\tIdNumber as string,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimRmsPartyRole\nFixRmsEventColumns derive(isCurrentDefault = true(),\n\t\tFinMonth = case(toInteger(dayOfMonth(toDate(CreationDate))) > 25,toString(addMonths(toDate(CreationDate),1),'yyyy-MM-01'), toString(toDate(CreationDate),'yyyy-MM-01')),\n\t\tSourceSystem = case(RequestFlag=='HighVolume', 'AstuteOnlineHV', 'AstuteOnline')) ~> SetisCurrentDefault\nSRCRmsEventSRC select(mapColumn(\n\t\tRmsEventId,\n\t\tEventIdentifier,\n\t\tTransactionReference,\n\t\tClientReference,\n\t\tEventDateTime,\n\t\tRmsEventTypeId,\n\t\tRmsPolicyTypeId,\n\t\tRmsEventStatusId,\n\t\tOrganizationID,\n\t\tGroupId,\n\t\tProfileId,\n\t\tDeleteReasonId,\n\t\tDeletionDate,\n\t\tLastChangedBy,\n\t\tLastChangedDate,\n\t\tCreationDate,\n\t\tRmsRequestSourceId,\n\t\tCompanyId,\n\t\tRequestFlag,\n\t\tCreationDate,\n\t\tIsDeleted\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixRmsEventColumns\nDimCompany select(mapColumn(\n\t\tCompanyKey,\n\t\tCompanyId,\n\t\tIsCurrent,\n\t\tSourceSystem\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectDimcompany\nDimRmsEventType select(mapColumn(\n\t\tRmsEventTypeKey,\n\t\tRmsEventTypeId,\n\t\tIsCurrent\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectDimRmsEventType\nDimRmsPartyRole select(mapColumn(\n\t\tRmsPartyRoleKey,\n\t\tRmsEventId,\n\t\tIsCurrent\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectDimRmsPartyRole\nSetisCurrentDefault, SelectDimcompany join(FixRmsEventColumns@CompanyId == SelectDimcompany@CompanyId\n\t&& SetisCurrentDefault@SourceSystem == SelectDimcompany@SourceSystem\n\t&& isCurrentDefault == IsCurrent,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinCompany\nJoinCompany select(mapColumn(\n\t\tRmsEventId,\n\t\tEventIdentifier,\n\t\tTransactionReference,\n\t\tClientReference,\n\t\tEventDateTime,\n\t\tRmsEventTypeId,\n\t\tRmsPolicyTypeId,\n\t\tRmsEventStatusId,\n\t\tOrganizationID,\n\t\tGroupId,\n\t\tProfileId,\n\t\tDeleteReasonId,\n\t\tDeletionDate,\n\t\tLastChangedBy,\n\t\tLastChangedDate,\n\t\tCreationDate,\n\t\tRmsRequestSourceId,\n\t\tCompanyId = FixRmsEventColumns@CompanyId,\n\t\tRequestFlag,\n\t\tisCurrentDefault,\n\t\tCompanyKey,\n\t\tFinMonth,\n\t\tIsDeleted\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixCompanyColumns\nFixCompanyColumns, SelectDimRmsEventType join(FixCompanyColumns@RmsEventTypeId == SelectDimRmsEventType@RmsEventTypeId\n\t&& isCurrentDefault == IsCurrent,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinRmsEventType\nJoinRmsEventType select(mapColumn(\n\t\tRmsEventId,\n\t\tEventIdentifier,\n\t\tTransactionReference,\n\t\tClientReference,\n\t\tEventDateTime,\n\t\tRmsEventTypeId = FixCompanyColumns@RmsEventTypeId,\n\t\tRmsPolicyTypeId,\n\t\tRmsEventStatusId,\n\t\tOrganizationID,\n\t\tGroupId,\n\t\tProfileId,\n\t\tDeleteReasonId,\n\t\tDeletionDate,\n\t\tLastChangedBy,\n\t\tLastChangedDate,\n\t\tCreationDate,\n\t\tRmsRequestSourceId,\n\t\tCompanyId,\n\t\tRequestFlag,\n\t\tisCurrentDefault,\n\t\tCompanyKey,\n\t\tRmsEventTypeKey,\n\t\tFinMonth,\n\t\tIsDeleted\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixRmsEventType\nFixRmsEventType, SelectDimRmsPartyRole join(FixRmsEventType@RmsEventId == SelectDimRmsPartyRole@RmsEventId\n\t&& isCurrentDefault == IsCurrent,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinRmsPartyRole\nJoinRmsPartyRole select(mapColumn(\n\t\tRmsEventId = FixRmsEventType@RmsEventId,\n\t\tEventIdentifier,\n\t\tTransactionReference,\n\t\tClientReference,\n\t\tEventDateTime,\n\t\tRmsEventTypeId,\n\t\tRmsPolicyTypeId,\n\t\tRmsEventStatusId,\n\t\tOrganizationID,\n\t\tGroupId,\n\t\tProfileId,\n\t\tDeleteReasonId,\n\t\tDeletionDate,\n\t\tLastChangedBy,\n\t\tLastChangedDate,\n\t\tCreationDate,\n\t\tRmsRequestSourceId,\n\t\tCompanyId,\n\t\tRequestFlag,\n\t\tisCurrentDefault,\n\t\tCompanyKey,\n\t\tRmsEventTypeKey,\n\t\tRmsPartyRoleKey,\n\t\tFinMonth,\n\t\tIsDeleted\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixRmsPartyRole\nFixRmsPartyRole derive(UpdatedDateDW = currentTimestamp(),\n\t\tCreatedDateDW = currentTimestamp(),\n\t\tCreatedByDW = 'ADF Pipeline',\n\t\tSourceSystem = 'FIDS_RMS') ~> DefaultColumns\nDefaultColumns sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tRmsEventId as integer,\n\t\tRmsPartyRoleKey as integer,\n\t\tRmsEventTypeKey as integer,\n\t\tCompanyKey as integer,\n\t\tEventIdentifier as string,\n\t\tTransactionReference as string,\n\t\tClientReference as string,\n\t\tEventDateTime as timestamp,\n\t\tRmsPolicyTypeKey as integer,\n\t\tRmsEventStatusKey as integer,\n\t\tOrganizationKey as integer,\n\t\tGroupKey as integer,\n\t\tProfileKey as integer,\n\t\tIsDeleted as boolean,\n\t\tDeleteReasonKey as integer,\n\t\tDeletionDate as timestamp,\n\t\tLastChangedBy as string,\n\t\tLastChangedDate as timestamp,\n\t\tCreationDate as timestamp,\n\t\tFinMonth as date,\n\t\tRmsRequestSourceKey as integer,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string,\n\t\tRequestFlag as string\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tstaged: true,\n\tallowCopyCommand: true,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 1,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tRmsEventId,\n\t\tRmsPartyRoleKey,\n\t\tRmsEventTypeKey,\n\t\tCompanyKey,\n\t\tEventIdentifier,\n\t\tTransactionReference,\n\t\tClientReference,\n\t\tEventDateTime,\n\t\tRmsPolicyTypeKey = RmsPolicyTypeId,\n\t\tRmsEventStatusKey = RmsEventStatusId,\n\t\tOrganizationKey = OrganizationID,\n\t\tGroupKey = GroupId,\n\t\tProfileKey = ProfileId,\n\t\tDeleteReasonKey = DeleteReasonId,\n\t\tDeletionDate,\n\t\tLastChangedBy,\n\t\tLastChangedDate,\n\t\tCreationDate,\n\t\tRmsRequestSourceKey = RmsRequestSourceId,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tCreatedByDW,\n\t\tSourceSystem,\n\t\tRequestFlag,\n\t\tFinMonth,\n\t\tIsDeleted\n\t)) ~> FactRms"
+		}
+	}
+}

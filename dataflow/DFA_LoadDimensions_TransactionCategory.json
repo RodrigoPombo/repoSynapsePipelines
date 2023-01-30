@@ -1,0 +1,48 @@
+{
+	"name": "DFA_LoadDimensions_TransactionCategory",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_TransactionCategorySRC",
+						"type": "DatasetReference"
+					},
+					"name": "SourceTransactionCategory"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimTransactionCategory",
+						"type": "DatasetReference"
+					},
+					"name": "DimTransactionCategory"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_DimTransactionCategory",
+						"type": "DatasetReference"
+					},
+					"name": "SinkTransactionCategory"
+				}
+			],
+			"transformations": [
+				{
+					"name": "DoesNotExistsInTransactionCategory"
+				},
+				{
+					"name": "SetDefaultFields"
+				},
+				{
+					"name": "AllowUpserts"
+				},
+				{
+					"name": "SelectDimTransactionCategory"
+				}
+			],
+			"script": "source(output(\n\t\tTransactionCategoryId as integer,\n\t\tName as string,\n\t\tPerUseBilling as boolean,\n\t\tAIModifiedDateTime as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: true,\n\tformat: 'parquet',\n\twildcardPaths:['AstuteOnline/Master/TransactionCategory/**/*']) ~> SourceTransactionCategory\nsource(output(\n\t\tTransactionCategoryKey as integer,\n\t\tTransactionCategoryId as integer,\n\t\tName as string,\n\t\tPerUseBilling as boolean,\n\t\tIsEnabled as boolean,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimTransactionCategory\nSourceTransactionCategory, SelectDimTransactionCategory exists(SourceTransactionCategory@TransactionCategoryId == SelectDimTransactionCategory@TransactionCategoryId,\n\tnegate:true,\n\tbroadcast: 'auto')~> DoesNotExistsInTransactionCategory\nDoesNotExistsInTransactionCategory derive(IsDeleted = false(),\n\t\tIsCurrent = true(),\n\t\tUpdatedDateDW = currentTimestamp(),\n\t\tCreatedDateDW = currentTimestamp(),\n\t\tCreatedByDW = 'AzureDataFactory',\n\t\tSourceSystem = \"AstuteOnline\") ~> SetDefaultFields\nSetDefaultFields alterRow(upsertIf(true())) ~> AllowUpserts\nDimTransactionCategory select(mapColumn(\n\t\tTransactionCategoryKey,\n\t\tTransactionCategoryId,\n\t\tName,\n\t\tPerUseBilling,\n\t\tIsEnabled,\n\t\tIsDeleted,\n\t\tIsCurrent,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tCreatedByDW,\n\t\tSourceSystem\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectDimTransactionCategory\nAllowUpserts sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tTransactionCategoryKey as integer,\n\t\tTransactionCategoryId as integer,\n\t\tName as string,\n\t\tPerUseBilling as boolean,\n\t\tIsEnabled as boolean,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:false,\n\tupsertable:true,\n\tkeys:['TransactionCategoryId'],\n\tformat: 'table',\n\tstaged: true,\n\tallowCopyCommand: true,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tTransactionCategoryId,\n\t\tName,\n\t\tPerUseBilling,\n\t\tIsDeleted,\n\t\tIsCurrent,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tCreatedByDW,\n\t\tSourceSystem\n\t)) ~> SinkTransactionCategory"
+		}
+	}
+}

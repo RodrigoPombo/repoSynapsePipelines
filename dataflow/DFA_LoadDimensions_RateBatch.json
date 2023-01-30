@@ -1,0 +1,48 @@
+{
+	"name": "DFA_LoadDimensions_RateBatch",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_RateBatchSRC",
+						"type": "DatasetReference"
+					},
+					"name": "SourceRateBatch"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimRateBatch",
+						"type": "DatasetReference"
+					},
+					"name": "DimRateBatch"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_DimRateBatch",
+						"type": "DatasetReference"
+					},
+					"name": "DSTDimRateBatch"
+				}
+			],
+			"transformations": [
+				{
+					"name": "DoesNotExistsInRateBatch"
+				},
+				{
+					"name": "SetDefaultFields"
+				},
+				{
+					"name": "AllowUpserts"
+				},
+				{
+					"name": "SelectRateBatch"
+				}
+			],
+			"script": "source(output(\n\t\tRateBatchId as integer,\n\t\tEffectiveDate as timestamp,\n\t\tUploadeBy as string,\n\t\tIsReviewed as boolean,\n\t\tReviewedBy as string,\n\t\tDateTimeUploaded as timestamp,\n\t\tDateTimeReviewed as timestamp,\n\t\tAIModifiedDateTime as timestamp,\n\t\tRequestFlag as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet',\n\twildcardPaths:['AstuteOnline/Billing/RateBatch/**/*']) ~> SourceRateBatch\nsource(output(\n\t\tRateBatchKey as integer,\n\t\tRateBatchId as integer,\n\t\tEffectiveDate as timestamp,\n\t\tUploadedBy as string,\n\t\tIsReviewed as boolean,\n\t\tReviewedBy as string,\n\t\tDateTimeUploaded as timestamp,\n\t\tDateTimeReviewed as timestamp,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimRateBatch\nSourceRateBatch, SelectRateBatch exists(SourceRateBatch@RateBatchId==SelectRateBatch@RateBatchId,\n\tnegate:true,\n\tbroadcast: 'auto')~> DoesNotExistsInRateBatch\nDoesNotExistsInRateBatch derive(IsDeleted = false(),\n\t\tIsCurrent = true(),\n\t\tUpdatedDateDW = currentTimestamp(),\n\t\tCreatedDateDW = currentTimestamp(),\n\t\tCreatedByDW = 'AzureDataFactory',\n\t\tSourceSystem = 'AstuteOnline') ~> SetDefaultFields\nSetDefaultFields alterRow(upsertIf(true())) ~> AllowUpserts\nDimRateBatch select(mapColumn(\n\t\tRateBatchKey,\n\t\tRateBatchId,\n\t\tIsCurrent\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectRateBatch\nAllowUpserts sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tRateBatchKey as integer,\n\t\tRateBatchId as integer,\n\t\tEffectiveDate as timestamp,\n\t\tUploadedBy as string,\n\t\tIsReviewed as boolean,\n\t\tReviewedBy as string,\n\t\tDateTimeUploaded as timestamp,\n\t\tDateTimeReviewed as timestamp,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:false,\n\tupsertable:true,\n\tkeys:['RateBatchId'],\n\tformat: 'table',\n\tstaged: true,\n\tallowCopyCommand: true,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tRateBatchId,\n\t\tEffectiveDate,\n\t\tUploadedBy = UploadeBy,\n\t\tIsReviewed,\n\t\tReviewedBy,\n\t\tDateTimeUploaded,\n\t\tDateTimeReviewed,\n\t\tIsDeleted,\n\t\tIsCurrent,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tCreatedByDW,\n\t\tSourceSystem\n\t)) ~> DSTDimRateBatch"
+		}
+	}
+}

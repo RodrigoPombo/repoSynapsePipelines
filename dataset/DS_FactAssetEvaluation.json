@@ -1,0 +1,66 @@
+{
+	"name": "DS_FactAssetEvaluation",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_Synapse",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "VOPD"
+		},
+		"annotations": [],
+		"type": "AzureSqlDWTable",
+		"schema": [
+			{
+				"name": "ProfileKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ProfileId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "PropertyHistoryId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "RequestDateTime",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "FinMonth",
+				"type": "date"
+			},
+			{
+				"name": "UpdatedDateDW",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CreatedDateDW",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CreatedByDW",
+				"type": "varchar"
+			},
+			{
+				"name": "SourceSystem",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "Fact",
+			"table": "FactAssetEvaluation"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

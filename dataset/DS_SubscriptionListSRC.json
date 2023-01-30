@@ -1,0 +1,102 @@
+{
+	"name": "DS_SubscriptionListSRC",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_DataLakeEnriched",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "AstuteOnline/FSPE/Subscriptionlist",
+				"fileSystem": "immersive"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "SubscriptionListId",
+				"type": "INT32"
+			},
+			{
+				"name": "CompanyId",
+				"type": "INT32"
+			},
+			{
+				"name": "FspNumber",
+				"type": "UTF8"
+			},
+			{
+				"name": "IntermediaryIdNo",
+				"type": "UTF8"
+			},
+			{
+				"name": "IntermediaryIdType",
+				"type": "UTF8"
+			},
+			{
+				"name": "PartialIntermediaryIdNo",
+				"type": "UTF8"
+			},
+			{
+				"name": "EnablePartialSAIDNumberSearch",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "CreateDate",
+				"type": "INT96"
+			},
+			{
+				"name": "IsActive",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "InactiveDate",
+				"type": "INT96"
+			},
+			{
+				"name": "Reference",
+				"type": "UTF8"
+			},
+			{
+				"name": "IsFspNumberSubscription",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "BatchNumber",
+				"type": "INT32"
+			},
+			{
+				"name": "TotalInBatch",
+				"type": "INT32"
+			},
+			{
+				"name": "IsProcessed",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "MachineLockedName",
+				"type": "UTF8"
+			},
+			{
+				"name": "DateTimeLocked",
+				"type": "INT96"
+			},
+			{
+				"name": "DateTimeProcessed",
+				"type": "INT96"
+			},
+			{
+				"name": "AIModifiedDateTime",
+				"type": "INT96"
+			},
+			{
+				"name": "RequestFlag",
+				"type": "UTF8"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

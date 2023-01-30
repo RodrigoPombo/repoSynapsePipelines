@@ -1,0 +1,38 @@
+{
+	"name": "DS_LoadRawDataToEnrich_Fact",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_DataLakeEnriched",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"enrichedTable": {
+				"type": "string"
+			},
+			"enrichedSchema": {
+				"type": "string"
+			},
+			"enrichedDatabase": {
+				"type": "string"
+			},
+			"loadDate": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": {
+					"value": "@concat(dataset().enrichedDatabase, '/',\ndataset().enrichedSchema, '/',\ndataset().enrichedTable, '/',\ndataset().loadDate\n)",
+					"type": "Expression"
+				},
+				"fileSystem": "immersive"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

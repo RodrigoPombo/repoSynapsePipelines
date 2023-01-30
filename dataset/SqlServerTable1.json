@@ -1,0 +1,35 @@
+{
+	"name": "SqlServerTable1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SqlServer1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [
+			{
+				"name": "AccountKey",
+				"type": "varchar"
+			},
+			{
+				"name": "name",
+				"type": "varchar"
+			},
+			{
+				"name": "Amount",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "EnglishDayNameOfWeek",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "dummy"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

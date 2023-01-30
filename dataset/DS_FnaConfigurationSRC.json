@@ -1,0 +1,85 @@
+{
+	"name": "DS_FnaConfigurationSRC",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_DataLakeEnriched",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "VOPD"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "staging/FnaConfiguration",
+				"fileSystem": "immersive"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "CompanyId",
+				"type": "INT32"
+			},
+			{
+				"name": "FnaId",
+				"type": "INT32"
+			},
+			{
+				"name": "FnaConfigurationStatusId",
+				"type": "INT32"
+			},
+			{
+				"name": "FnaConfigurationId",
+				"type": "INT32"
+			},
+			{
+				"name": "CreationDate",
+				"type": "INT96"
+			},
+			{
+				"name": "Deleted",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "FnaConfigurationAdviserId",
+				"type": "INT32"
+			},
+			{
+				"name": "FnaConfigurationBrokerCodeId",
+				"type": "INT32"
+			},
+			{
+				"name": "MonthlyBalanceControlId",
+				"type": "INT32"
+			},
+			{
+				"name": "ComponentId",
+				"type": "INT32"
+			},
+			{
+				"name": "SubscriptionBandId",
+				"type": "INT32"
+			},
+			{
+				"name": "SubscriptionYear",
+				"type": "INT32"
+			},
+			{
+				"name": "SubscriptionMonth",
+				"type": "INT32"
+			},
+			{
+				"name": "SubscriptionStartDate",
+				"type": "INT96"
+			},
+			{
+				"name": "SubscriptionEndDate",
+				"type": "INT96"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

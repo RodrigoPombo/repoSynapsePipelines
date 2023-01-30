@@ -1,0 +1,42 @@
+{
+	"name": "DS_LacPolicyTypeSRC",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_DataLakeEnriched",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "AstuteOnline/Master/LacPolicyType",
+				"fileSystem": "immersive"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "LacPolicyTypeId",
+				"type": "INT32"
+			},
+			{
+				"name": "Name",
+				"type": "UTF8"
+			},
+			{
+				"name": "Description",
+				"type": "UTF8"
+			},
+			{
+				"name": "AIModifiedDateTime",
+				"type": "INT96"
+			},
+			{
+				"name": "RequestFlag",
+				"type": "UTF8"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,114 @@
+{
+	"name": "DS_RmsEvent",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_DataLakeEnriched",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "staging/RmsEvent",
+				"fileSystem": "immersive"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "RmsEventId",
+				"type": "INT64"
+			},
+			{
+				"name": "EventIdentifier",
+				"type": "UTF8"
+			},
+			{
+				"name": "TransactionReference",
+				"type": "UTF8"
+			},
+			{
+				"name": "ClientReference",
+				"type": "UTF8"
+			},
+			{
+				"name": "EventDateTime",
+				"type": "INT96"
+			},
+			{
+				"name": "RmsEventTypeId",
+				"type": "INT32"
+			},
+			{
+				"name": "RmsPolicyTypeId",
+				"type": "INT32"
+			},
+			{
+				"name": "RmsEventStatusId",
+				"type": "INT32"
+			},
+			{
+				"name": "OrganizationID",
+				"type": "INT32"
+			},
+			{
+				"name": "GroupId",
+				"type": "INT32"
+			},
+			{
+				"name": "ProfileId",
+				"type": "INT32"
+			},
+			{
+				"name": "IsDeleted",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "DeleteReasonId",
+				"type": "INT32"
+			},
+			{
+				"name": "DeletionDate",
+				"type": "INT96"
+			},
+			{
+				"name": "LastChangedBy",
+				"type": "UTF8"
+			},
+			{
+				"name": "LastChangedDate",
+				"type": "INT96"
+			},
+			{
+				"name": "CreationDate",
+				"type": "INT96"
+			},
+			{
+				"name": "RmsRequestSourceId",
+				"type": "INT32"
+			},
+			{
+				"name": "OldSystemKeyId",
+				"type": "INT64"
+			},
+			{
+				"name": "DataSourceId",
+				"type": "INT32"
+			},
+			{
+				"name": "CompanyId",
+				"type": "INT32"
+			},
+			{
+				"name": "AIModifiedDateTime",
+				"type": "INT96"
+			},
+			{
+				"name": "RequestFlag",
+				"type": "UTF8"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

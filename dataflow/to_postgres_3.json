@@ -1,0 +1,28 @@
+{
+	"name": "to_postgres_3",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AzureSqlTable2",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AzurePostgreSqlTable2",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [],
+			"script": "source(output(\n\t\tportuguese_passport as string,\n\t\tarea as string,\n\t\tendpoint as string,\n\t\tpartition as string,\n\t\tinstallation as string,\n\t\tparameter as string,\n\t\ttime as timestamp,\n\t\tvalue as boolean,\n\t\tDaily as date,\n\t\tWeekly as integer,\n\t\tcol_derived as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> source1\nsource1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tportuguese_passport as string,\n\t\tarea as string,\n\t\tendpoint as string,\n\t\tpartition as string,\n\t\tinstallation as string,\n\t\tcol_derived as string\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\trecreate:true,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1"
+		}
+	}
+}

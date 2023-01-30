@@ -1,0 +1,214 @@
+{
+	"name": "DS_DimProfile",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_Synapse",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Dimensions"
+		},
+		"annotations": [],
+		"type": "AzureSqlDWTable",
+		"schema": [
+			{
+				"name": "ProfileKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ProfileId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CompanyKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "IdNumber",
+				"type": "char"
+			},
+			{
+				"name": "EmailAddress",
+				"type": "varchar"
+			},
+			{
+				"name": "FirstName",
+				"type": "varchar"
+			},
+			{
+				"name": "Surname",
+				"type": "varchar"
+			},
+			{
+				"name": "LastLoginDate",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "ProfileStatus",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "IsConfirmed",
+				"type": "bit"
+			},
+			{
+				"name": "LastPasswordFailureDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "PasswordFailuresSinceLastSuccess",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "AdministrationLevel",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "IdType",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Title",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Initials",
+				"type": "varchar"
+			},
+			{
+				"name": "CellNumber",
+				"type": "varchar"
+			},
+			{
+				"name": "WorkNumber",
+				"type": "varchar"
+			},
+			{
+				"name": "FaxNumber",
+				"type": "varchar"
+			},
+			{
+				"name": "AreTermsAndConditionsAccepted",
+				"type": "bit"
+			},
+			{
+				"name": "TermsAndConditionsAcceptDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "DefaultPageSize",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "DefaultParentProfileKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "EntityStatus",
+				"type": "varchar"
+			},
+			{
+				"name": "StatusChangeDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "DeletionDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "LastChangedBy",
+				"type": "varchar"
+			},
+			{
+				"name": "LastChangedDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CreationDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "Note",
+				"type": "varchar"
+			},
+			{
+				"name": "HashAlgorithm",
+				"type": "varchar"
+			},
+			{
+				"name": "ProfileGuid",
+				"type": "varchar"
+			},
+			{
+				"name": "DebtorNumber",
+				"type": "varchar"
+			},
+			{
+				"name": "BillingTermsAccepted",
+				"type": "bit"
+			},
+			{
+				"name": "BillingTermsDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "IsDeleted",
+				"type": "bit"
+			},
+			{
+				"name": "IsCurrent",
+				"type": "bit"
+			},
+			{
+				"name": "UpdatedDateDW",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CreatedDateDW",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CreatedByDW",
+				"type": "varchar"
+			},
+			{
+				"name": "SourceSystem",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "Dim",
+			"table": "DimProfile"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

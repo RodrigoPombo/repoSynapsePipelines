@@ -1,0 +1,66 @@
+{
+	"name": "DS_FnaSRC",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_DataLakeEnriched",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "AstuteOnline/AIS/Fna",
+				"fileSystem": "immersive"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "FnaId",
+				"type": "INT32"
+			},
+			{
+				"name": "FnaGuid",
+				"type": "UTF8"
+			},
+			{
+				"name": "FnaName",
+				"type": "UTF8"
+			},
+			{
+				"name": "CpFstpSettingId",
+				"type": "INT32"
+			},
+			{
+				"name": "Deleted",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "LastChangedBy",
+				"type": "UTF8"
+			},
+			{
+				"name": "LastChangedDate",
+				"type": "INT96"
+			},
+			{
+				"name": "CreationDate",
+				"type": "INT96"
+			},
+			{
+				"name": "Hide",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "AIModifiedDateTime",
+				"type": "INT96"
+			},
+			{
+				"name": "RequestFlag",
+				"type": "UTF8"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

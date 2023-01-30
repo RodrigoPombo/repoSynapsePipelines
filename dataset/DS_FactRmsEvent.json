@@ -1,0 +1,145 @@
+{
+	"name": "DS_FactRmsEvent",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_Synapse",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlDWTable",
+		"schema": [
+			{
+				"name": "RmsEventId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "RmsPartyRoleKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "RmsEventTypeKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CompanyKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "EventIdentifier",
+				"type": "varchar"
+			},
+			{
+				"name": "TransactionReference",
+				"type": "varchar"
+			},
+			{
+				"name": "ClientReference",
+				"type": "varchar"
+			},
+			{
+				"name": "EventDateTime",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "RmsPolicyTypeKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "RmsEventStatusKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "OrganizationKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "GroupKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ProfileKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "IsDeleted",
+				"type": "bit"
+			},
+			{
+				"name": "DeleteReasonKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "DeletionDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "LastChangedBy",
+				"type": "varchar"
+			},
+			{
+				"name": "LastChangedDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CreationDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "FinMonth",
+				"type": "date"
+			},
+			{
+				"name": "RmsRequestSourceKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "UpdatedDateDW",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CreatedDateDW",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CreatedByDW",
+				"type": "varchar"
+			},
+			{
+				"name": "SourceSystem",
+				"type": "varchar"
+			},
+			{
+				"name": "RequestFlag",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "Fact",
+			"table": "FactRmsEvent"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

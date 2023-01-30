@@ -1,0 +1,96 @@
+{
+	"name": "DS_DimComponent",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_Synapse",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Dimensions"
+		},
+		"annotations": [],
+		"type": "AzureSqlDWTable",
+		"schema": [
+			{
+				"name": "ComponentKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ComponentId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ComponentName",
+				"type": "varchar"
+			},
+			{
+				"name": "OrderRank",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "IsSystemServiceComponent",
+				"type": "bit"
+			},
+			{
+				"name": "IsMandatoryComponent",
+				"type": "bit"
+			},
+			{
+				"name": "IsUserSelectableComponent",
+				"type": "bit"
+			},
+			{
+				"name": "RequiresFsbValidaionCheck",
+				"type": "bit"
+			},
+			{
+				"name": "ComponentCode",
+				"type": "varchar"
+			},
+			{
+				"name": "FinancialCompany",
+				"type": "varchar"
+			},
+			{
+				"name": "ExcludeFromMonthBalance",
+				"type": "bit"
+			},
+			{
+				"name": "IsDeleted",
+				"type": "bit"
+			},
+			{
+				"name": "IsCurrent",
+				"type": "bit"
+			},
+			{
+				"name": "UpdatedDateDW",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CreatedDateDW",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CreatedByDW",
+				"type": "varchar"
+			},
+			{
+				"name": "SourceSystem",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "Dim",
+			"table": "DimComponent"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

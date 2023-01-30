@@ -1,0 +1,83 @@
+{
+	"name": "DF_LoadFacts_VopdRequest",
+	"properties": {
+		"folder": {
+			"name": "VOPD"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_VopdRequestSRC",
+						"type": "DatasetReference"
+					},
+					"name": "SRCVopdRequest"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimRequestSource",
+						"type": "DatasetReference"
+					},
+					"name": "SRCDimRequestSource"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimProfile",
+						"type": "DatasetReference"
+					},
+					"name": "SRCDimProfile"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimCompany",
+						"type": "DatasetReference"
+					},
+					"name": "SCRDimCompany"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_FactVopdRequest",
+						"type": "DatasetReference"
+					},
+					"name": "DSTVopdRequest"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Constants"
+				},
+				{
+					"name": "SelectRequestSource"
+				},
+				{
+					"name": "JoinRequestSource"
+				},
+				{
+					"name": "FixRequestSource"
+				},
+				{
+					"name": "SelectProfile"
+				},
+				{
+					"name": "JoinProfile"
+				},
+				{
+					"name": "FixProfile"
+				},
+				{
+					"name": "SelectCompany"
+				},
+				{
+					"name": "JoinCompany"
+				},
+				{
+					"name": "FixCompany"
+				}
+			],
+			"script": "source(output(\n\t\tVopdRequestDetailId as long,\n\t\tVopdRequestId as long,\n\t\tMessageId as string,\n\t\tIdReferenceNo as string,\n\t\tVopdIdTypeId as integer,\n\t\tAIModifiedDateTime as timestamp,\n\t\tVopdVerificationTypeId as integer,\n\t\tVerificationTypeDescription as string,\n\t\tIdTypeDescription as string,\n\t\tCompanyId as integer,\n\t\tProfileId as integer,\n\t\tVopdRequestSourceId as integer,\n\t\tTransRefGuid as string,\n\t\tTrackingReference as string,\n\t\tVopdRequestStatusId as integer,\n\t\tIsBulkRequest as boolean,\n\t\tIsArchived as boolean,\n\t\tIsResponseDelivered as boolean,\n\t\tQTRequest as boolean,\n\t\tIsComprehensive as integer,\n\t\tVopdResponseStatusId as integer,\n\t\tResponseStatusDescription as string,\n\t\tDhaTransactionId as long,\n\t\tRequestDateTime as timestamp,\n\t\tResponseDateTime as timestamp,\n\t\tNumberOfRetries as integer,\n\t\tRequestStatus as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: true,\n\tformat: 'parquet',\n\twildcardPaths:['staging/VopdRequestDetail/*']) ~> SRCVopdRequest\nsource(output(\n\t\tRequestSourceKey as integer,\n\t\tRequestSourceId as string,\n\t\tIsEnabled as boolean,\n\t\tVersionIdentifier as string,\n\t\tSourceType as string,\n\t\tDescription as string,\n\t\tSourceProduct as string,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> SRCDimRequestSource\nsource(output(\n\t\tProfileKey as integer,\n\t\tProfileId as integer,\n\t\tCompanyKey as integer,\n\t\tIdNumber as string,\n\t\tEmailAddress as string,\n\t\tFirstName as string,\n\t\tSurname as string,\n\t\tLastLoginDate as timestamp,\n\t\tProfileStatus as integer,\n\t\tIsConfirmed as boolean,\n\t\tLastPasswordFailureDate as timestamp,\n\t\tPasswordFailuresSinceLastSuccess as integer,\n\t\tAdministrationLevel as integer,\n\t\tIdType as integer,\n\t\tTitle as integer,\n\t\tInitials as string,\n\t\tCellNumber as string,\n\t\tWorkNumber as string,\n\t\tFaxNumber as string,\n\t\tAreTermsAndConditionsAccepted as boolean,\n\t\tTermsAndConditionsAcceptDate as timestamp,\n\t\tDefaultPageSize as integer,\n\t\tDefaultParentProfileKey as integer,\n\t\tEntityStatus as string,\n\t\tStatusChangeDate as timestamp,\n\t\tDeletionDate as timestamp,\n\t\tLastChangedBy as string,\n\t\tLastChangedDate as timestamp,\n\t\tCreationDate as timestamp,\n\t\tNote as string,\n\t\tHashAlgorithm as string,\n\t\tProfileGuid as string,\n\t\tDebtorNumber as string,\n\t\tBillingTermsAccepted as boolean,\n\t\tBillingTermsDate as timestamp,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> SRCDimProfile\nsource(output(\n\t\tCompanyKey as integer,\n\t\tCompanyId as integer,\n\t\tName as string,\n\t\tDebtorNumber as string,\n\t\tCrmReferenceNumber as string,\n\t\tDebitOrderDay as integer,\n\t\tEntityStatus as string,\n\t\tEntityStatusReasonKey as integer,\n\t\tStatusChangeDate as timestamp,\n\t\tDeletionDate as timestamp,\n\t\tLastChangedBy as string,\n\t\tLastChangedDate as timestamp,\n\t\tCreationDate as timestamp,\n\t\tConsolidateInvoices as boolean,\n\t\tNote as string,\n\t\tCompanyGuid as string,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> SCRDimCompany\nSRCVopdRequest derive(isCurrentDefault = true(),\n\t\tSourceProduct = 'VOPD',\n\t\tResponseFinMonth = case(toInteger(dayOfMonth(toDate(ResponseDateTime))) > 25,toString(addMonths(toDate(ResponseDateTime),1),'yyyy-MM-01'), toString(toDate(ResponseDateTime),'yyyy-MM-01')),\n\t\tUpdatedDateDW = currentTimestamp(),\n\t\tCreatedDateDW = currentTimestamp(),\n\t\tSourceSystem = 'AstuteOnline',\n\t\tVopdRequestDetailId = toInteger(VopdRequestDetailId),\n\t\tCreatedByDW = 'ADF Pipeline') ~> Constants\nSRCDimRequestSource select(mapColumn(\n\t\tRequestSourceKey,\n\t\tRequestSourceId,\n\t\tSourceProduct,\n\t\tIsCurrent\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectRequestSource\nConstants, SelectRequestSource join(toString(VopdRequestSourceId) == RequestSourceId\n\t&& Constants@SourceProduct == SelectRequestSource@SourceProduct\n\t&& isCurrentDefault == IsCurrent,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinRequestSource\nJoinRequestSource select(mapColumn(\n\t\tVopdRequestDetailId,\n\t\tVopdRequestId,\n\t\tMessageId,\n\t\tIdReferenceNo,\n\t\tVopdIdTypeId,\n\t\tAIModifiedDateTime,\n\t\tVopdVerificationTypeId,\n\t\tVerificationTypeDescription,\n\t\tIdTypeDescription,\n\t\tCompanyId,\n\t\tProfileId,\n\t\tVopdRequestSourceId,\n\t\tTransRefGuid,\n\t\tTrackingReference,\n\t\tVopdRequestStatusId,\n\t\tIsBulkRequest,\n\t\tIsArchived,\n\t\tIsResponseDelivered,\n\t\tQTRequest,\n\t\tIsComprehensive,\n\t\tVopdResponseStatusId,\n\t\tResponseStatusDescription,\n\t\tDhaTransactionId,\n\t\tRequestDateTime,\n\t\tResponseDateTime,\n\t\tNumberOfRetries,\n\t\tRequestStatus,\n\t\tisCurrentDefault,\n\t\tSourceProduct = Constants@SourceProduct,\n\t\tResponseFinMonth,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tSourceSystem,\n\t\tCreatedByDW,\n\t\tRequestSourceKey,\n\t\tRequestSourceId,\n\t\tSourceProduct = SelectRequestSource@SourceProduct,\n\t\tIsCurrent\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixRequestSource\nSRCDimProfile select(mapColumn(\n\t\tProfileKey,\n\t\tProfileId,\n\t\tCompanyKey,\n\t\tIsCurrent,\n\t\tSourceSystem\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectProfile\nFixRequestSource, SelectProfile join(FixRequestSource@ProfileId == SelectProfile@ProfileId\n\t&& isCurrentDefault == SelectProfile@IsCurrent\n\t&& FixRequestSource@SourceSystem == SelectProfile@SourceSystem,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinProfile\nJoinProfile select(mapColumn(\n\t\tVopdRequestDetailId,\n\t\tVopdRequestId,\n\t\tMessageId,\n\t\tIdReferenceNo,\n\t\tVopdIdTypeId,\n\t\tAIModifiedDateTime,\n\t\tVopdVerificationTypeId,\n\t\tVerificationTypeDescription,\n\t\tIdTypeDescription,\n\t\tCompanyId,\n\t\tProfileId = FixRequestSource@ProfileId,\n\t\tVopdRequestSourceId,\n\t\tTransRefGuid,\n\t\tTrackingReference,\n\t\tVopdRequestStatusId,\n\t\tIsBulkRequest,\n\t\tIsArchived,\n\t\tIsResponseDelivered,\n\t\tQTRequest,\n\t\tIsComprehensive,\n\t\tVopdResponseStatusId,\n\t\tResponseStatusDescription,\n\t\tDhaTransactionId,\n\t\tRequestDateTime,\n\t\tResponseDateTime,\n\t\tNumberOfRetries,\n\t\tRequestStatus,\n\t\tisCurrentDefault,\n\t\tSourceProduct,\n\t\tResponseFinMonth,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tSourceSystem = FixRequestSource@SourceSystem,\n\t\tCreatedByDW,\n\t\tRequestSourceKey,\n\t\tRequestSourceId,\n\t\tIsCurrent = FixRequestSource@IsCurrent,\n\t\tProfileKey,\n\t\tProfileId = SelectProfile@ProfileId,\n\t\tCompanyKey,\n\t\tIsCurrent = SelectProfile@IsCurrent\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixProfile\nSCRDimCompany select(mapColumn(\n\t\tCompanyKey,\n\t\tCompanyId,\n\t\tIsCurrent,\n\t\tSourceSystem\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectCompany\nFixProfile, SelectCompany join(FixProfile@CompanyId == SelectCompany@CompanyId\n\t&& isCurrentDefault == SelectCompany@IsCurrent\n\t&& FixProfile@SourceSystem == SelectCompany@SourceSystem,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinCompany\nJoinCompany select(mapColumn(\n\t\tVopdRequestDetailId,\n\t\tVopdRequestId,\n\t\tMessageId,\n\t\tIdReferenceNo,\n\t\tVopdIdTypeId,\n\t\tAIModifiedDateTime,\n\t\tVopdVerificationTypeId,\n\t\tVerificationTypeDescription,\n\t\tIdTypeDescription,\n\t\tCompanyId = FixProfile@CompanyId,\n\t\tProfileId,\n\t\tVopdRequestSourceId,\n\t\tTransRefGuid,\n\t\tTrackingReference,\n\t\tVopdRequestStatusId,\n\t\tIsBulkRequest,\n\t\tIsArchived,\n\t\tIsResponseDelivered,\n\t\tQTRequest,\n\t\tIsComprehensive,\n\t\tVopdResponseStatusId,\n\t\tResponseStatusDescription,\n\t\tDhaTransactionId,\n\t\tRequestDateTime,\n\t\tResponseDateTime,\n\t\tNumberOfRetries,\n\t\tRequestStatus,\n\t\tisCurrentDefault,\n\t\tSourceProduct,\n\t\tResponseFinMonth,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tSourceSystem = FixProfile@SourceSystem,\n\t\tCreatedByDW,\n\t\tRequestSourceKey,\n\t\tRequestSourceId,\n\t\tIsCurrent = FixProfile@IsCurrent,\n\t\tProfileKey,\n\t\tCompanyKey = FixProfile@CompanyKey,\n\t\tCompanyKey = SelectCompany@CompanyKey,\n\t\tCompanyId = SelectCompany@CompanyId,\n\t\tIsCurrent = SelectCompany@IsCurrent\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixCompany\nFixCompany sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tVOPDRequestDetailID as integer,\n\t\tMessageId as string,\n\t\tIdReferenceNo as string,\n\t\tVOPDRequestId as integer,\n\t\tCompanyKey as integer,\n\t\tProfileKey as integer,\n\t\tTransRefGuid as string,\n\t\tTrackingReference as string,\n\t\tResponseFinMonth as date,\n\t\tRequestDateTime as timestamp,\n\t\tResponseDateTime as timestamp,\n\t\tIsBulkRequest as boolean,\n\t\tIsArchived as boolean,\n\t\tIsResponseDelivered as boolean,\n\t\tQTRequest as boolean,\n\t\tIsComprehensive as integer,\n\t\tDhaTransactionId as integer,\n\t\tNumberOfRetries as integer,\n\t\tResponseStatus as string,\n\t\tRequestStatus as string,\n\t\tRequestSourceKey as integer,\n\t\tIdType as string,\n\t\tVOPDVerificationTypeId as integer,\n\t\tVerificationType as string,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tstaged: true,\n\tallowCopyCommand: true,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tVOPDRequestDetailID = VopdRequestDetailId,\n\t\tMessageId,\n\t\tIdReferenceNo,\n\t\tVOPDRequestId = VopdRequestId,\n\t\tCompanyKey,\n\t\tProfileKey,\n\t\tTransRefGuid,\n\t\tTrackingReference,\n\t\tResponseFinMonth,\n\t\tRequestDateTime,\n\t\tResponseDateTime,\n\t\tIsBulkRequest,\n\t\tIsArchived,\n\t\tIsResponseDelivered,\n\t\tQTRequest,\n\t\tIsComprehensive,\n\t\tDhaTransactionId,\n\t\tNumberOfRetries,\n\t\tResponseStatus = ResponseStatusDescription,\n\t\tRequestStatus,\n\t\tRequestSourceKey,\n\t\tIdType = VopdIdTypeId,\n\t\tVOPDVerificationTypeId = VopdVerificationTypeId,\n\t\tVerificationType = VerificationTypeDescription,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tCreatedByDW,\n\t\tSourceSystem\n\t)) ~> DSTVopdRequest"
+		}
+	}
+}

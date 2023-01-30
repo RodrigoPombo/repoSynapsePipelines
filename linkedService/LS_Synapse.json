@@ -1,0 +1,23 @@
+{
+	"name": "LS_Synapse",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"type": "AzureSqlDW",
+		"typeProperties": {
+			"connectionString": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=tcp:immersivesynapse.sql.azuresynapse.net,1433;Initial Catalog=immersivedw;User ID=sqlmetadatastoresa;Persist Security Info=False;MultipleActiveResultSets=False;TrustServerCertificate=False",
+			"password": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "AzureKeyVaultImmersiveLinkedService",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "sqlmetadatastoresa"
+			}
+		},
+		"connectVia": {
+			"referenceName": "IR-QuickReUse",
+			"type": "IntegrationRuntimeReference"
+		},
+		"annotations": []
+	}
+}

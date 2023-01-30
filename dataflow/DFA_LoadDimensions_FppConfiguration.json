@@ -1,0 +1,64 @@
+{
+	"name": "DFA_LoadDimensions_FppConfiguration",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_FppconfigurationSRC",
+						"type": "DatasetReference"
+					},
+					"name": "SourceFppConfiguration"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimFppConfiguration",
+						"type": "DatasetReference"
+					},
+					"name": "DimFppConfiguration"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimCompany",
+						"type": "DatasetReference"
+					},
+					"name": "DimCompany"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_DimFppConfiguration",
+						"type": "DatasetReference"
+					},
+					"name": "SinkFppConfiguration"
+				}
+			],
+			"transformations": [
+				{
+					"name": "SetDefaultFields"
+				},
+				{
+					"name": "AllowUpserts"
+				},
+				{
+					"name": "DoesNotExist"
+				},
+				{
+					"name": "SelectFppConfiguration"
+				},
+				{
+					"name": "SelectDimCompany"
+				},
+				{
+					"name": "JoinDimCompany"
+				},
+				{
+					"name": "FixDimcompany"
+				}
+			],
+			"script": "source(output(\n\t\tFppConfigurationId as integer,\n\t\tReceiveDebarredFileFlag as boolean,\n\t\tReceiveDeltaFileFlag as boolean,\n\t\tMessageSchemaId as integer,\n\t\tCompanyId as integer,\n\t\tPrimaryIntegrationPortId as integer,\n\t\tSecondaryIntegrationPortId as integer,\n\t\tMQErrorIntegrationPortId as integer,\n\t\tReceivesConfirmationOfSubsListLoading as boolean,\n\t\tAIModifiedDateTime as timestamp,\n\t\tRequestFlag as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: true,\n\tformat: 'parquet',\n\twildcardPaths:['AstuteOnline/FSPE/Fppconfiguration/**/*']) ~> SourceFppConfiguration\nsource(output(\n\t\tFppConfigurationKey as integer,\n\t\tCompanyKey as integer,\n\t\tFppConfigurationId as integer,\n\t\tMessageSchemaId as integer,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimFppConfiguration\nsource(output(\n\t\tCompanyKey as integer,\n\t\tCompanyId as integer,\n\t\tName as string,\n\t\tDebtorNumber as string,\n\t\tCrmReferenceNumber as string,\n\t\tDebitOrderDay as integer,\n\t\tEntityStatus as string,\n\t\tEntityStatusReasonKey as integer,\n\t\tStatusChangeDate as timestamp,\n\t\tDeletionDate as timestamp,\n\t\tLastChangedBy as string,\n\t\tLastChangedDate as timestamp,\n\t\tCreationDate as timestamp,\n\t\tConsolidateInvoices as boolean,\n\t\tNote as string,\n\t\tCompanyGuid as string,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimCompany\nDoesNotExist derive(IsDeleted = false(),\n\t\tIsCurrent = true(),\n\t\tUpdatedDateDW = currentTimestamp(),\n\t\tCreatedDateDW = currentTimestamp(),\n\t\tCreatedByDW = 'AzureDataFactory',\n\t\tSourceSystem = 'AstuteOnline') ~> SetDefaultFields\nFixDimcompany alterRow(upsertIf(true())) ~> AllowUpserts\nSourceFppConfiguration, SelectFppConfiguration exists(SourceFppConfiguration@FppConfigurationId==SelectFppConfiguration@FppConfigurationId,\n\tnegate:true,\n\tbroadcast: 'auto')~> DoesNotExist\nDimFppConfiguration select(mapColumn(\n\t\tFppConfigurationKey,\n\t\tFppConfigurationId,\n\t\tIsCurrent\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectFppConfiguration\nDimCompany select(mapColumn(\n\t\tCompanyKey,\n\t\tCompanyId,\n\t\tIsCurrent\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectDimCompany\nSetDefaultFields, SelectDimCompany join(SourceFppConfiguration@CompanyId == SelectDimCompany@CompanyId\n\t&& SetDefaultFields@IsCurrent == SelectDimCompany@IsCurrent,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinDimCompany\nJoinDimCompany select(mapColumn(\n\t\tFppConfigurationId,\n\t\tReceiveDebarredFileFlag,\n\t\tReceiveDeltaFileFlag,\n\t\tMessageSchemaId,\n\t\tCompanyId = SourceFppConfiguration@CompanyId,\n\t\tPrimaryIntegrationPortId,\n\t\tSecondaryIntegrationPortId,\n\t\tMQErrorIntegrationPortId,\n\t\tReceivesConfirmationOfSubsListLoading,\n\t\tAIModifiedDateTime,\n\t\tRequestFlag,\n\t\tIsDeleted,\n\t\tIsCurrent = SetDefaultFields@IsCurrent,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tCreatedByDW,\n\t\tSourceSystem,\n\t\tCompanyKey,\n\t\tCompanyId = SelectDimCompany@CompanyId,\n\t\tIsCurrent = SelectDimCompany@IsCurrent\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixDimcompany\nAllowUpserts sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tFppConfigurationKey as integer,\n\t\tCompanyKey as integer,\n\t\tFppConfigurationId as integer,\n\t\tMessageSchemaId as integer,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:false,\n\tupsertable:true,\n\tkeys:['FppConfigurationId'],\n\tformat: 'table',\n\tstaged: true,\n\tallowCopyCommand: true,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tCompanyKey,\n\t\tFppConfigurationId,\n\t\tMessageSchemaId,\n\t\tIsDeleted,\n\t\tIsCurrent,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tCreatedByDW,\n\t\tSourceSystem\n\t),\n\tpreCommands: [],\n\tpostCommands: []) ~> SinkFppConfiguration"
+		}
+	}
+}

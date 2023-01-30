@@ -1,0 +1,75 @@
+{
+	"name": "DS_DimCompanyAttributeValue",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_Synapse",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlDWTable",
+		"schema": [
+			{
+				"name": "AttributeValueKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "AttributeValueId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "AttributeId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CompanyKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CompanyId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "StringValue",
+				"type": "varchar"
+			},
+			{
+				"name": "IsDeleted",
+				"type": "bit"
+			},
+			{
+				"name": "IsCurrent",
+				"type": "bit"
+			},
+			{
+				"name": "UpdatedDateDW",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CreatedDateDW",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CreatedByDW",
+				"type": "varchar"
+			},
+			{
+				"name": "SourceSystem",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "Dim",
+			"table": "DimCompanyAttributeValue"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

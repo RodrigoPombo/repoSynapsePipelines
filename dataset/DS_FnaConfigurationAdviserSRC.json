@@ -1,0 +1,70 @@
+{
+	"name": "DS_FnaConfigurationAdviserSRC",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_DataLakeEnriched",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "AstuteOnline/AIS/FnaConfigurationAdviser",
+				"fileSystem": "immersive"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "FnaConfigurationAdviserId",
+				"type": "INT32"
+			},
+			{
+				"name": "FnaConfigurationAdviserGuid",
+				"type": "UTF8"
+			},
+			{
+				"name": "FnaConfigurationId",
+				"type": "INT32"
+			},
+			{
+				"name": "IdNumber",
+				"type": "UTF8"
+			},
+			{
+				"name": "FirstName",
+				"type": "UTF8"
+			},
+			{
+				"name": "LastName",
+				"type": "UTF8"
+			},
+			{
+				"name": "Deleted",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "LastChangedBy",
+				"type": "UTF8"
+			},
+			{
+				"name": "LastChangedDate",
+				"type": "INT96"
+			},
+			{
+				"name": "CreationDate",
+				"type": "INT96"
+			},
+			{
+				"name": "AIModifiedDateTime",
+				"type": "INT96"
+			},
+			{
+				"name": "RequestFlag",
+				"type": "UTF8"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,75 @@
+{
+	"name": "DS_FactUserManangementSystem",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_Synapse",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlDWTable",
+		"schema": [
+			{
+				"name": "CompanyKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "DebtorNumber",
+				"type": "varchar"
+			},
+			{
+				"name": "AssociationtypeName",
+				"type": "varchar"
+			},
+			{
+				"name": "Name",
+				"type": "varchar"
+			},
+			{
+				"name": "FSPNumber",
+				"type": "varchar"
+			},
+			{
+				"name": "SubscriptionYear",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SubscriptionMonth",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "FinMonth",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "UpdatedDateDW",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CreatedDateDW",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CreatedByDW",
+				"type": "varchar"
+			},
+			{
+				"name": "SourceSystem",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "Fact",
+			"table": "FactUserMangementSystem"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

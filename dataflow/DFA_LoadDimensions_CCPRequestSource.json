@@ -1,0 +1,48 @@
+{
+	"name": "DFA_LoadDimensions_CCPRequestSource",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_CCPRequestSourceSRC",
+						"type": "DatasetReference"
+					},
+					"name": "SourceRequestSource"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimRequestSource",
+						"type": "DatasetReference"
+					},
+					"name": "DimRequestSource"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_DimRequestSource",
+						"type": "DatasetReference"
+					},
+					"name": "DSTDimRequestSource"
+				}
+			],
+			"transformations": [
+				{
+					"name": "DoesnotExistInRequestSource"
+				},
+				{
+					"name": "SetDefaultFields"
+				},
+				{
+					"name": "AllowUpserts"
+				},
+				{
+					"name": "SelectDimRequestSource"
+				}
+			],
+			"script": "source(output(\n\t\tRequestSourceCode as string,\n\t\tIsEnabled as boolean,\n\t\tVersionIdentifier as string,\n\t\tDescription as string,\n\t\tAIModifiedDateTime as timestamp,\n\t\tRequestFlag as string,\n\t\tSourceProduct as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: true,\n\tformat: 'parquet',\n\twildcardPaths:['AstuteOnline/Ccp/RequestSource/**/*']) ~> SourceRequestSource\nsource(output(\n\t\tRequestSourceKey as integer,\n\t\tRequestSourceId as string,\n\t\tIsEnabled as boolean,\n\t\tVersionIdentifier as string,\n\t\tSourceType as string,\n\t\tDescription as string,\n\t\tSourceProduct as string,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimRequestSource\nSourceRequestSource, DimRequestSource exists(RequestSourceCode == RequestSourceId && SourceRequestSource@IsEnabled != DimRequestSource@IsEnabled,\n\tnegate:true,\n\tbroadcast: 'right')~> DoesnotExistInRequestSource\nDoesnotExistInRequestSource derive(IsDeleted = false(),\n\t\tIsCurrent = true(),\n\t\tUpdatedDateDW = currentTimestamp(),\n\t\tCreatedDateDW = currentTimestamp(),\n\t\tCreatedByDW = 'AzureDataFactory',\n\t\tSourceSystem = 'AstuteOnline',\n\t\tSourceType = case(Description == 'AOL Website', 'AstuteOnline', case(Description == 'FNB', 'Batch', 'FNA'))) ~> SetDefaultFields\nSetDefaultFields alterRow(upsertIf(true())) ~> AllowUpserts\nDimRequestSource select(mapColumn(\n\t\tRequestSourceKey,\n\t\tRequestSourceId\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectDimRequestSource\nAllowUpserts sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tRequestSourceKey as integer,\n\t\tRequestSourceId as string,\n\t\tIsEnabled as boolean,\n\t\tVersionIdentifier as string,\n\t\tSourceType as string,\n\t\tDescription as string,\n\t\tSourceProduct as string,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:false,\n\tupsertable:true,\n\tkeys:['RequestSourceId'],\n\tformat: 'table',\n\tstaged: true,\n\tallowCopyCommand: true,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tIsEnabled,\n\t\tRequestSourceId = RequestSourceCode,\n\t\tVersionIdentifier,\n\t\tDescription,\n\t\tIsDeleted,\n\t\tIsCurrent,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tCreatedByDW,\n\t\tSourceSystem,\n\t\tSourceType,\n\t\tSourceProduct\n\t)) ~> DSTDimRequestSource"
+		}
+	}
+}

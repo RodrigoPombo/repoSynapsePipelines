@@ -1,0 +1,48 @@
+{
+	"name": "DFA_LoadDimensions_Fna",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_FnaSRC",
+						"type": "DatasetReference"
+					},
+					"name": "SourceFna"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimFna",
+						"type": "DatasetReference"
+					},
+					"name": "DimFna"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_DimFna",
+						"type": "DatasetReference"
+					},
+					"name": "SinkFna"
+				}
+			],
+			"transformations": [
+				{
+					"name": "SetDefaultFields"
+				},
+				{
+					"name": "AllowUpserts"
+				},
+				{
+					"name": "DoesNotExist"
+				},
+				{
+					"name": "selectDimFna"
+				}
+			],
+			"script": "source(output(\n\t\tFnaId as integer,\n\t\tFnaGuid as string,\n\t\tFnaName as string,\n\t\tCpFstpSettingId as integer,\n\t\tDeleted as boolean,\n\t\tLastChangedBy as string,\n\t\tLastChangedDate as timestamp,\n\t\tCreationDate as timestamp,\n\t\tHide as boolean,\n\t\tAIModifiedDateTime as timestamp,\n\t\tRequestFlag as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: true,\n\tformat: 'parquet',\n\twildcardPaths:['AstuteOnline/AIS/Fna/**/*']) ~> SourceFna\nsource(output(\n\t\tFnaKey as integer,\n\t\tFnaId as integer,\n\t\tFnaName as string,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimFna\nDoesNotExist derive(IsDeleted = false(),\n\t\tIsCurrent = true(),\n\t\tUpdatedDateDW = currentTimestamp(),\n\t\tCreatedDateDW = currentTimestamp(),\n\t\tCreatedByDW = 'AzureDataFactory',\n\t\tSourceSystem = 'AstuteOnline') ~> SetDefaultFields\nSetDefaultFields alterRow(upsertIf(true())) ~> AllowUpserts\nSourceFna, selectDimFna exists(SourceFna@FnaId==selectDimFna@FnaId,\n\tnegate:true,\n\tbroadcast: 'auto')~> DoesNotExist\nDimFna select(mapColumn(\n\t\tFnaKey,\n\t\tFnaId,\n\t\tIsCurrent\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> selectDimFna\nAllowUpserts sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tFnaKey as integer,\n\t\tFnaId as integer,\n\t\tFnaName as string,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:false,\n\tupsertable:true,\n\tkeys:['FnaId'],\n\tformat: 'table',\n\tstaged: true,\n\tallowCopyCommand: true,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tFnaId,\n\t\tFnaName,\n\t\tIsDeleted = Deleted,\n\t\tIsCurrent,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tCreatedByDW,\n\t\tSourceSystem\n\t),\n\tpreCommands: [],\n\tpostCommands: []) ~> SinkFna"
+		}
+	}
+}

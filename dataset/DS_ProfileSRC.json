@@ -1,0 +1,217 @@
+{
+	"name": "DS_ProfileSRC",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_DataLakeEnriched",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Dimensions"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "AstuteOnline/Security/Profile",
+				"fileSystem": "immersive"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "ProfileId",
+				"type": "INT32"
+			},
+			{
+				"name": "CompanyId",
+				"type": "INT32"
+			},
+			{
+				"name": "IdNumber",
+				"type": "UTF8"
+			},
+			{
+				"name": "EmailAddress",
+				"type": "UTF8"
+			},
+			{
+				"name": "Password",
+				"type": "UTF8"
+			},
+			{
+				"name": "PasswordChangeDate",
+				"type": "INT96"
+			},
+			{
+				"name": "Username",
+				"type": "UTF8"
+			},
+			{
+				"name": "FirstName",
+				"type": "UTF8"
+			},
+			{
+				"name": "Surname",
+				"type": "UTF8"
+			},
+			{
+				"name": "LastLoginDate",
+				"type": "INT96"
+			},
+			{
+				"name": "ProfileStatus",
+				"type": "INT32"
+			},
+			{
+				"name": "PasswordVerificationToken",
+				"type": "UTF8"
+			},
+			{
+				"name": "PasswordVerificationTokenExpirationDate",
+				"type": "INT96"
+			},
+			{
+				"name": "IsConfirmed",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "LastPasswordFailureDate",
+				"type": "INT96"
+			},
+			{
+				"name": "PasswordFailuresSinceLastSuccess",
+				"type": "INT32"
+			},
+			{
+				"name": "ConfirmationToken",
+				"type": "UTF8"
+			},
+			{
+				"name": "AdministrationLevel",
+				"type": "INT32"
+			},
+			{
+				"name": "IdType",
+				"type": "INT32"
+			},
+			{
+				"name": "Title",
+				"type": "INT32"
+			},
+			{
+				"name": "Initials",
+				"type": "UTF8"
+			},
+			{
+				"name": "CellNumber",
+				"type": "UTF8"
+			},
+			{
+				"name": "WorkNumber",
+				"type": "UTF8"
+			},
+			{
+				"name": "FaxNumber",
+				"type": "UTF8"
+			},
+			{
+				"name": "PinNumber",
+				"type": "UTF8"
+			},
+			{
+				"name": "AreTermsAndConditionsAccepted",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "TermsAndConditionsAcceptDate",
+				"type": "INT96"
+			},
+			{
+				"name": "DefaultGroupId",
+				"type": "INT32"
+			},
+			{
+				"name": "DefaultPageSize",
+				"type": "INT32"
+			},
+			{
+				"name": "DefaultParentProfileId",
+				"type": "INT32"
+			},
+			{
+				"name": "EntityStatus",
+				"type": "INT32"
+			},
+			{
+				"name": "EntityStatusReasonId",
+				"type": "INT32"
+			},
+			{
+				"name": "StatusChangeDate",
+				"type": "INT96"
+			},
+			{
+				"name": "IsDeleted",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "DeleteReasonId",
+				"type": "INT32"
+			},
+			{
+				"name": "DeletionDate",
+				"type": "INT96"
+			},
+			{
+				"name": "LastChangedBy",
+				"type": "UTF8"
+			},
+			{
+				"name": "LastChangedDate",
+				"type": "INT96"
+			},
+			{
+				"name": "CreationDate",
+				"type": "INT96"
+			},
+			{
+				"name": "TrackingRecordId",
+				"type": "UTF8"
+			},
+			{
+				"name": "Note",
+				"type": "UTF8"
+			},
+			{
+				"name": "HashAlgorithm",
+				"type": "UTF8"
+			},
+			{
+				"name": "ProfileGuid",
+				"type": "UTF8"
+			},
+			{
+				"name": "DebtorNumber",
+				"type": "UTF8"
+			},
+			{
+				"name": "BillingTermsAccepted",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "BillingTermsDate",
+				"type": "INT96"
+			},
+			{
+				"name": "AIModifiedDateTime",
+				"type": "INT96"
+			},
+			{
+				"name": "RequestFlag",
+				"type": "UTF8"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

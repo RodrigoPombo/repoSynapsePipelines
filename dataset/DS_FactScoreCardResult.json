@@ -1,0 +1,89 @@
+{
+	"name": "DS_FactScoreCardResult",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_Synapse",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlDWTable",
+		"schema": [
+			{
+				"name": "CompanyKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ScoreCardRequestId",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "SourceRmsEventId",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "RequestDateTime",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "Score",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CreationDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "RequestFlag",
+				"type": "varchar"
+			},
+			{
+				"name": "ScoreCardRequestResultId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "FinMonth",
+				"type": "date"
+			},
+			{
+				"name": "CreatedDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "UpdatedDateDW",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CreatedDateDW",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CreatedByDW",
+				"type": "varchar"
+			},
+			{
+				"name": "SourceSystem",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "Fact",
+			"table": "FactScoreCardResult"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

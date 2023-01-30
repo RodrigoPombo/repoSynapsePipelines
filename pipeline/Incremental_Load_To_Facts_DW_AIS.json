@@ -1,0 +1,265 @@
+{
+	"name": "Incremental_Load_To_Facts_DW_AIS",
+	"properties": {
+		"activities": [
+			{
+				"name": "DeleteFnaConfiguration",
+				"type": "Delete",
+				"dependsOn": [
+					{
+						"activity": "If Condition2",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "DS_CopyFactEnrichToStaging",
+						"type": "DatasetReference",
+						"parameters": {
+							"tablename": {
+								"value": "@pipeline().parameters.tableName",
+								"type": "Expression"
+							}
+						}
+					},
+					"enableLogging": false,
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					}
+				}
+			},
+			{
+				"name": "LookupIfEmptyDataSet_FnaConfiguration",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "ParquetSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"modifiedDatetimeStart": {
+								"value": "@pipeline().parameters.windowStart",
+								"type": "Expression"
+							},
+							"modifiedDatetimeEnd": {
+								"value": "@pipeline().parameters.windowEnd",
+								"type": "Expression"
+							},
+							"wildcardFileName": "*.parquet",
+							"enablePartitionDiscovery": false
+						}
+					},
+					"dataset": {
+						"referenceName": "DS_CopyFactFromEnrichToStagingSRC",
+						"type": "DatasetReference",
+						"parameters": {
+							"tablename": {
+								"value": "@pipeline().parameters.tableName",
+								"type": "Expression"
+							},
+							"schemaname": {
+								"value": "@pipeline().parameters.schemaName",
+								"type": "Expression"
+							},
+							"databasename": {
+								"value": "@pipeline().parameters.databaseName",
+								"type": "Expression"
+							}
+						}
+					}
+				}
+			},
+			{
+				"name": "If Condition2",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "LookupIfEmptyDataSet_FnaConfiguration",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@greater(indexOf(string(activity('LookupIfEmptyDataSet_FnaConfiguration').output),'firstRow'),-1)",
+						"type": "Expression"
+					},
+					"ifTrueActivities": [
+						{
+							"name": "DFA_LoadFacts_FnaConfiguration",
+							"type": "ExecuteDataFlow",
+							"dependsOn": [
+								{
+									"activity": "IncrementalCopyFnaConfiguration",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "1.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataflow": {
+									"referenceName": "DF_LoadFacts_FnaConfiguration",
+									"type": "DataFlowReference"
+								},
+								"staging": {
+									"linkedService": {
+										"referenceName": "LS_SynapseStaging",
+										"type": "LinkedServiceReference"
+									},
+									"folderPath": "immersivedatalakestorage"
+								},
+								"compute": {
+									"coreCount": 8,
+									"computeType": "General"
+								},
+								"traceLevel": "Fine",
+								"sourceStagingConcurrency": 1
+							}
+						},
+						{
+							"name": "IncrementalCopyFnaConfiguration",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [
+								{
+									"name": "Source",
+									"value": "fse-test-sql//"
+								},
+								{
+									"name": "Destination",
+									"value": "staging/ccprequest/"
+								}
+							],
+							"typeProperties": {
+								"source": {
+									"type": "ParquetSource",
+									"storeSettings": {
+										"type": "AzureBlobFSReadSettings",
+										"recursive": true,
+										"modifiedDatetimeStart": {
+											"value": "@pipeline().parameters.windowStart",
+											"type": "Expression"
+										},
+										"modifiedDatetimeEnd": {
+											"value": "@pipeline().parameters.windowEnd",
+											"type": "Expression"
+										},
+										"wildcardFileName": "*.parquet",
+										"enablePartitionDiscovery": false
+									}
+								},
+								"sink": {
+									"type": "ParquetSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings",
+										"copyBehavior": "FlattenHierarchy"
+									},
+									"formatSettings": {
+										"type": "ParquetWriteSettings"
+									}
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "DS_CopyFactFromEnrichToStagingSRC",
+									"type": "DatasetReference",
+									"parameters": {
+										"tablename": {
+											"value": "@pipeline().parameters.tableName",
+											"type": "Expression"
+										},
+										"schemaname": {
+											"value": "@pipeline().parameters.schemaName",
+											"type": "Expression"
+										},
+										"databasename": {
+											"value": "@pipeline().parameters.databaseName",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "DS_CopyFactEnrichToStaging",
+									"type": "DatasetReference",
+									"parameters": {
+										"tablename": {
+											"value": "@pipeline().parameters.tableName",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"windowStart": {
+				"type": "string"
+			},
+			"windowEnd": {
+				"type": "string"
+			},
+			"databaseName": {
+				"type": "string",
+				"defaultValue": "AstuteOnline"
+			},
+			"schemaName": {
+				"type": "string",
+				"defaultValue": "AIS"
+			},
+			"tableName": {
+				"type": "string",
+				"defaultValue": "FnaConfiguration"
+			}
+		},
+		"folder": {
+			"name": "Active/2202150050002247 - Arnab [ABN AMRO]"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-11-28T15:35:48Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

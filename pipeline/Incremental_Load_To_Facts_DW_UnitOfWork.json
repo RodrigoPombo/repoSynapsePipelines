@@ -1,0 +1,180 @@
+{
+	"name": "Incremental_Load_To_Facts_DW_UnitOfWork",
+	"properties": {
+		"activities": [
+			{
+				"name": "Load_UnitOfWork_Staging",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "LookupIfEmptyDataSet_UnitOfWork",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@greater(indexOf(string(activity('LookupIfEmptyDataSet_UnitOfWork').output),'firstRow'),-1)",
+						"type": "Expression"
+					},
+					"ifTrueActivities": [
+						{
+							"name": "DFA_LoadFacts_UnitOfWork",
+							"type": "ExecuteDataFlow",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "1.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataflow": {
+									"referenceName": "DF_LoadFacts_UnitOfWork",
+									"type": "DataFlowReference"
+								},
+								"staging": {
+									"linkedService": {
+										"referenceName": "LS_SynapseStaging",
+										"type": "LinkedServiceReference"
+									},
+									"folderPath": "immersivedatalakestorage"
+								},
+								"integrationRuntime": {
+									"referenceName": "IR-QuickReUse",
+									"type": "IntegrationRuntimeReference"
+								},
+								"traceLevel": "Fine",
+								"runConcurrently": true,
+								"sourceStagingConcurrency": 1
+							}
+						},
+						{
+							"name": "Delete_Staging_UnitOfWork",
+							"type": "Delete",
+							"dependsOn": [
+								{
+									"activity": "DFA_LoadFacts_UnitOfWork",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataset": {
+									"referenceName": "DS_CopyFactEnrichToStaging",
+									"type": "DatasetReference",
+									"parameters": {
+										"tablename": {
+											"value": "@pipeline().parameters.tableName",
+											"type": "Expression"
+										}
+									}
+								},
+								"enableLogging": false,
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								}
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "LookupIfEmptyDataSet_UnitOfWork",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "ParquetSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"modifiedDatetimeStart": {
+								"value": "@pipeline().parameters.windowStart",
+								"type": "Expression"
+							},
+							"modifiedDatetimeEnd": {
+								"value": "@pipeline().parameters.windowEnd",
+								"type": "Expression"
+							},
+							"wildcardFileName": "*.parquet",
+							"enablePartitionDiscovery": false
+						}
+					},
+					"dataset": {
+						"referenceName": "DS_CopyFactFromEnrichToStagingSRC",
+						"type": "DatasetReference",
+						"parameters": {
+							"tablename": {
+								"value": "@pipeline().parameters.tableName",
+								"type": "Expression"
+							},
+							"schemaname": {
+								"value": "@pipeline().parameters.schemaName",
+								"type": "Expression"
+							},
+							"databasename": {
+								"value": "@pipeline().parameters.databaseName",
+								"type": "Expression"
+							}
+						}
+					}
+				}
+			}
+		],
+		"parameters": {
+			"windowStart": {
+				"type": "String"
+			},
+			"windowEnd": {
+				"type": "String"
+			},
+			"databaseName": {
+				"type": "string",
+				"defaultValue": "AstuteOnline"
+			},
+			"schemaName": {
+				"type": "string",
+				"defaultValue": "Billing"
+			},
+			"tableName": {
+				"type": "string",
+				"defaultValue": "UnitOfWork"
+			}
+		},
+		"variables": {
+			"loadDate": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "Active/2202150050002247 - Arnab [ABN AMRO]"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-11-28T15:35:56Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,158 @@
+{
+	"name": "DS_CopyDimFromStagingToEnrichSRC",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_DatalakeRaw",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"tablename": {
+				"type": "string"
+			},
+			"schemaname": {
+				"type": "string"
+			},
+			"databasename": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": {
+					"value": "@concat(dataset().databasename,'/',\ndataset().schemaname, '/',\ndataset().tablename)",
+					"type": "Expression"
+				},
+				"fileSystem": "immersive"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "UnitOfWorkId",
+				"type": "INT32"
+			},
+			{
+				"name": "ReferenceNumber",
+				"type": "UTF8"
+			},
+			{
+				"name": "MonthlyBalanceControlId",
+				"type": "INT32"
+			},
+			{
+				"name": "GroupId",
+				"type": "INT32"
+			},
+			{
+				"name": "ProfileId",
+				"type": "INT32"
+			},
+			{
+				"name": "TransactionCategoryId",
+				"type": "INT32"
+			},
+			{
+				"name": "EstimatedTransactionTypeId",
+				"type": "INT32"
+			},
+			{
+				"name": "ActualTransactionTypeId",
+				"type": "INT32"
+			},
+			{
+				"name": "EstimatedTransactionValue",
+				"type": "DECIMAL",
+				"precision": 19,
+				"scale": 4
+			},
+			{
+				"name": "ActualTransactionValue",
+				"type": "DECIMAL",
+				"precision": 19,
+				"scale": 4
+			},
+			{
+				"name": "ExcessTransactionValue",
+				"type": "DECIMAL",
+				"precision": 19,
+				"scale": 4
+			},
+			{
+				"name": "IsTransactionComplete",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "IsExcessTransaction",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "IsDeferredPriceCalculation",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "RequiresInvoiceRequest",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "InvoiceRequestId",
+				"type": "INT32"
+			},
+			{
+				"name": "DateTimeTransactionStarted",
+				"type": "INT96"
+			},
+			{
+				"name": "DateTimeTransactionComplete",
+				"type": "INT96"
+			},
+			{
+				"name": "IsContentProviderTransaction",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "ContentProviderBillingId",
+				"type": "INT32"
+			},
+			{
+				"name": "OnBehalfOfProfileId",
+				"type": "INT32"
+			},
+			{
+				"name": "Quantity",
+				"type": "INT32"
+			},
+			{
+				"name": "MyClientId",
+				"type": "INT32"
+			},
+			{
+				"name": "CoreOrProducts",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "CcpServiceId",
+				"type": "INT32"
+			},
+			{
+				"name": "CNFRateId",
+				"type": "INT32"
+			},
+			{
+				"name": "ParentId",
+				"type": "INT32"
+			},
+			{
+				"name": "ContentProviderTransTypeID",
+				"type": "INT32"
+			},
+			{
+				"name": "AIModifiedDateTime",
+				"type": "INT96"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

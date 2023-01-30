@@ -1,0 +1,80 @@
+{
+	"name": "DFA_LoadDimensions_ContentProvider",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_ContentProviderSRC",
+						"type": "DatasetReference"
+					},
+					"name": "SourceContentProvider"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimComponent",
+						"type": "DatasetReference"
+					},
+					"name": "DimComponent"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimEntityStatusReason",
+						"type": "DatasetReference"
+					},
+					"name": "DimEntityStatusReason"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimContentProvider",
+						"type": "DatasetReference"
+					},
+					"name": "DimContentProvider"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_DimContentProvider",
+						"type": "DatasetReference"
+					},
+					"name": "SinkContentProvider"
+				}
+			],
+			"transformations": [
+				{
+					"name": "SetDefaultFields"
+				},
+				{
+					"name": "AllowUpserts"
+				},
+				{
+					"name": "DoesNotExists"
+				},
+				{
+					"name": "SelectComponent"
+				},
+				{
+					"name": "SelectEntityStatus"
+				},
+				{
+					"name": "JoinComponent"
+				},
+				{
+					"name": "JoinEntityStatus"
+				},
+				{
+					"name": "SelectContentProvider"
+				},
+				{
+					"name": "SetIsCurrentDefault"
+				},
+				{
+					"name": "FixedComponent"
+				}
+			],
+			"script": "source(output(\n\t\tContentProviderId as integer,\n\t\tName as string,\n\t\tProviderCode as string,\n\t\tIntegrationPortId as integer,\n\t\tComponentId as integer,\n\t\tEntityStatus as integer,\n\t\tEntityStatusReasonId as integer,\n\t\tStatusChangeDate as timestamp,\n\t\tIsDeleted as boolean,\n\t\tDeleteReasonId as integer,\n\t\tDeletionDate as timestamp,\n\t\tLastChangedBy as string,\n\t\tLastChangedDate as timestamp,\n\t\tCreationDate as timestamp,\n\t\tHvIntegrationPortId as integer,\n\t\tMachineName as string,\n\t\tScheduledTaskId as integer,\n\t\tAIModifiedDateTime as timestamp,\n\t\tRequestFlag as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: true,\n\tformat: 'parquet',\n\twildcardPaths:['AstuteOnline/ContentProviders/ContentProvider/**/*']) ~> SourceContentProvider\nsource(output(\n\t\tComponentKey as integer,\n\t\tComponentId as integer,\n\t\tComponentName as string,\n\t\tOrderRank as integer,\n\t\tIsSystemServiceComponent as boolean,\n\t\tIsMandatoryComponent as boolean,\n\t\tIsUserSelectableComponent as boolean,\n\t\tRequiresFsbValidaionCheck as boolean,\n\t\tComponentCode as string,\n\t\tFinancialCompany as string,\n\t\tExcludeFromMonthBalance as boolean,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimComponent\nsource(output(\n\t\tEntityStatusReasonKey as integer,\n\t\tEntityStatusReasonId as integer,\n\t\tEntityType as integer,\n\t\tReason as string,\n\t\tIsActive as boolean,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimEntityStatusReason\nsource(output(\n\t\tContentProviderKey as integer,\n\t\tContentProviderId as integer,\n\t\tName as string,\n\t\tProviderCode as string,\n\t\tIntegrationPortId as integer,\n\t\tComponentKey as integer,\n\t\tEntityStatus as integer,\n\t\tEntityStatusReasonKey as integer,\n\t\tStatusChangeDate as timestamp,\n\t\tLastChangedBy as string,\n\t\tLastChangedDate as timestamp,\n\t\tCreationDate as timestamp,\n\t\tHvIntegrationPortId as integer,\n\t\tMachineName as string,\n\t\tScheduledTaskId as integer,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimContentProvider\nJoinEntityStatus derive(IsDeleted = false(),\n\t\tIsCurrent = true(),\n\t\tUpdatedDateDW = currentTimestamp(),\n\t\tCreatedDateDW = currentTimestamp(),\n\t\tCreatedByDW = 'AzureDataFactory',\n\t\tSourceSystem = 'AstuteOnline') ~> SetDefaultFields\nSetDefaultFields alterRow(upsertIf(true())) ~> AllowUpserts\nSourceContentProvider, SelectContentProvider exists(SourceContentProvider@ContentProviderId == SelectContentProvider@ContentProviderId,\n\tnegate:true,\n\tbroadcast: 'auto')~> DoesNotExists\nDimComponent select(mapColumn(\n\t\tComponentKey,\n\t\tComponentId,\n\t\tIsCurrent\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectComponent\nDimEntityStatusReason select(mapColumn(\n\t\tEntityStatusReasonKey,\n\t\tEntityStatusReasonId,\n\t\tIsCurrent\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectEntityStatus\nSetIsCurrentDefault, SelectComponent join(SourceContentProvider@ComponentId == SelectComponent@ComponentId\n\t&& IsCurrentDefault == IsCurrent,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinComponent\nFixedComponent, SelectEntityStatus join(FixedComponent@EntityStatusReasonId == SelectEntityStatus@EntityStatusReasonId\n\t&& IsCurrentDefault == IsCurrent,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinEntityStatus\nDimContentProvider select(mapColumn(\n\t\tContentProviderKey,\n\t\tContentProviderId,\n\t\tIsCurrent\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectContentProvider\nDoesNotExists derive(IsCurrentDefault = true()) ~> SetIsCurrentDefault\nJoinComponent select(mapColumn(\n\t\tContentProviderId,\n\t\tName,\n\t\tProviderCode,\n\t\tIntegrationPortId,\n\t\tComponentId = SourceContentProvider@ComponentId,\n\t\tEntityStatus,\n\t\tEntityStatusReasonId,\n\t\tStatusChangeDate,\n\t\tIsDeleted,\n\t\tDeleteReasonId,\n\t\tDeletionDate,\n\t\tLastChangedBy,\n\t\tLastChangedDate,\n\t\tCreationDate,\n\t\tHvIntegrationPortId,\n\t\tMachineName,\n\t\tScheduledTaskId,\n\t\tAIModifiedDateTime,\n\t\tRequestFlag,\n\t\tIsCurrentDefault,\n\t\tComponentKey\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixedComponent\nAllowUpserts sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tContentProviderKey as integer,\n\t\tContentProviderId as integer,\n\t\tName as string,\n\t\tProviderCode as string,\n\t\tIntegrationPortId as integer,\n\t\tComponentKey as integer,\n\t\tEntityStatus as integer,\n\t\tEntityStatusReasonKey as integer,\n\t\tStatusChangeDate as timestamp,\n\t\tLastChangedBy as string,\n\t\tLastChangedDate as timestamp,\n\t\tCreationDate as timestamp,\n\t\tHvIntegrationPortId as integer,\n\t\tMachineName as string,\n\t\tScheduledTaskId as integer,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:false,\n\tupsertable:true,\n\tkeys:['ContentProviderId'],\n\tformat: 'table',\n\tstaged: true,\n\tallowCopyCommand: true,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tContentProviderId,\n\t\tName,\n\t\tProviderCode,\n\t\tIntegrationPortId,\n\t\tComponentKey,\n\t\tEntityStatus,\n\t\tEntityStatusReasonKey,\n\t\tStatusChangeDate,\n\t\tLastChangedBy,\n\t\tLastChangedDate,\n\t\tCreationDate,\n\t\tHvIntegrationPortId,\n\t\tMachineName,\n\t\tScheduledTaskId,\n\t\tIsDeleted,\n\t\tIsCurrent,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tCreatedByDW,\n\t\tSourceSystem\n\t)) ~> SinkContentProvider"
+		}
+	}
+}

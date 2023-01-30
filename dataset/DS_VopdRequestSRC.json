@@ -1,0 +1,133 @@
+{
+	"name": "DS_VopdRequestSRC",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_DataLakeEnriched",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "VOPD"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "staging/VopdRequestDetail",
+				"fileSystem": "immersive"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "VopdRequestDetailId",
+				"type": "INT64"
+			},
+			{
+				"name": "VopdRequestId",
+				"type": "INT64"
+			},
+			{
+				"name": "MessageId",
+				"type": "UTF8"
+			},
+			{
+				"name": "IdReferenceNo",
+				"type": "UTF8"
+			},
+			{
+				"name": "VopdIdTypeId",
+				"type": "INT32"
+			},
+			{
+				"name": "AIModifiedDateTime",
+				"type": "INT96"
+			},
+			{
+				"name": "VopdVerificationTypeId",
+				"type": "INT32"
+			},
+			{
+				"name": "VerificationTypeDescription",
+				"type": "UTF8"
+			},
+			{
+				"name": "IdTypeDescription",
+				"type": "UTF8"
+			},
+			{
+				"name": "CompanyId",
+				"type": "INT32"
+			},
+			{
+				"name": "ProfileId",
+				"type": "INT32"
+			},
+			{
+				"name": "VopdRequestSourceId",
+				"type": "INT32"
+			},
+			{
+				"name": "TransRefGuid",
+				"type": "UTF8"
+			},
+			{
+				"name": "TrackingReference",
+				"type": "UTF8"
+			},
+			{
+				"name": "VopdRequestStatusId",
+				"type": "INT32"
+			},
+			{
+				"name": "IsBulkRequest",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "IsArchived",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "IsResponseDelivered",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "QTRequest",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "IsComprehensive",
+				"type": "INT32"
+			},
+			{
+				"name": "VopdResponseStatusId",
+				"type": "INT32"
+			},
+			{
+				"name": "ResponseStatusDescription",
+				"type": "UTF8"
+			},
+			{
+				"name": "DhaTransactionId",
+				"type": "INT64"
+			},
+			{
+				"name": "RequestDateTime",
+				"type": "INT96"
+			},
+			{
+				"name": "ResponseDateTime",
+				"type": "INT96"
+			},
+			{
+				"name": "NumberOfRetries",
+				"type": "INT32"
+			},
+			{
+				"name": "RequestStatus",
+				"type": "UTF8"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,78 @@
+{
+	"name": "DS_SubscriptionBandSRC",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_DataLakeEnriched",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "AstuteOnline/Billing/SubscriptionBand",
+				"fileSystem": "immersive"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "SubscriptionBandId",
+				"type": "INT32"
+			},
+			{
+				"name": "ComponentId",
+				"type": "INT32"
+			},
+			{
+				"name": "Name",
+				"type": "UTF8"
+			},
+			{
+				"name": "Description",
+				"type": "UTF8"
+			},
+			{
+				"name": "IsEnabled",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "DefaultCostCentreCode",
+				"type": "UTF8"
+			},
+			{
+				"name": "IsDeleted",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "DeleteReasonId",
+				"type": "INT32"
+			},
+			{
+				"name": "DeletionDate",
+				"type": "INT96"
+			},
+			{
+				"name": "LastChangedBy",
+				"type": "UTF8"
+			},
+			{
+				"name": "LastChangedDate",
+				"type": "INT96"
+			},
+			{
+				"name": "CreationDate",
+				"type": "INT96"
+			},
+			{
+				"name": "IndividualSubscription",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "AIModifiedDateTime",
+				"type": "INT96"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

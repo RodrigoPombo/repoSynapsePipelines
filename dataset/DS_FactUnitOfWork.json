@@ -1,0 +1,282 @@
+{
+	"name": "DS_FactUnitOfWork",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_Synapse",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlDWTable",
+		"schema": [
+			{
+				"name": "UnitOfWorkId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ReferenceNumber",
+				"type": "varchar"
+			},
+			{
+				"name": "MonthlyBalanceControlId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "TransactionCategoryKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "EstimatedTransactionTypeKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ActualTransactionTypeKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "EstimatedTransactionValue",
+				"type": "money",
+				"precision": 19,
+				"scale": 4
+			},
+			{
+				"name": "ActualTransactionValue",
+				"type": "money",
+				"precision": 19,
+				"scale": 4
+			},
+			{
+				"name": "ExcessTransactionValue",
+				"type": "money",
+				"precision": 19,
+				"scale": 4
+			},
+			{
+				"name": "IsTransactionComplete",
+				"type": "bit"
+			},
+			{
+				"name": "IsExcessTransaction",
+				"type": "bit"
+			},
+			{
+				"name": "IsDeferredPriceCalculation",
+				"type": "bit"
+			},
+			{
+				"name": "RequiresInvoiceRequest",
+				"type": "bit"
+			},
+			{
+				"name": "TransactionCompletedFinMonth",
+				"type": "date"
+			},
+			{
+				"name": "DateTimeTransactionStarted",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "DateTimeTransactionComplete",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "IsContentProviderTransaction",
+				"type": "bit"
+			},
+			{
+				"name": "OnBehalfOfProfileKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Quantity",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CoreOrProducts",
+				"type": "bit"
+			},
+			{
+				"name": "ParentId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CcpRequestId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ProductKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "RequestSourceKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ClientKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Core",
+				"type": "bit"
+			},
+			{
+				"name": "ProfileKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CompanyKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "GroupKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CcpRequestDetailId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ContentProviderKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "PolicyNumber",
+				"type": "varchar"
+			},
+			{
+				"name": "SingleRequestIsComplete",
+				"type": "bit"
+			},
+			{
+				"name": "ResultCode",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ResultInfoCode",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "HighVolumeRequest",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SingleRequestDateTime",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "SingleResponseDateTime",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CcpRequestBatchId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "BatchRefId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "HighVolumeIsCompleted",
+				"type": "bit"
+			},
+			{
+				"name": "IntegrationPortId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "HighVolumeRequestDateTime",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "HighVolumeResponseDateTime",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "SourceCcpRequestBatchId",
+				"type": "bigint",
+				"precision": 19
+			},
+			{
+				"name": "FileName",
+				"type": "varchar"
+			},
+			{
+				"name": "MedicalScheme",
+				"type": "varchar"
+			},
+			{
+				"name": "RequestJSON",
+				"type": "varchar"
+			},
+			{
+				"name": "RequestFlag",
+				"type": "varchar"
+			},
+			{
+				"name": "CreatedDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "UpdatedDateDW",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CreatedDateDW",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CreatedByDW",
+				"type": "varchar"
+			},
+			{
+				"name": "SourceSystem",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "Fact",
+			"table": "FactUnitOfWork"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

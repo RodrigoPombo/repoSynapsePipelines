@@ -1,0 +1,48 @@
+{
+	"name": "DFA_LoadDimensions_SubscriptionBand",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_SubscriptionBandSRC",
+						"type": "DatasetReference"
+					},
+					"name": "SourceSubscriptionBand"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimSubscriptionBand",
+						"type": "DatasetReference"
+					},
+					"name": "DimSubscriptionBand"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_DimSubscriptionBand",
+						"type": "DatasetReference"
+					},
+					"name": "SinkSubscriptionBand"
+				}
+			],
+			"transformations": [
+				{
+					"name": "DoesNotExistInSubscriptionBand"
+				},
+				{
+					"name": "SelectSubscriptionBand"
+				},
+				{
+					"name": "DefaultColumns"
+				},
+				{
+					"name": "AllowUpserts"
+				}
+			],
+			"script": "source(output(\n\t\tSubscriptionBandId as integer,\n\t\tComponentId as integer,\n\t\tName as string,\n\t\tDescription as string,\n\t\tIsEnabled as boolean,\n\t\tDefaultCostCentreCode as string,\n\t\tIsDeleted as boolean,\n\t\tDeleteReasonId as integer,\n\t\tDeletionDate as timestamp,\n\t\tLastChangedBy as string,\n\t\tLastChangedDate as timestamp,\n\t\tCreationDate as timestamp,\n\t\tIndividualSubscription as boolean,\n\t\tAIModifiedDateTime as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: true,\n\tformat: 'parquet',\n\twildcardPaths:['AstuteOnline/Billing/SubscriptionBand/**/*']) ~> SourceSubscriptionBand\nsource(output(\n\t\tSubscriptionBandKey as integer,\n\t\tSubscriptionBandId as integer,\n\t\tName as string,\n\t\tDescription as string,\n\t\tIsEnabled as boolean,\n\t\tDefaultCostCentreCode as string,\n\t\tDeletionDate as timestamp,\n\t\tLastChangedBy as string,\n\t\tLastChangedDate as timestamp,\n\t\tCreationDate as timestamp,\n\t\tIndividualSubscription as boolean,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tStartDate as timestamp,\n\t\tEndDate as timestamp,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimSubscriptionBand\nSourceSubscriptionBand, SelectSubscriptionBand exists(SourceSubscriptionBand@SubscriptionBandId == SelectSubscriptionBand@SubscriptionBandId,\n\tnegate:true,\n\tbroadcast: 'right')~> DoesNotExistInSubscriptionBand\nDimSubscriptionBand select(mapColumn(\n\t\tSubscriptionBandKey,\n\t\tSubscriptionBandId,\n\t\tName,\n\t\tDescription,\n\t\tIsEnabled,\n\t\tDefaultCostCentreCode,\n\t\tDeletionDate,\n\t\tLastChangedBy,\n\t\tLastChangedDate,\n\t\tCreationDate,\n\t\tIndividualSubscription,\n\t\tIsDeleted,\n\t\tIsCurrent,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tCreatedByDW,\n\t\tSourceSystem\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectSubscriptionBand\nDoesNotExistInSubscriptionBand derive(IsDeleted = false(),\n\t\tIsCurrent = true(),\n\t\tUpdatedDateDW = currentTimestamp(),\n\t\tCreatedDateDW = currentTimestamp(),\n\t\tCreatedByDW = 'AzureDataFactory',\n\t\tSourceSystem = 'AstuteOnline',\n\t\tStartDate = currentUTC(),\n\t\tEndDate = toTimestamp(null())) ~> DefaultColumns\nDefaultColumns alterRow(upsertIf(true())) ~> AllowUpserts\nAllowUpserts sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tSubscriptionBandKey as integer,\n\t\tSubscriptionBandId as integer,\n\t\tName as string,\n\t\tDescription as string,\n\t\tIsEnabled as boolean,\n\t\tDefaultCostCentreCode as string,\n\t\tDeletionDate as timestamp,\n\t\tLastChangedBy as string,\n\t\tLastChangedDate as timestamp,\n\t\tCreationDate as timestamp,\n\t\tIndividualSubscription as boolean,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tStartDate as timestamp,\n\t\tEndDate as timestamp,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:false,\n\tupsertable:true,\n\tkeys:['SubscriptionBandId'],\n\tformat: 'table',\n\tstaged: true,\n\tallowCopyCommand: true,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tSubscriptionBandId,\n\t\tName,\n\t\tDescription,\n\t\tIsEnabled,\n\t\tDefaultCostCentreCode,\n\t\tDeletionDate,\n\t\tLastChangedBy,\n\t\tLastChangedDate,\n\t\tCreationDate,\n\t\tIndividualSubscription,\n\t\tIsDeleted,\n\t\tIsCurrent,\n\t\tStartDate,\n\t\tEndDate,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tCreatedByDW,\n\t\tSourceSystem\n\t)) ~> SinkSubscriptionBand"
+		}
+	}
+}

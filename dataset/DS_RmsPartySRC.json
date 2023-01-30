@@ -1,0 +1,488 @@
+{
+	"name": "DS_RmsPartySRC",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_DataLakeEnriched",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "FIDS_RMS/RMS/RmsParty",
+				"fileSystem": "immersive"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "RmsPartyId",
+				"type": "INT64"
+			},
+			{
+				"name": "PartyIdentifier",
+				"type": "UTF8"
+			},
+			{
+				"name": "CompanyName",
+				"type": "UTF8"
+			},
+			{
+				"name": "CompanyRegistrationNumber",
+				"type": "UTF8"
+			},
+			{
+				"name": "VirtualPartyName",
+				"type": "UTF8"
+			},
+			{
+				"name": "RoleTradingName",
+				"type": "UTF8"
+			},
+			{
+				"name": "MastersOffice",
+				"type": "UTF8"
+			},
+			{
+				"name": "ExecutorDateReceived",
+				"type": "INT96"
+			},
+			{
+				"name": "AuthorityDateReceived",
+				"type": "INT96"
+			},
+			{
+				"name": "LetterOfAuthority",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "LetterFromExecutor",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "PersonOtherRegistrationNumber",
+				"type": "UTF8"
+			},
+			{
+				"name": "OtherRegistrationNumber",
+				"type": "UTF8"
+			},
+			{
+				"name": "Initials",
+				"type": "UTF8"
+			},
+			{
+				"name": "FirstName",
+				"type": "UTF8"
+			},
+			{
+				"name": "Surname",
+				"type": "UTF8"
+			},
+			{
+				"name": "RmsIdTypeId",
+				"type": "INT32"
+			},
+			{
+				"name": "IdNumber",
+				"type": "UTF8"
+			},
+			{
+				"name": "RmsGenderId",
+				"type": "INT32"
+			},
+			{
+				"name": "RmsTitleId",
+				"type": "INT32"
+			},
+			{
+				"name": "DateOfBirth",
+				"type": "INT96"
+			},
+			{
+				"name": "LastChangedBy",
+				"type": "UTF8"
+			},
+			{
+				"name": "LastChangedDate",
+				"type": "INT96"
+			},
+			{
+				"name": "CreationDate",
+				"type": "INT96"
+			},
+			{
+				"name": "IsDeleted",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "DeleteReasonId",
+				"type": "INT32"
+			},
+			{
+				"name": "DeletionDate",
+				"type": "INT96"
+			},
+			{
+				"name": "SecondName",
+				"type": "UTF8"
+			},
+			{
+				"name": "ThirdName",
+				"type": "UTF8"
+			},
+			{
+				"name": "MaidenName",
+				"type": "UTF8"
+			},
+			{
+				"name": "NickName",
+				"type": "UTF8"
+			},
+			{
+				"name": "Alias",
+				"type": "UTF8"
+			},
+			{
+				"name": "MothersName",
+				"type": "UTF8"
+			},
+			{
+				"name": "YearsAtOccupation",
+				"type": "INT32"
+			},
+			{
+				"name": "OccupationID",
+				"type": "INT32"
+			},
+			{
+				"name": "MonthsAtOccupation",
+				"type": "INT32"
+			},
+			{
+				"name": "BirthGenderID",
+				"type": "INT32"
+			},
+			{
+				"name": "TaxpayerNumber",
+				"type": "UTF8"
+			},
+			{
+				"name": "BirthCity",
+				"type": "UTF8"
+			},
+			{
+				"name": "BirthCountryId",
+				"type": "INT32"
+			},
+			{
+				"name": "Citizenship",
+				"type": "UTF8"
+			},
+			{
+				"name": "CountryofResidenceID",
+				"type": "INT32"
+			},
+			{
+				"name": "DeathCountry",
+				"type": "INT32"
+			},
+			{
+				"name": "MortalityConfirmDate",
+				"type": "INT96"
+			},
+			{
+				"name": "DriversLicenseCountryId",
+				"type": "INT32"
+			},
+			{
+				"name": "EstimatedGrossAnnualOtherIncome",
+				"type": "DECIMAL",
+				"precision": 38,
+				"scale": 18
+			},
+			{
+				"name": "AnnualFundSalary",
+				"type": "DECIMAL",
+				"precision": 38,
+				"scale": 18
+			},
+			{
+				"name": "AnnualRiskSalary",
+				"type": "DECIMAL",
+				"precision": 38,
+				"scale": 18
+			},
+			{
+				"name": "EstimatedSalary",
+				"type": "DECIMAL",
+				"precision": 38,
+				"scale": 18
+			},
+			{
+				"name": "Postimmigration",
+				"type": "UTF8"
+			},
+			{
+				"name": "Height",
+				"type": "FLOAT"
+			},
+			{
+				"name": "ImmigrationEntryDate",
+				"type": "INT96"
+			},
+			{
+				"name": "IncomeInfoFromPartyIndicator",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "LanguageId",
+				"type": "INT32"
+			},
+			{
+				"name": "NetIncomeAmount",
+				"type": "DECIMAL",
+				"precision": 38,
+				"scale": 18
+			},
+			{
+				"name": "NetSavingsAmount",
+				"type": "DECIMAL",
+				"precision": 38,
+				"scale": 18
+			},
+			{
+				"name": "NonResidentAlienIndicator",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "PassportNumber",
+				"type": "UTF8"
+			},
+			{
+				"name": "PassportExpiryDate",
+				"type": "INT96"
+			},
+			{
+				"name": "PassportCountryIssuedId",
+				"type": "INT32"
+			},
+			{
+				"name": "RetirementAge",
+				"type": "INT32"
+			},
+			{
+				"name": "RetirementDate",
+				"type": "INT96"
+			},
+			{
+				"name": "RestrictionReason",
+				"type": "UTF8"
+			},
+			{
+				"name": "MaritalStatusID",
+				"type": "INT32"
+			},
+			{
+				"name": "MaritalStatusDate",
+				"type": "INT96"
+			},
+			{
+				"name": "SpouseInitials",
+				"type": "UTF8"
+			},
+			{
+				"name": "SpouseSurname",
+				"type": "UTF8"
+			},
+			{
+				"name": "SpouseDOB",
+				"type": "INT96"
+			},
+			{
+				"name": "SpouseIDNumber",
+				"type": "UTF8"
+			},
+			{
+				"name": "USATIN",
+				"type": "UTF8"
+			},
+			{
+				"name": "USASocialSecurityNumber",
+				"type": "UTF8"
+			},
+			{
+				"name": "USAPassportNumber",
+				"type": "UTF8"
+			},
+			{
+				"name": "FICAStatusID",
+				"type": "INT32"
+			},
+			{
+				"name": "TaxResident",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "TaxApplied",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "AlsoKnownAsName",
+				"type": "UTF8"
+			},
+			{
+				"name": "BirthName",
+				"type": "UTF8"
+			},
+			{
+				"name": "LegalName",
+				"type": "UTF8"
+			},
+			{
+				"name": "MarriedName",
+				"type": "UTF8"
+			},
+			{
+				"name": "Non-ResidentAlienNumber",
+				"type": "UTF8"
+			},
+			{
+				"name": "StageName",
+				"type": "UTF8"
+			},
+			{
+				"name": "PenName",
+				"type": "UTF8"
+			},
+			{
+				"name": "Prefix",
+				"type": "UTF8"
+			},
+			{
+				"name": "Suffix",
+				"type": "UTF8"
+			},
+			{
+				"name": "OrganizationId",
+				"type": "INT64"
+			},
+			{
+				"name": "DHADesignationNumber",
+				"type": "UTF8"
+			},
+			{
+				"name": "ClientReferenceKey",
+				"type": "UTF8"
+			},
+			{
+				"name": "ClientContractReferenceKey",
+				"type": "UTF8"
+			},
+			{
+				"name": "Age",
+				"type": "DECIMAL",
+				"precision": 38,
+				"scale": 18
+			},
+			{
+				"name": "AgeRecordedDate",
+				"type": "INT96"
+			},
+			{
+				"name": "InsuranceCompanyAssignedIdentificationNumber",
+				"type": "UTF8"
+			},
+			{
+				"name": "RaceId",
+				"type": "INT32"
+			},
+			{
+				"name": "DriverLisenseStatusId",
+				"type": "INT32"
+			},
+			{
+				"name": "DriverLisenseTypeId",
+				"type": "INT32"
+			},
+			{
+				"name": "TaxStatusId",
+				"type": "INT32"
+			},
+			{
+				"name": "ProofOfAgeArtifactId",
+				"type": "INT32"
+			},
+			{
+				"name": "ProofOfResidenceArtifactId",
+				"type": "INT32"
+			},
+			{
+				"name": "DeathJurisdiction",
+				"type": "UTF8"
+			},
+			{
+				"name": "AdviserDetailId",
+				"type": "INT32"
+			},
+			{
+				"name": "smokerStatus",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "Education",
+				"type": "INT32"
+			},
+			{
+				"name": "HighestEducationLevel",
+				"type": "INT32"
+			},
+			{
+				"name": "OldSystemKeyId",
+				"type": "INT64"
+			},
+			{
+				"name": "PersonStatus",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "SmartIDNumber",
+				"type": "UTF8"
+			},
+			{
+				"name": "LastSmartIDNumberIssued",
+				"type": "UTF8"
+			},
+			{
+				"name": "RightFingerPrint",
+				"type": "UTF8"
+			},
+			{
+				"name": "LeftFingerPrint",
+				"type": "UTF8"
+			},
+			{
+				"name": "RmsEventId",
+				"type": "INT64"
+			},
+			{
+				"name": "OldRolePlayerId",
+				"type": "INT64"
+			},
+			{
+				"name": "RmsPartyCategoryId",
+				"type": "INT32"
+			},
+			{
+				"name": "AIModifiedDateTime",
+				"type": "INT96"
+			},
+			{
+				"name": "RequestFlag",
+				"type": "UTF8"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

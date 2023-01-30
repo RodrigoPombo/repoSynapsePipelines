@@ -1,0 +1,78 @@
+{
+	"name": "DS_MessageSRC",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_DataLakeEnriched",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "staging/LacMessageLog",
+				"fileSystem": "immersive"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "LacMessageLogId",
+				"type": "INT64"
+			},
+			{
+				"name": "TransRefGuid",
+				"type": "UTF8"
+			},
+			{
+				"name": "LacNotificationStatusId",
+				"type": "INT32"
+			},
+			{
+				"name": "LacRequestSourceId",
+				"type": "INT32"
+			},
+			{
+				"name": "TranContentCode",
+				"type": "INT32"
+			},
+			{
+				"name": "TransactionDateTime",
+				"type": "INT96"
+			},
+			{
+				"name": "ErrorMessage",
+				"type": "UTF8"
+			},
+			{
+				"name": "CreationDate",
+				"type": "INT96"
+			},
+			{
+				"name": "LastChangedBy",
+				"type": "UTF8"
+			},
+			{
+				"name": "LastChangedDate",
+				"type": "INT96"
+			},
+			{
+				"name": "GroupId",
+				"type": "INT32"
+			},
+			{
+				"name": "MessageLogGuid",
+				"type": "UTF8"
+			},
+			{
+				"name": "AIModifiedDateTime",
+				"type": "INT96"
+			},
+			{
+				"name": "RequestFlag",
+				"type": "UTF8"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

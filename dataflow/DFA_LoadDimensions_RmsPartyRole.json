@@ -1,0 +1,80 @@
+{
+	"name": "DFA_LoadDimensions_RmsPartyRole",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_RmsPartySRC",
+						"type": "DatasetReference"
+					},
+					"name": "SourceRmsPartySRC"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_RmsPartyRoleSRC",
+						"type": "DatasetReference"
+					},
+					"name": "RmsPartyRoleSCR"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_RmsPartyTypeSRC",
+						"type": "DatasetReference"
+					},
+					"name": "RmsPartyTypeSRC"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimRmsPartyRole",
+						"type": "DatasetReference"
+					},
+					"name": "DimRmsPartyRole"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_DimRmsPartyRole",
+						"type": "DatasetReference"
+					},
+					"name": "SinkRmsPartyRole"
+				}
+			],
+			"transformations": [
+				{
+					"name": "SetDefaultFields"
+				},
+				{
+					"name": "AllowUpserts"
+				},
+				{
+					"name": "DoesNotExist"
+				},
+				{
+					"name": "selectRmsPartyRoleSRC"
+				},
+				{
+					"name": "selectRmsPartyType"
+				},
+				{
+					"name": "joinRmsPartyRole"
+				},
+				{
+					"name": "FixRmsPartyRole"
+				},
+				{
+					"name": "SelectDimRmsPartyRole"
+				},
+				{
+					"name": "JoinRmsPartyType"
+				},
+				{
+					"name": "FixRmsPartyType"
+				}
+			],
+			"script": "source(output(\n\t\tRmsPartyId as long,\n\t\tPartyIdentifier as string,\n\t\tCompanyName as string,\n\t\tCompanyRegistrationNumber as string,\n\t\tVirtualPartyName as string,\n\t\tRoleTradingName as string,\n\t\tMastersOffice as string,\n\t\tExecutorDateReceived as timestamp,\n\t\tAuthorityDateReceived as timestamp,\n\t\tLetterOfAuthority as boolean,\n\t\tLetterFromExecutor as boolean,\n\t\tPersonOtherRegistrationNumber as string,\n\t\tOtherRegistrationNumber as string,\n\t\tInitials as string,\n\t\tFirstName as string,\n\t\tSurname as string,\n\t\tRmsIdTypeId as integer,\n\t\tIdNumber as string,\n\t\tRmsGenderId as integer,\n\t\tRmsTitleId as integer,\n\t\tDateOfBirth as timestamp,\n\t\tLastChangedBy as string,\n\t\tLastChangedDate as timestamp,\n\t\tCreationDate as timestamp,\n\t\tIsDeleted as boolean,\n\t\tDeleteReasonId as integer,\n\t\tDeletionDate as timestamp,\n\t\tSecondName as string,\n\t\tThirdName as string,\n\t\tMaidenName as string,\n\t\tNickName as string,\n\t\tAlias as string,\n\t\tMothersName as string,\n\t\tYearsAtOccupation as integer,\n\t\tOccupationID as integer,\n\t\tMonthsAtOccupation as integer,\n\t\tBirthGenderID as integer,\n\t\tTaxpayerNumber as string,\n\t\tBirthCity as string,\n\t\tBirthCountryId as integer,\n\t\tCitizenship as string,\n\t\tCountryofResidenceID as integer,\n\t\tDeathCountry as integer,\n\t\tMortalityConfirmDate as timestamp,\n\t\tDriversLicenseCountryId as integer,\n\t\tEstimatedGrossAnnualOtherIncome as decimal(38,18),\n\t\tAnnualFundSalary as decimal(38,18),\n\t\tAnnualRiskSalary as decimal(38,18),\n\t\tEstimatedSalary as decimal(38,18),\n\t\tPostimmigration as string,\n\t\tHeight as float,\n\t\tImmigrationEntryDate as timestamp,\n\t\tIncomeInfoFromPartyIndicator as boolean,\n\t\tLanguageId as integer,\n\t\tNetIncomeAmount as decimal(38,18),\n\t\tNetSavingsAmount as decimal(38,18),\n\t\tNonResidentAlienIndicator as boolean,\n\t\tPassportNumber as string,\n\t\tPassportExpiryDate as timestamp,\n\t\tPassportCountryIssuedId as integer,\n\t\tRetirementAge as integer,\n\t\tRetirementDate as timestamp,\n\t\tRestrictionReason as string,\n\t\tMaritalStatusID as integer,\n\t\tMaritalStatusDate as timestamp,\n\t\tSpouseInitials as string,\n\t\tSpouseSurname as string,\n\t\tSpouseDOB as timestamp,\n\t\tSpouseIDNumber as string,\n\t\tUSATIN as string,\n\t\tUSASocialSecurityNumber as string,\n\t\tUSAPassportNumber as string,\n\t\tFICAStatusID as integer,\n\t\tTaxResident as boolean,\n\t\tTaxApplied as boolean,\n\t\tAlsoKnownAsName as string,\n\t\tBirthName as string,\n\t\tLegalName as string,\n\t\tMarriedName as string,\n\t\t{Non-ResidentAlienNumber} as string,\n\t\tStageName as string,\n\t\tPenName as string,\n\t\tPrefix as string,\n\t\tSuffix as string,\n\t\tOrganizationId as long,\n\t\tDHADesignationNumber as string,\n\t\tClientReferenceKey as string,\n\t\tClientContractReferenceKey as string,\n\t\tAge as decimal(38,18),\n\t\tAgeRecordedDate as timestamp,\n\t\tInsuranceCompanyAssignedIdentificationNumber as string,\n\t\tRaceId as integer,\n\t\tDriverLisenseStatusId as integer,\n\t\tDriverLisenseTypeId as integer,\n\t\tTaxStatusId as integer,\n\t\tProofOfAgeArtifactId as integer,\n\t\tProofOfResidenceArtifactId as integer,\n\t\tDeathJurisdiction as string,\n\t\tAdviserDetailId as integer,\n\t\tsmokerStatus as boolean,\n\t\tEducation as integer,\n\t\tHighestEducationLevel as integer,\n\t\tOldSystemKeyId as long,\n\t\tPersonStatus as boolean,\n\t\tSmartIDNumber as string,\n\t\tLastSmartIDNumberIssued as string,\n\t\tRightFingerPrint as string,\n\t\tLeftFingerPrint as string,\n\t\tRmsEventId as long,\n\t\tOldRolePlayerId as long,\n\t\tRmsPartyCategoryId as integer,\n\t\tAIModifiedDateTime as timestamp,\n\t\tRequestFlag as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: true,\n\tformat: 'parquet',\n\twildcardPaths:['FIDS_RMS/RMS/RmsParty/**/*']) ~> SourceRmsPartySRC\nsource(output(\n\t\tRmsPartyRoleId as long,\n\t\tRmsPartyTypeId as integer,\n\t\tRmsPartyId as long,\n\t\tAIModifiedDateTime as timestamp,\n\t\tRequestFlag as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet',\n\twildcardPaths:['FIDS_RMS/RMS/RmsPartyRole/**/*']) ~> RmsPartyRoleSCR\nsource(output(\n\t\tRmsPartyTypeId as integer,\n\t\tName as string,\n\t\tRmsPartyCategoryId as integer,\n\t\tAIModifiedDateTime as timestamp,\n\t\tRequestFlag as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet',\n\twildcardPaths:['FIDS_RMS/Master/RmsPartyType/**/*']) ~> RmsPartyTypeSRC\nsource(output(\n\t\tRmsPartyRoleKey as integer,\n\t\tRmsPartyRoleId as long,\n\t\tRmsPartyTypeId as integer,\n\t\tRmsPartyId as integer,\n\t\tRmsEventId as integer,\n\t\tPartyType as string,\n\t\tIdNumber as string,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimRmsPartyRole\nDoesNotExist derive(IsDeleted = false(),\n\t\tIsCurrent = true(),\n\t\tUpdatedDateDW = currentTimestamp(),\n\t\tCreatedDateDW = currentTimestamp(),\n\t\tCreatedByDW = 'AzureDataFactory',\n\t\tSourceSystem = 'AstuteOnline') ~> SetDefaultFields\nSetDefaultFields alterRow(upsertIf(true())) ~> AllowUpserts\nFixRmsPartyType, SelectDimRmsPartyRole exists(FixRmsPartyType@RmsPartyRoleId==SelectDimRmsPartyRole@RmsPartyRoleId,\n\tnegate:true,\n\tbroadcast: 'auto')~> DoesNotExist\nRmsPartyRoleSCR select(mapColumn(\n\t\tRmsPartyRoleId,\n\t\tRmsPartyTypeId,\n\t\tRmsPartyId\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> selectRmsPartyRoleSRC\nRmsPartyTypeSRC select(mapColumn(\n\t\tRmsPartyTypeId,\n\t\tName\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> selectRmsPartyType\nSourceRmsPartySRC, selectRmsPartyRoleSRC join(SourceRmsPartySRC@RmsPartyId == selectRmsPartyRoleSRC@RmsPartyId,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> joinRmsPartyRole\njoinRmsPartyRole select(mapColumn(\n\t\tRmsPartyId = SourceRmsPartySRC@RmsPartyId,\n\t\tIdNumber,\n\t\tRmsEventId,\n\t\tRmsPartyRoleId,\n\t\tRmsPartyTypeId\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixRmsPartyRole\nDimRmsPartyRole select(mapColumn(\n\t\tRmsPartyRoleKey,\n\t\tRmsPartyRoleId\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectDimRmsPartyRole\nFixRmsPartyRole, selectRmsPartyType join(FixRmsPartyRole@RmsPartyTypeId == selectRmsPartyType@RmsPartyTypeId,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinRmsPartyType\nJoinRmsPartyType select(mapColumn(\n\t\tRmsPartyId,\n\t\tIdNumber,\n\t\tRmsPartyRoleId,\n\t\tRmsPartyTypeId = FixRmsPartyRole@RmsPartyTypeId,\n\t\tPartyType = Name,\n\t\tRmsEventId\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixRmsPartyType\nAllowUpserts sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tRmsPartyRoleKey as integer,\n\t\tRmsPartyRoleId as long,\n\t\tRmsPartyTypeId as integer,\n\t\tRmsPartyId as integer,\n\t\tRmsEventId as integer,\n\t\tPartyType as string,\n\t\tIdNumber as string,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:false,\n\tupsertable:true,\n\tkeys:['RmsPartyRoleId'],\n\tformat: 'table',\n\tstaged: true,\n\tallowCopyCommand: true,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tRmsPartyRoleId,\n\t\tRmsPartyTypeId,\n\t\tRmsPartyId,\n\t\tRmsEventId,\n\t\tPartyType,\n\t\tIdNumber,\n\t\tIsDeleted,\n\t\tIsCurrent,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tCreatedByDW,\n\t\tSourceSystem\n\t),\n\tpreCommands: [],\n\tpostCommands: []) ~> SinkRmsPartyRole"
+		}
+	}
+}

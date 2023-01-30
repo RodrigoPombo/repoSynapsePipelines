@@ -1,0 +1,64 @@
+{
+	"name": "DFA_LoadDimensions_FnaConfigurationBrokerCode",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_FnaConfigurationBrokerCodeSRC",
+						"type": "DatasetReference"
+					},
+					"name": "SourceFnaConfigurationBrokerCodeSRC"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimFnaConfigurationBrokerCode",
+						"type": "DatasetReference"
+					},
+					"name": "DimFnaConfigurationBrokerCode"
+				},
+				{
+					"dataset": {
+						"referenceName": "AisContentProviderSRC",
+						"type": "DatasetReference"
+					},
+					"name": "AisContentProviderSRC"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_DimFnaConfigurationBrokerCode",
+						"type": "DatasetReference"
+					},
+					"name": "SinkFnaConfigurationBrokerCode"
+				}
+			],
+			"transformations": [
+				{
+					"name": "SetDefaultFields"
+				},
+				{
+					"name": "AllowUpserts"
+				},
+				{
+					"name": "DoesNotExist"
+				},
+				{
+					"name": "selectDimFnaConfigurationBrokerCode"
+				},
+				{
+					"name": "SelectAisContentProvider"
+				},
+				{
+					"name": "JoinAisContentProvider"
+				},
+				{
+					"name": "FixAisContentProvider"
+				}
+			],
+			"script": "source(output(\n\t\tFnaConfigurationBrokerCodeId as integer,\n\t\tFnaConfigurationBrokerCodeGuid as string,\n\t\tFnaConfigurationAdviserId as integer,\n\t\tAisContentProviderId as string,\n\t\tBrokerCode as string,\n\t\tDeleted as boolean,\n\t\tLastChangedBy as string,\n\t\tLastChangedDate as timestamp,\n\t\tCreationDate as timestamp,\n\t\tAIModifiedDateTime as timestamp,\n\t\tRequestFlag as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: true,\n\tformat: 'parquet',\n\twildcardPaths:['AstuteOnline/AIS/FnaConfigurationBrokerCode/**/*']) ~> SourceFnaConfigurationBrokerCodeSRC\nsource(output(\n\t\tFnaConfigurationBrokerCodeKey as integer,\n\t\tFnaConfigurationBrokerCodeId as integer,\n\t\tAisContentProviderId as string,\n\t\tAisContentProvider as string,\n\t\tIsActive as boolean,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimFnaConfigurationBrokerCode\nsource(output(\n\t\tId as string,\n\t\tName as string,\n\t\tCreteatedDate as timestamp,\n\t\tIsActive as boolean,\n\t\tInvCpFstpSettingId as integer,\n\t\tExternalSftpSettingId as integer,\n\t\tDescription as string,\n\t\tAIModifiedDateTime as timestamp,\n\t\tRequestFlag as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet') ~> AisContentProviderSRC\nFixAisContentProvider derive(IsDeleted = false(),\n\t\tIsCurrent = true(),\n\t\tUpdatedDateDW = currentTimestamp(),\n\t\tCreatedDateDW = currentTimestamp(),\n\t\tCreatedByDW = 'AzureDataFactory',\n\t\tSourceSystem = 'AstuteOnline') ~> SetDefaultFields\nSetDefaultFields alterRow(upsertIf(true())) ~> AllowUpserts\nSourceFnaConfigurationBrokerCodeSRC, selectDimFnaConfigurationBrokerCode exists(SourceFnaConfigurationBrokerCodeSRC@FnaConfigurationBrokerCodeId==selectDimFnaConfigurationBrokerCode@FnaConfigurationBrokerCodeId,\n\tnegate:true,\n\tbroadcast: 'auto')~> DoesNotExist\nDimFnaConfigurationBrokerCode select(mapColumn(\n\t\tFnaConfigurationBrokerCodeKey,\n\t\tFnaConfigurationBrokerCodeId,\n\t\tIsCurrent\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> selectDimFnaConfigurationBrokerCode\nAisContentProviderSRC select(mapColumn(\n\t\tId,\n\t\tName,\n\t\tIsActive\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectAisContentProvider\nDoesNotExist, SelectAisContentProvider join(AisContentProviderId == Id,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinAisContentProvider\nJoinAisContentProvider select(mapColumn(\n\t\tFnaConfigurationBrokerCodeId,\n\t\tFnaConfigurationBrokerCodeGuid,\n\t\tFnaConfigurationAdviserId,\n\t\tAisContentProviderId,\n\t\tBrokerCode,\n\t\tDeleted,\n\t\tLastChangedBy,\n\t\tLastChangedDate,\n\t\tCreationDate,\n\t\tAIModifiedDateTime,\n\t\tRequestFlag,\n\t\tAisContentProvider = Name,\n\t\tIsActive\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixAisContentProvider\nAllowUpserts sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tFnaConfigurationBrokerCodeKey as integer,\n\t\tFnaConfigurationBrokerCodeId as integer,\n\t\tAisContentProviderId as string,\n\t\tAisContentProvider as string,\n\t\tIsActive as boolean,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:false,\n\tupsertable:true,\n\tkeys:['FnaConfigurationBrokerCodeId'],\n\tformat: 'table',\n\tstaged: true,\n\tallowCopyCommand: true,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tFnaConfigurationBrokerCodeId,\n\t\tAisContentProviderId,\n\t\tIsDeleted = Deleted,\n\t\tIsCurrent,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tCreatedByDW,\n\t\tSourceSystem,\n\t\tAisContentProvider,\n\t\tIsActive\n\t),\n\tpreCommands: [],\n\tpostCommands: []) ~> SinkFnaConfigurationBrokerCode"
+		}
+	}
+}

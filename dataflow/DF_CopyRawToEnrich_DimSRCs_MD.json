@@ -1,0 +1,32 @@
+{
+	"name": "DF_CopyRawToEnrich_DimSRCs_MD",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_CopyDimToStaging",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_LoadRawDataToEnrich_Dim",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "DefaultValues"
+				}
+			],
+			"script": "parameters{\n\tsourceProduct as string,\n\tfileName as string\n}\nsource(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: true,\n\tformat: 'parquet') ~> source1\nsource1 derive(SourceProduct = upper($sourceProduct)) ~> DefaultValues\nDefaultValues sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tUnitOfWorkId as integer,\n\t\tReferenceNumber as string,\n\t\tMonthlyBalanceControlId as integer,\n\t\tGroupId as integer,\n\t\tProfileId as integer,\n\t\tTransactionCategoryId as integer,\n\t\tEstimatedTransactionTypeId as integer,\n\t\tActualTransactionTypeId as integer,\n\t\tEstimatedTransactionValue as decimal(19,4),\n\t\tActualTransactionValue as decimal(19,4),\n\t\tExcessTransactionValue as decimal(19,4),\n\t\tIsTransactionComplete as boolean,\n\t\tIsExcessTransaction as boolean,\n\t\tIsDeferredPriceCalculation as boolean,\n\t\tRequiresInvoiceRequest as boolean,\n\t\tInvoiceRequestId as integer,\n\t\tDateTimeTransactionStarted as timestamp,\n\t\tDateTimeTransactionComplete as timestamp,\n\t\tIsContentProviderTransaction as boolean,\n\t\tContentProviderBillingId as integer,\n\t\tOnBehalfOfProfileId as integer,\n\t\tQuantity as integer,\n\t\tMyClientId as integer,\n\t\tCoreOrProducts as boolean,\n\t\tCcpServiceId as integer,\n\t\tCNFRateId as integer,\n\t\tParentId as integer,\n\t\tContentProviderTransTypeID as integer,\n\t\tAIModifiedDateTime as timestamp\n\t),\n\tformat: 'parquet',\n\tpartitionFileNames:[($fileName + toString(crc32(currentUTC())) + '.parquet')],\n\tumask: 0022,\n\tpreCommands: [],\n\tpostCommands: [],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tpartitionBy('hash', 1)) ~> sink1"
+		}
+	}
+}

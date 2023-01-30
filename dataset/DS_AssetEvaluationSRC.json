@@ -1,0 +1,37 @@
+{
+	"name": "DS_AssetEvaluationSRC",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_DataLakeEnriched",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "VOPD"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "staging/PropertyHistory",
+				"fileSystem": "immersive"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "PropertyHistoryId",
+				"type": "INT64"
+			},
+			{
+				"name": "profileid",
+				"type": "INT32"
+			},
+			{
+				"name": "RequestDateTime",
+				"type": "INT96"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

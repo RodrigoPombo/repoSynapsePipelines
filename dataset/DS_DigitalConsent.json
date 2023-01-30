@@ -1,0 +1,58 @@
+{
+	"name": "DS_DigitalConsent",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_DataLakeEnriched",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "AstuteOnline/CRM",
+				"fileSystem": "immersive"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "ProfileId",
+				"type": "INT32"
+			},
+			{
+				"name": "DigitalConsentStatusId",
+				"type": "INT32"
+			},
+			{
+				"name": "ComponentId",
+				"type": "INT32"
+			},
+			{
+				"name": "myclientid",
+				"type": "INT32"
+			},
+			{
+				"name": "IsDeleted",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "IsDcCustomer",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "RequestSourceCode",
+				"type": "UTF8"
+			},
+			{
+				"name": "UnitOfWorkId",
+				"type": "INT32"
+			},
+			{
+				"name": "Daterequested",
+				"type": "INT96"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,129 @@
+{
+	"name": "DS_FactMonthlyBalanceControl",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_Synapse",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlDWTable",
+		"schema": [
+			{
+				"name": "MonthlyBalanceControlId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CompanyKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ComponentKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SubscriptionBandKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "BilledSubscriptionFinMonth",
+				"type": "date"
+			},
+			{
+				"name": "SubscriptionYear",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SubscriptionMonth",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CreditLimit",
+				"type": "money",
+				"precision": 19,
+				"scale": 4
+			},
+			{
+				"name": "CreditLimitAdjustmentAmount",
+				"type": "money",
+				"precision": 19,
+				"scale": 4
+			},
+			{
+				"name": "SubscriptionStartDate",
+				"type": "date"
+			},
+			{
+				"name": "SubscriptionEndDate",
+				"type": "date"
+			},
+			{
+				"name": "CreditLimitExceededMailSent",
+				"type": "bit"
+			},
+			{
+				"name": "SubscriptionAmountExceededMailSent",
+				"type": "bit"
+			},
+			{
+				"name": "IsInitialized",
+				"type": "bit"
+			},
+			{
+				"name": "IsFinalized",
+				"type": "bit"
+			},
+			{
+				"name": "LastUpdate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "OpeningBalance",
+				"type": "money",
+				"precision": 19,
+				"scale": 4
+			},
+			{
+				"name": "ProfileKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "RequestFlag",
+				"type": "varchar"
+			},
+			{
+				"name": "UpdatedDateDW",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CreatedDateDW",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CreatedByDW",
+				"type": "varchar"
+			},
+			{
+				"name": "SourceSystem",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "Fact",
+			"table": "FactMonthlyBalanceControl"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

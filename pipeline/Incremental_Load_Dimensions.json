@@ -1,0 +1,1282 @@
+{
+	"name": "Incremental_Load_Dimensions",
+	"properties": {
+		"activities": [
+			{
+				"name": "DFA_LoadDimensions_RequestSource",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "LoadDataIfNotEmpty",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DFA_LoadDimensions_CCPRequestSource",
+						"type": "DataFlowReference"
+					},
+					"staging": {
+						"linkedService": {
+							"referenceName": "LS_SynapseStaging",
+							"type": "LinkedServiceReference"
+						},
+						"folderPath": "immersivedatalakestorage"
+					},
+					"integrationRuntime": {
+						"referenceName": "IR-QuickReUse",
+						"type": "IntegrationRuntimeReference"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "DFA_LoadDimensions_EntityStatusReason",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "DFA_LoadDimensions_RequestSource",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DFA_LoadDimensions_EntityStatusReason",
+						"type": "DataFlowReference"
+					},
+					"staging": {
+						"linkedService": {
+							"referenceName": "LS_SynapseStaging",
+							"type": "LinkedServiceReference"
+						},
+						"folderPath": "immersivedatalakestorage"
+					},
+					"integrationRuntime": {
+						"referenceName": "IR-QuickReUse",
+						"type": "IntegrationRuntimeReference"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "DFA_LoadDimensions_Company",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "DFA_LoadDimensions_EntityStatusReason",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DFA_LoadDimensions_Company",
+						"type": "DataFlowReference",
+						"parameters": {
+							"is_current": "true()"
+						}
+					},
+					"staging": {
+						"linkedService": {
+							"referenceName": "LS_SynapseStaging",
+							"type": "LinkedServiceReference"
+						},
+						"folderPath": "immersivedatalakestorage"
+					},
+					"integrationRuntime": {
+						"referenceName": "IR-QuickReUse",
+						"type": "IntegrationRuntimeReference"
+					},
+					"traceLevel": "Fine",
+					"sourceStagingConcurrency": 1
+				}
+			},
+			{
+				"name": "DFA_LoadDimensions_TransactionType",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "DFA_LoadDimensions_TransactionCategory",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "DFA_LoadDimensions_Component",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DFA_LoadDimensions_TransactionType",
+						"type": "DataFlowReference"
+					},
+					"staging": {
+						"linkedService": {
+							"referenceName": "LS_SynapseStaging",
+							"type": "LinkedServiceReference"
+						},
+						"folderPath": "immersivedatalakestorage"
+					},
+					"integrationRuntime": {
+						"referenceName": "IR-QuickReUse",
+						"type": "IntegrationRuntimeReference"
+					},
+					"traceLevel": "Fine",
+					"sourceStagingConcurrency": 1
+				}
+			},
+			{
+				"name": "DFA_LoadDimensions_SubscriptionBand",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "DFA_LoadDimensions_FppConfiguration",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DFA_LoadDimensions_SubscriptionBand",
+						"type": "DataFlowReference"
+					},
+					"staging": {
+						"linkedService": {
+							"referenceName": "LS_SynapseStaging",
+							"type": "LinkedServiceReference"
+						},
+						"folderPath": "immersivedatalakestorage"
+					},
+					"integrationRuntime": {
+						"referenceName": "IR-QuickReUse",
+						"type": "IntegrationRuntimeReference"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "DFA_LoadDimensions_TransactionCategory",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "DFA_LoadDimensions_SubscriptionList",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DFA_LoadDimensions_TransactionCategory",
+						"type": "DataFlowReference"
+					},
+					"staging": {
+						"linkedService": {
+							"referenceName": "LS_SynapseStaging",
+							"type": "LinkedServiceReference"
+						},
+						"folderPath": "immersivedatalakestorage"
+					},
+					"integrationRuntime": {
+						"referenceName": "IR-QuickReUse",
+						"type": "IntegrationRuntimeReference"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "DFA_LoadDimensions_Rate",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "DFA_LoadDimensions_TransactionType",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "DFA_LoadDimensions_SubscriptionBand",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "DFA_LoadDimensions_RateBatch",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DFA_LoadDimensions_Rate",
+						"type": "DataFlowReference"
+					},
+					"staging": {
+						"linkedService": {
+							"referenceName": "LS_SynapseStaging",
+							"type": "LinkedServiceReference"
+						},
+						"folderPath": "immersivedatalakestorage"
+					},
+					"integrationRuntime": {
+						"referenceName": "IR-QuickReUse",
+						"type": "IntegrationRuntimeReference"
+					},
+					"traceLevel": "Fine",
+					"sourceStagingConcurrency": 1
+				}
+			},
+			{
+				"name": "DFA_LoadDimensions_RateBatch",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "DFA_LoadDimensions_Product",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DFA_LoadDimensions_RateBatch",
+						"type": "DataFlowReference"
+					},
+					"staging": {
+						"linkedService": {
+							"referenceName": "LS_SynapseStaging",
+							"type": "LinkedServiceReference"
+						},
+						"folderPath": "immersivedatalakestorage"
+					},
+					"integrationRuntime": {
+						"referenceName": "IR-QuickReUse",
+						"type": "IntegrationRuntimeReference"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "DFA_LoadDimensions_Component",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "DFA_LoadDimensions_Fsp",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DFA_LoadDimensions_Component",
+						"type": "DataFlowReference"
+					},
+					"staging": {
+						"linkedService": {
+							"referenceName": "LS_SynapseStaging",
+							"type": "LinkedServiceReference"
+						},
+						"folderPath": "immersivedatalakestorage"
+					},
+					"integrationRuntime": {
+						"referenceName": "IR-QuickReUse",
+						"type": "IntegrationRuntimeReference"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "DFA_LoadDimensions_Profile",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "DFA_LoadDimensions_Company",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DFA_LoadDimensions_Profile",
+						"type": "DataFlowReference",
+						"parameters": {
+							"p_isCurrent": "true()"
+						}
+					},
+					"staging": {
+						"linkedService": {
+							"referenceName": "LS_SynapseStaging",
+							"type": "LinkedServiceReference"
+						},
+						"folderPath": "immersivedatalakestorage"
+					},
+					"integrationRuntime": {
+						"referenceName": "IR-QuickReUse",
+						"type": "IntegrationRuntimeReference"
+					},
+					"traceLevel": "Fine",
+					"sourceStagingConcurrency": 1
+				}
+			},
+			{
+				"name": "LoadDataIfNotEmpty",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "LookupIfEmptyDataSet_UnitOfWork",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@greater(indexOf(string(activity('LookupIfEmptyDataSet_UnitOfWork').output),'firstRow'),-1)",
+						"type": "Expression"
+					},
+					"ifFalseActivities": [
+						{
+							"name": "WaitFalse",
+							"type": "Wait",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"waitTimeInSeconds": 1
+							}
+						}
+					],
+					"ifTrueActivities": [
+						{
+							"name": "DFA_LoadDimensions_Client",
+							"type": "ExecuteDataFlow",
+							"dependsOn": [
+								{
+									"activity": "IncrementalCopyUnitOfwork",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "1.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataflow": {
+									"referenceName": "DFA_LoadDimensions_Client",
+									"type": "DataFlowReference",
+									"parameters": {
+										"is_current": "true()"
+									}
+								},
+								"staging": {
+									"linkedService": {
+										"referenceName": "LS_SynapseStaging",
+										"type": "LinkedServiceReference"
+									},
+									"folderPath": "immersivedatalakestorage"
+								},
+								"integrationRuntime": {
+									"referenceName": "IR-QuickReUse",
+									"type": "IntegrationRuntimeReference"
+								},
+								"traceLevel": "Fine"
+							}
+						},
+						{
+							"name": "IncrementalCopyUnitOfwork",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [
+								{
+									"name": "Source",
+									"value": "fse-test-sql//"
+								},
+								{
+									"name": "Destination",
+									"value": "staging/RmsEvent/"
+								}
+							],
+							"typeProperties": {
+								"source": {
+									"type": "ParquetSource",
+									"storeSettings": {
+										"type": "AzureBlobFSReadSettings",
+										"recursive": true,
+										"modifiedDatetimeStart": {
+											"value": "@pipeline().parameters.windowStart",
+											"type": "Expression"
+										},
+										"modifiedDatetimeEnd": {
+											"value": "@pipeline().parameters.windowEnd",
+											"type": "Expression"
+										},
+										"wildcardFileName": "*.parquet",
+										"enablePartitionDiscovery": false
+									}
+								},
+								"sink": {
+									"type": "ParquetSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings",
+										"maxConcurrentConnections": 20,
+										"copyBehavior": "FlattenHierarchy"
+									},
+									"formatSettings": {
+										"type": "ParquetWriteSettings"
+									}
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "DS_CopyFactFromEnrichToStagingSRC",
+									"type": "DatasetReference",
+									"parameters": {
+										"tablename": "UnitOfWork",
+										"schemaname": "Billing",
+										"databasename": "AstuteOnline"
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "DS_CopyFactEnrichToStaging",
+									"type": "DatasetReference",
+									"parameters": {
+										"tablename": "UnitOfWork"
+									}
+								}
+							]
+						}
+					]
+				}
+			},
+			{
+				"name": "DFA_LoadDimensions_Product",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "DFA_LoadDimensions_RmsPartyRole",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DFA_LoadDimensions_Product",
+						"type": "DataFlowReference"
+					},
+					"staging": {
+						"linkedService": {
+							"referenceName": "LS_SynapseStaging",
+							"type": "LinkedServiceReference"
+						},
+						"folderPath": "immersivedatalakestorage"
+					},
+					"integrationRuntime": {
+						"referenceName": "IR-QuickReUse",
+						"type": "IntegrationRuntimeReference"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "LookupIfEmptyDataSet_UnitOfWork",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "ParquetSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"modifiedDatetimeStart": {
+								"value": "@pipeline().parameters.windowStart",
+								"type": "Expression"
+							},
+							"modifiedDatetimeEnd": {
+								"value": "@pipeline().parameters.windowEnd",
+								"type": "Expression"
+							},
+							"wildcardFileName": "*.parquet",
+							"enablePartitionDiscovery": false
+						}
+					},
+					"dataset": {
+						"referenceName": "DS_CopyFactFromEnrichToStagingSRC",
+						"type": "DatasetReference",
+						"parameters": {
+							"tablename": {
+								"value": "UnitOfWork",
+								"type": "Expression"
+							},
+							"schemaname": {
+								"value": "Billing",
+								"type": "Expression"
+							},
+							"databasename": {
+								"value": "AstuteOnline",
+								"type": "Expression"
+							}
+						}
+					}
+				}
+			},
+			{
+				"name": "DFA_LoadDimensions_Group",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "DFA_LoadDimensions_Profile",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DFA_LoadDimensions_Group",
+						"type": "DataFlowReference",
+						"parameters": {
+							"is_current": "true()"
+						}
+					},
+					"staging": {
+						"linkedService": {
+							"referenceName": "LS_SynapseStaging",
+							"type": "LinkedServiceReference"
+						},
+						"folderPath": "immersivedatalakestorage"
+					},
+					"integrationRuntime": {
+						"referenceName": "IR-QuickReUse",
+						"type": "IntegrationRuntimeReference"
+					},
+					"traceLevel": "Fine",
+					"sourceStagingConcurrency": 1
+				}
+			},
+			{
+				"name": "DFA_LoadDimensions_ContentProvider",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "DFA_LoadDimensions_Component",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "DFA_LoadDimensions_EntityStatusReason",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DFA_LoadDimensions_ContentProvider",
+						"type": "DataFlowReference"
+					},
+					"staging": {
+						"linkedService": {
+							"referenceName": "LS_SynapseStaging",
+							"type": "LinkedServiceReference"
+						},
+						"folderPath": "immersivedatalakestorage"
+					},
+					"integrationRuntime": {
+						"referenceName": "IR-QuickReUse",
+						"type": "IntegrationRuntimeReference"
+					},
+					"traceLevel": "Fine",
+					"sourceStagingConcurrency": 1
+				}
+			},
+			{
+				"name": "DFA_LoadDimensions_CompanyAttributeValue",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DFA_LoadDimensions_CompanyAttributeValue",
+						"type": "DataFlowReference"
+					},
+					"staging": {
+						"linkedService": {
+							"referenceName": "LS_SynapseStaging",
+							"type": "LinkedServiceReference"
+						},
+						"folderPath": "immersivedatalakestorage"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine",
+					"sourceStagingConcurrency": 1
+				}
+			},
+			{
+				"name": "DFA_LoadDimensions_Fsp",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DFA_LoadDimensions_Fsp",
+						"type": "DataFlowReference"
+					},
+					"staging": {
+						"linkedService": {
+							"referenceName": "LS_SynapseStaging",
+							"type": "LinkedServiceReference"
+						},
+						"folderPath": "immersivedatalakestorage"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine",
+					"sourceStagingConcurrency": 1
+				}
+			},
+			{
+				"name": "DFA_LoadDimensions_SubscriptionList",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DFA_LoadDimensions_SubscriptionList",
+						"type": "DataFlowReference"
+					},
+					"staging": {
+						"linkedService": {
+							"referenceName": "LS_SynapseStaging",
+							"type": "LinkedServiceReference"
+						},
+						"folderPath": "immersivedatalakestorage"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine",
+					"sourceStagingConcurrency": 1
+				}
+			},
+			{
+				"name": "DFA_LoadDimensions_FppConfiguration",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "DFA_LoadDimensions_CompanyAttributeValue",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DFA_LoadDimensions_FppConfiguration",
+						"type": "DataFlowReference"
+					},
+					"staging": {
+						"linkedService": {
+							"referenceName": "LS_SynapseStaging",
+							"type": "LinkedServiceReference"
+						},
+						"folderPath": "immersivedatalakestorage"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine",
+					"sourceStagingConcurrency": 1
+				}
+			},
+			{
+				"name": "DFA_LoadDimensions_AstsLob",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DFA_LoadDimensions_AstsLob",
+						"type": "DataFlowReference"
+					},
+					"staging": {
+						"linkedService": {
+							"referenceName": "LS_SynapseStaging",
+							"type": "LinkedServiceReference"
+						},
+						"folderPath": "immersivedatalakestorage"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "DFA_LoadDimensions_AstsRealTimeStatus",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "DFA_LoadDimensions_AstsLob",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DFA_LoadDimensions_AstsRealTimeStatus",
+						"type": "DataFlowReference"
+					},
+					"staging": {
+						"linkedService": {
+							"referenceName": "LS_SynapseStaging",
+							"type": "LinkedServiceReference"
+						},
+						"folderPath": "immersivedatalakestorage"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "DFA_LoadDimensions_AstsRequestMessageHeaderDetail",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "DFA_LoadDimensions_AstsRealTimeStatus",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DFA_LoadDimensions_AstsRequestMessageHeaderDetail",
+						"type": "DataFlowReference"
+					},
+					"staging": {
+						"linkedService": {
+							"referenceName": "LS_SynapseStaging",
+							"type": "LinkedServiceReference"
+						},
+						"folderPath": "immersivedatalakestorage"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "DFA_LoadDimensions_Astsrequestresult",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "DFA_LoadDimensions_AstsRequestMessageHeaderDetail",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DFA_LoadDimensions_Astsrequestresult",
+						"type": "DataFlowReference"
+					},
+					"staging": {
+						"linkedService": {
+							"referenceName": "LS_SynapseStaging",
+							"type": "LinkedServiceReference"
+						},
+						"folderPath": "immersivedatalakestorage"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "DFA_LoadDimensions_AstsServiceType",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "DFA_LoadDimensions_Astsrequestresult",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DFA_LoadDimensions_AstsServiceType",
+						"type": "DataFlowReference"
+					},
+					"staging": {
+						"linkedService": {
+							"referenceName": "LS_SynapseStaging",
+							"type": "LinkedServiceReference"
+						},
+						"folderPath": "immersivedatalakestorage"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "DFA_LoadDimensions_RmsEventType",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DFA_LoadDimensions_RmsEventType",
+						"type": "DataFlowReference"
+					},
+					"staging": {
+						"linkedService": {
+							"referenceName": "LS_SynapseStaging",
+							"type": "LinkedServiceReference"
+						},
+						"folderPath": "immersivedatalakestorage"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "DFA_LoadDimensions_RmsPartyRole",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "DFA_LoadDimensions_RmsEventType",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DFA_LoadDimensions_RmsPartyRole",
+						"type": "DataFlowReference"
+					},
+					"staging": {
+						"linkedService": {
+							"referenceName": "LS_SynapseStaging",
+							"type": "LinkedServiceReference"
+						},
+						"folderPath": "immersivedatalakestorage"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "DFA_LoadDimensions_FnaConfigurationStatus",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DFA_LoadDimensions_FnaConfigurationStatus",
+						"type": "DataFlowReference"
+					},
+					"staging": {
+						"linkedService": {
+							"referenceName": "LS_SynapseStaging",
+							"type": "LinkedServiceReference"
+						},
+						"folderPath": "immersivedatalakestorage"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "DFA_LoadDimensions_FnaConfigurationBrokerCode",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "DFA_LoadDimensions_FnaConfigurationStatus",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DFA_LoadDimensions_FnaConfigurationBrokerCode",
+						"type": "DataFlowReference"
+					},
+					"staging": {
+						"linkedService": {
+							"referenceName": "LS_SynapseStaging",
+							"type": "LinkedServiceReference"
+						},
+						"folderPath": "immersivedatalakestorage"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "DFA_LoadDimensions_FnaConfigurationAdviser",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "DFA_LoadDimensions_FnaConfigurationBrokerCode",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DFA_LoadDimensions_FnaConfigurationAdviser",
+						"type": "DataFlowReference"
+					},
+					"staging": {
+						"linkedService": {
+							"referenceName": "LS_SynapseStaging",
+							"type": "LinkedServiceReference"
+						},
+						"folderPath": "immersivedatalakestorage"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "DFA_LoadDimensions_Fna",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "DFA_LoadDimensions_FnaConfigurationAdviser",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "1.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DFA_LoadDimensions_Fna",
+						"type": "DataFlowReference"
+					},
+					"staging": {
+						"linkedService": {
+							"referenceName": "LS_SynapseStaging",
+							"type": "LinkedServiceReference"
+						},
+						"folderPath": "immersivedatalakestorage"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"parameters": {
+			"windowStart": {
+				"type": "string"
+			},
+			"windowEnd": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "Active/2202150050002247 - Arnab [ABN AMRO]"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-11-28T15:34:57Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

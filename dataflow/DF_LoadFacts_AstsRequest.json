@@ -1,0 +1,150 @@
+{
+	"name": "DF_LoadFacts_AstsRequest",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_AstsRequest",
+						"type": "DatasetReference"
+					},
+					"name": "SRCAstsRequest"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimCompany",
+						"type": "DatasetReference"
+					},
+					"name": "DimCompanyFrom"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimCompany",
+						"type": "DatasetReference"
+					},
+					"name": "DimCompanyTo"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimAstsRequestMessageHeaderDetail",
+						"type": "DatasetReference"
+					},
+					"name": "DimAstsRequestMessageHeaderDetail"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimAstsLob",
+						"type": "DatasetReference"
+					},
+					"name": "DimAstsLob"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimAstsRealTimeStatus",
+						"type": "DatasetReference"
+					},
+					"name": "DimAstsRealTimeStatus"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_AstsServiceType",
+						"type": "DatasetReference"
+					},
+					"name": "DimAstsServiceType"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimAstsRequestResult",
+						"type": "DatasetReference"
+					},
+					"name": "DimAstsRequestResult"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_FactAstsRequest",
+						"type": "DatasetReference"
+					},
+					"name": "SinkAsts"
+				}
+			],
+			"transformations": [
+				{
+					"name": "SetisCurrentDefault"
+				},
+				{
+					"name": "FixAstsRequestColumns"
+				},
+				{
+					"name": "SelectDimcompanyFrom"
+				},
+				{
+					"name": "SelectDimCompanyTo"
+				},
+				{
+					"name": "SelectDimAstsRequestMessageHeaderDetail"
+				},
+				{
+					"name": "JoinCompanyFrom"
+				},
+				{
+					"name": "FixCompanyColumnsFrom"
+				},
+				{
+					"name": "JoinCompanyTo"
+				},
+				{
+					"name": "FixCompanyTo"
+				},
+				{
+					"name": "JoinAstsRequestMessageHeaderDetail"
+				},
+				{
+					"name": "FixAstsRequestMessageHeaderDetail"
+				},
+				{
+					"name": "DefaultColumns"
+				},
+				{
+					"name": "JoinAstsLob"
+				},
+				{
+					"name": "SelectDimAstsLob"
+				},
+				{
+					"name": "FixAstsLob"
+				},
+				{
+					"name": "SelectDimAstsRealTimeStatus"
+				},
+				{
+					"name": "JoinAstsRealTimeStatus"
+				},
+				{
+					"name": "FixAstsRealTimeStatus"
+				},
+				{
+					"name": "SelectDimAstsServiceType"
+				},
+				{
+					"name": "SelectAstsRequestResult"
+				},
+				{
+					"name": "JoinAstsRequestResult"
+				},
+				{
+					"name": "FixAstsRequestResult"
+				},
+				{
+					"name": "JoinAstsServiceType"
+				},
+				{
+					"name": "FixAstsServiceType"
+				}
+			],
+			"script": "source(output(\n\t\tAstsRequestId as integer,\n\t\tCreationDate as timestamp,\n\t\tReference as string,\n\t\tFromCompanyId as integer,\n\t\tToCompanyId as integer,\n\t\tFaultTouRI as string,\n\t\tFromUri as string,\n\t\tToURI as string,\n\t\tMessageSize as integer,\n\t\tMessageCount as integer,\n\t\tAstsStatusCodeId as integer,\n\t\tAstsRealTimeStatusId as integer,\n\t\tRequestid as integer,\n\t\tPolicyKey as string,\n\t\tACORDVersion as string,\n\t\tMessageId as string,\n\t\tAstsLobId as integer,\n\t\tError as string,\n\t\tAstsRequestDetailsId as integer,\n\t\tServiceTypeId as integer\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: true,\n\tformat: 'parquet',\n\twildcardPaths:['staging/AstsRequest/*']) ~> SRCAstsRequest\nsource(output(\n\t\tCompanyKey as integer,\n\t\tCompanyId as integer,\n\t\tName as string,\n\t\tDebtorNumber as string,\n\t\tCrmReferenceNumber as string,\n\t\tDebitOrderDay as integer,\n\t\tEntityStatus as string,\n\t\tEntityStatusReasonKey as integer,\n\t\tStatusChangeDate as timestamp,\n\t\tDeletionDate as timestamp,\n\t\tLastChangedBy as string,\n\t\tLastChangedDate as timestamp,\n\t\tCreationDate as timestamp,\n\t\tConsolidateInvoices as boolean,\n\t\tNote as string,\n\t\tCompanyGuid as string,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimCompanyFrom\nsource(output(\n\t\tCompanyKey as integer,\n\t\tCompanyId as integer,\n\t\tName as string,\n\t\tDebtorNumber as string,\n\t\tCrmReferenceNumber as string,\n\t\tDebitOrderDay as integer,\n\t\tEntityStatus as string,\n\t\tEntityStatusReasonKey as integer,\n\t\tStatusChangeDate as timestamp,\n\t\tDeletionDate as timestamp,\n\t\tLastChangedBy as string,\n\t\tLastChangedDate as timestamp,\n\t\tCreationDate as timestamp,\n\t\tConsolidateInvoices as boolean,\n\t\tNote as string,\n\t\tCompanyGuid as string,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimCompanyTo\nsource(output(\n\t\tAstsRequestKey as integer,\n\t\tAstsRequestMessageHeaderDetailId as integer,\n\t\tAstsRequestId as integer,\n\t\tProcessingIntermediaryOrganizationName as string,\n\t\tCorrelationId as string,\n\t\tMessageSubmissionTypeCode as string,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimAstsRequestMessageHeaderDetail\nsource(output(\n\t\tAstsLobKey as integer,\n\t\tAstsLobId as integer,\n\t\tDescription as string,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimAstsLob\nsource(output(\n\t\tAstsRealTimeStatusKey as integer,\n\t\tAstsRealTimeStatusId as integer,\n\t\tDescription as string,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimAstsRealTimeStatus\nsource(output(\n\t\tServiceTypeKey as integer,\n\t\tServiceTypeId as integer,\n\t\tServiceTypeName as string,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimAstsServiceType\nsource(output(\n\t\tAstsStatusCodeKey as integer,\n\t\tAstsRequestId as integer,\n\t\tAstsStatusCodeid as integer,\n\t\tAstsRequestResultId as string,\n\t\tStatusName as string,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimAstsRequestResult\nFixAstsRequestColumns derive(isCurrentDefault = true(),\n\t\tFinMonth = case(toInteger(dayOfMonth(toDate(CreationDate))) > 25,toString(addMonths(toDate(CreationDate),1),'yyyy-MM-01'), toString(toDate(CreationDate),'yyyy-MM-01')),\n\t\tSourceSystem = 'AstuteOnline') ~> SetisCurrentDefault\nSRCAstsRequest select(mapColumn(\n\t\tAstsRequestId,\n\t\tCreationDate,\n\t\tReference,\n\t\tFromCompanyId,\n\t\tToCompanyId,\n\t\tFaultTouRI,\n\t\tFromUri,\n\t\tToURI,\n\t\tMessageSize,\n\t\tMessageCount,\n\t\tAstsStatusCodeId,\n\t\tAstsRealTimeStatusId,\n\t\tRequestid,\n\t\tPolicyKey,\n\t\tACORDVersion,\n\t\tMessageId,\n\t\tAstsLobId,\n\t\tError,\n\t\tAstsRequestDetailsId,\n\t\tServiceTypeId\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixAstsRequestColumns\nDimCompanyFrom select(mapColumn(\n\t\tCompanyKey,\n\t\tCompanyId,\n\t\tIsCurrent,\n\t\tSourceSystem\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectDimcompanyFrom\nDimCompanyTo select(mapColumn(\n\t\tCompanyKey,\n\t\tCompanyId,\n\t\tIsCurrent,\n\t\tSourceSystem\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectDimCompanyTo\nDimAstsRequestMessageHeaderDetail select(mapColumn(\n\t\tAstsRequestKey,\n\t\tAstsRequestId,\n\t\tIsCurrent\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectDimAstsRequestMessageHeaderDetail\nSetisCurrentDefault, SelectDimcompanyFrom join(FromCompanyId == CompanyId\n\t&& SetisCurrentDefault@SourceSystem == SelectDimcompanyFrom@SourceSystem\n\t&& isCurrentDefault == IsCurrent,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinCompanyFrom\nJoinCompanyFrom select(mapColumn(\n\t\tAstsRequestId,\n\t\tCreationDate,\n\t\tReference,\n\t\tFromCompanyId,\n\t\tToCompanyId,\n\t\tFaultTouRI,\n\t\tFromUri,\n\t\tToURI,\n\t\tMessageSize,\n\t\tMessageCount,\n\t\tAstsStatusCodeId,\n\t\tAstsRealTimeStatusId,\n\t\tRequestid,\n\t\tPolicyKey,\n\t\tACORDVersion,\n\t\tMessageId,\n\t\tAstsLobId,\n\t\tError,\n\t\tAstsRequestDetailsId,\n\t\tServiceTypeId,\n\t\tisCurrentDefault,\n\t\tFinMonth,\n\t\tFromCompanyKey = CompanyKey,\n\t\tSourceSystem = SetisCurrentDefault@SourceSystem\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixCompanyColumnsFrom\nFixCompanyColumnsFrom, SelectDimCompanyTo join(ToCompanyId == CompanyId\n\t&& FixCompanyColumnsFrom@SourceSystem == SelectDimCompanyTo@SourceSystem\n\t&& isCurrentDefault == IsCurrent,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinCompanyTo\nJoinCompanyTo select(mapColumn(\n\t\tAstsRequestId,\n\t\tCreationDate,\n\t\tReference,\n\t\tFromCompanyId,\n\t\tToCompanyId,\n\t\tFaultTouRI,\n\t\tFromUri,\n\t\tToURI,\n\t\tMessageSize,\n\t\tMessageCount,\n\t\tAstsStatusCodeId,\n\t\tAstsRealTimeStatusId,\n\t\tRequestid,\n\t\tPolicyKey,\n\t\tACORDVersion,\n\t\tMessageId,\n\t\tAstsLobId,\n\t\tError,\n\t\tAstsRequestDetailsId,\n\t\tServiceTypeId,\n\t\tisCurrentDefault,\n\t\tFinMonth,\n\t\tFromCompanyKey,\n\t\tToCompanyKey = CompanyKey,\n\t\tSourceSystem = FixCompanyColumnsFrom@SourceSystem\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixCompanyTo\nFixCompanyTo, SelectDimAstsRequestMessageHeaderDetail join(FixCompanyTo@AstsRequestId == SelectDimAstsRequestMessageHeaderDetail@AstsRequestId\n\t&& isCurrentDefault == IsCurrent,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinAstsRequestMessageHeaderDetail\nJoinAstsRequestMessageHeaderDetail select(mapColumn(\n\t\tAstsRequestId = FixCompanyTo@AstsRequestId,\n\t\tCreationDate,\n\t\tReference,\n\t\tFromCompanyId,\n\t\tToCompanyId,\n\t\tFaultTouRI,\n\t\tFromUri,\n\t\tToURI,\n\t\tMessageSize,\n\t\tMessageCount,\n\t\tAstsStatusCodeId,\n\t\tAstsRealTimeStatusId,\n\t\tRequestid,\n\t\tPolicyKey,\n\t\tACORDVersion,\n\t\tMessageId,\n\t\tAstsLobId,\n\t\tError,\n\t\tAstsRequestDetailsId,\n\t\tServiceTypeId,\n\t\tisCurrentDefault,\n\t\tFinMonth,\n\t\tFromCompanyKey,\n\t\tToCompanyKey,\n\t\tAstsRequestKey,\n\t\tAstsRequestId = SelectDimAstsRequestMessageHeaderDetail@AstsRequestId,\n\t\tIsCurrent,\n\t\tSourceSystem\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixAstsRequestMessageHeaderDetail\nFixAstsServiceType derive(UpdatedDateDW = currentTimestamp(),\n\t\tCreatedDateDW = currentTimestamp(),\n\t\tCreatedByDW = 'ADF Pipeline',\n\t\tFinMonth = toDate(FinMonth)) ~> DefaultColumns\nFixAstsRequestMessageHeaderDetail, SelectDimAstsLob join(FixAstsRequestMessageHeaderDetail@AstsLobId == SelectDimAstsLob@AstsLobId\n\t&& isCurrentDefault == SelectDimAstsLob@IsCurrent,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinAstsLob\nDimAstsLob select(mapColumn(\n\t\tAstsLobKey,\n\t\tAstsLobId,\n\t\tIsCurrent\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectDimAstsLob\nJoinAstsLob select(mapColumn(\n\t\tAstsRequestId,\n\t\tCreationDate,\n\t\tReference,\n\t\tFromCompanyId,\n\t\tToCompanyId,\n\t\tFaultTouRI,\n\t\tFromUri,\n\t\tToURI,\n\t\tMessageSize,\n\t\tMessageCount,\n\t\tAstsStatusCodeId,\n\t\tAstsRealTimeStatusId,\n\t\tRequestid,\n\t\tPolicyKey,\n\t\tACORDVersion,\n\t\tMessageId,\n\t\tAstsLobId = FixAstsRequestMessageHeaderDetail@AstsLobId,\n\t\tError,\n\t\tAstsRequestDetailsId,\n\t\tServiceTypeId,\n\t\tisCurrentDefault,\n\t\tFinMonth,\n\t\tFromCompanyKey,\n\t\tToCompanyKey,\n\t\tAstsRequestKey,\n\t\tIsCurrent = FixAstsRequestMessageHeaderDetail@IsCurrent,\n\t\tAstsLobKey,\n\t\tAstsLobId = SelectDimAstsLob@AstsLobId,\n\t\tIsCurrent = SelectDimAstsLob@IsCurrent,\n\t\tSourceSystem\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixAstsLob\nDimAstsRealTimeStatus select(mapColumn(\n\t\tAstsRealTimeStatusKey,\n\t\tAstsRealTimeStatusId,\n\t\tIsCurrent\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectDimAstsRealTimeStatus\nFixAstsLob, SelectDimAstsRealTimeStatus join(FixAstsLob@AstsRealTimeStatusId == SelectDimAstsRealTimeStatus@AstsRealTimeStatusId\n\t&& isCurrentDefault == SelectDimAstsRealTimeStatus@IsCurrent,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinAstsRealTimeStatus\nJoinAstsRealTimeStatus select(mapColumn(\n\t\tAstsRequestId,\n\t\tCreationDate,\n\t\tReference,\n\t\tFromCompanyId,\n\t\tToCompanyId,\n\t\tFaultTouRI,\n\t\tFromUri,\n\t\tToURI,\n\t\tMessageSize,\n\t\tMessageCount,\n\t\tAstsStatusCodeId,\n\t\tAstsRealTimeStatusId = FixAstsLob@AstsRealTimeStatusId,\n\t\tRequestid,\n\t\tPolicyKey,\n\t\tACORDVersion,\n\t\tMessageId,\n\t\tAstsLobId,\n\t\tError,\n\t\tAstsRequestDetailsId,\n\t\tServiceTypeId,\n\t\tisCurrentDefault,\n\t\tFinMonth,\n\t\tFromCompanyKey,\n\t\tToCompanyKey,\n\t\tAstsRequestKey,\n\t\tIsCurrent = FixAstsLob@IsCurrent,\n\t\tAstsLobKey,\n\t\tAstsRealTimeStatusKey,\n\t\tAstsRealTimeStatusId = SelectDimAstsRealTimeStatus@AstsRealTimeStatusId,\n\t\tIsCurrent = SelectDimAstsRealTimeStatus@IsCurrent,\n\t\tSourceSystem\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixAstsRealTimeStatus\nDimAstsServiceType select(mapColumn(\n\t\tServiceTypeKey,\n\t\tServiceTypeId,\n\t\tIsCurrent\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectDimAstsServiceType\nDimAstsRequestResult select(mapColumn(\n\t\tAstsStatusCodeKey,\n\t\tAstsRequestId,\n\t\tIsCurrent\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectAstsRequestResult\nFixAstsRealTimeStatus, SelectAstsRequestResult join(FixAstsRealTimeStatus@AstsRequestId == SelectAstsRequestResult@AstsRequestId\n\t&& isCurrentDefault == SelectAstsRequestResult@IsCurrent,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinAstsRequestResult\nJoinAstsRequestResult select(mapColumn(\n\t\tAstsRequestId = FixAstsRealTimeStatus@AstsRequestId,\n\t\tCreationDate,\n\t\tReference,\n\t\tFromCompanyId,\n\t\tToCompanyId,\n\t\tFaultTouRI,\n\t\tFromUri,\n\t\tToURI,\n\t\tMessageSize,\n\t\tMessageCount,\n\t\tAstsStatusCodeId,\n\t\tAstsRealTimeStatusId,\n\t\tRequestid,\n\t\tPolicyKey,\n\t\tACORDVersion,\n\t\tMessageId,\n\t\tAstsLobId,\n\t\tError,\n\t\tAstsRequestDetailsId,\n\t\tServiceTypeId,\n\t\tisCurrentDefault,\n\t\tFinMonth,\n\t\tFromCompanyKey,\n\t\tToCompanyKey,\n\t\tAstsRequestKey,\n\t\tIsCurrent = FixAstsRealTimeStatus@IsCurrent,\n\t\tAstsLobKey,\n\t\tAstsRealTimeStatusKey,\n\t\tAstsStatusCodeKey,\n\t\tSourceSystem\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixAstsRequestResult\nFixAstsRequestResult, SelectDimAstsServiceType join(FixAstsRequestResult@ServiceTypeId == SelectDimAstsServiceType@ServiceTypeId\n\t&& isCurrentDefault == SelectDimAstsServiceType@IsCurrent,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinAstsServiceType\nJoinAstsServiceType select(mapColumn(\n\t\tAstsRequestId,\n\t\tCreationDate,\n\t\tReference,\n\t\tFromCompanyId,\n\t\tToCompanyId,\n\t\tFaultTouRI,\n\t\tFromUri,\n\t\tToURI,\n\t\tMessageSize,\n\t\tMessageCount,\n\t\tAstsStatusCodeId,\n\t\tAstsRealTimeStatusId,\n\t\tRequestid,\n\t\tPolicyKey,\n\t\tACORDVersion,\n\t\tMessageId,\n\t\tAstsLobId,\n\t\tError,\n\t\tAstsRequestDetailsId,\n\t\tServiceTypeId = FixAstsRequestResult@ServiceTypeId,\n\t\tisCurrentDefault,\n\t\tFinMonth,\n\t\tFromCompanyKey,\n\t\tToCompanyKey,\n\t\tAstsRequestKey,\n\t\tIsCurrent = FixAstsRequestResult@IsCurrent,\n\t\tAstsLobKey,\n\t\tAstsRealTimeStatusKey,\n\t\tAstsStatusCodeKey,\n\t\tServiceTypeKey,\n\t\tSourceSystem\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixAstsServiceType\nDefaultColumns sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tServiceTypeKey as integer,\n\t\tAstsRequestKey as integer,\n\t\tAstsLobKey as integer,\n\t\tAstsRealTimeStatusKey as integer,\n\t\tAstsStatusCodeKey as integer,\n\t\tFromCompanyKey as integer,\n\t\tToCompanyKey as integer,\n\t\tPolicyKey as string,\n\t\tAstsRequestId as integer,\n\t\tCreationDate as timestamp,\n\t\tFinMonth as date,\n\t\tReference as string,\n\t\tFromCompanyId as integer,\n\t\tToCompanyId as integer,\n\t\tServiceTypeId as integer,\n\t\tFaultTouRI as string,\n\t\tFromUri as string,\n\t\tToURI as string,\n\t\tACORDversiom as string,\n\t\tMessageSize as integer,\n\t\tMessageCount as integer,\n\t\tAstsStatusCodeid as integer,\n\t\tAstsRealTimeStatusId as integer,\n\t\tMessageId as string,\n\t\tRequestid as integer,\n\t\tAstsLobId as integer,\n\t\tError as string,\n\t\tAstsRequestDetailsId as integer,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tstaged: true,\n\tallowCopyCommand: true,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tServiceTypeKey,\n\t\tAstsRequestKey,\n\t\tAstsLobKey,\n\t\tAstsRealTimeStatusKey,\n\t\tAstsStatusCodeKey,\n\t\tFromCompanyKey,\n\t\tToCompanyKey,\n\t\tPolicyKey,\n\t\tAstsRequestId,\n\t\tCreationDate,\n\t\tFinMonth,\n\t\tReference,\n\t\tFromCompanyId,\n\t\tToCompanyId,\n\t\tServiceTypeId,\n\t\tFaultTouRI,\n\t\tFromUri,\n\t\tToURI,\n\t\tACORDversiom = ACORDVersion,\n\t\tMessageSize,\n\t\tMessageCount,\n\t\tAstsStatusCodeid = AstsStatusCodeId,\n\t\tAstsRealTimeStatusId,\n\t\tMessageId,\n\t\tRequestid,\n\t\tAstsLobId,\n\t\tError,\n\t\tAstsRequestDetailsId,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tCreatedByDW,\n\t\tSourceSystem\n\t)) ~> SinkAsts"
+		}
+	}
+}

@@ -1,0 +1,115 @@
+{
+	"name": "DF_LoadFacts_FnaConfiguration",
+	"properties": {
+		"folder": {
+			"name": "VOPD"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_FnaConfigurationSRC",
+						"type": "DatasetReference"
+					},
+					"name": "SRCFnaConfiguration"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimFna",
+						"type": "DatasetReference"
+					},
+					"name": "DimFna"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimFnaConfigurationAdviser",
+						"type": "DatasetReference"
+					},
+					"name": "DimFnaConfigurationAdviser"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimCompany",
+						"type": "DatasetReference"
+					},
+					"name": "DimCompany"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimFnaConfigurationBrokerCode",
+						"type": "DatasetReference"
+					},
+					"name": "DimFnaConfigurationBrokerCode"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimFnaConfigurationStatus",
+						"type": "DatasetReference"
+					},
+					"name": "DimFnaConfigurationStatus"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_FactFnaConfiguration",
+						"type": "DatasetReference"
+					},
+					"name": "SinkFactFnaConfiguration"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Constants"
+				},
+				{
+					"name": "SelectFna"
+				},
+				{
+					"name": "JoinFna"
+				},
+				{
+					"name": "FixFna"
+				},
+				{
+					"name": "SelectFnaConfigurationAdviser"
+				},
+				{
+					"name": "JoinFnaConfigurationAdviser"
+				},
+				{
+					"name": "FixFnaConfigurationAdviser"
+				},
+				{
+					"name": "SelectCompany"
+				},
+				{
+					"name": "JoinCompany"
+				},
+				{
+					"name": "FixCompany"
+				},
+				{
+					"name": "SelectFnaConfigurationBrokerCode"
+				},
+				{
+					"name": "SelectFnaConfigurationStatus"
+				},
+				{
+					"name": "JoinFnaConfigurationBrokerCode"
+				},
+				{
+					"name": "FixFnaConfigurationBrokerCode"
+				},
+				{
+					"name": "JoinFnaConfigurationStatus"
+				},
+				{
+					"name": "FixFnaConfigurationStatus"
+				}
+			],
+			"script": "source(output(\n\t\tCompanyId as integer,\n\t\tFnaId as integer,\n\t\tFnaConfigurationStatusId as integer,\n\t\tFnaConfigurationId as integer,\n\t\tCreationDate as timestamp,\n\t\tDeleted as boolean,\n\t\tFnaConfigurationAdviserId as integer,\n\t\tFnaConfigurationBrokerCodeId as integer,\n\t\tMonthlyBalanceControlId as integer,\n\t\tComponentId as integer,\n\t\tSubscriptionBandId as integer,\n\t\tSubscriptionYear as integer,\n\t\tSubscriptionMonth as integer,\n\t\tSubscriptionStartDate as timestamp,\n\t\tSubscriptionEndDate as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: true,\n\tformat: 'parquet',\n\twildcardPaths:['staging/FnaConfiguration/*']) ~> SRCFnaConfiguration\nsource(output(\n\t\tFnaKey as integer,\n\t\tFnaId as integer,\n\t\tFnaName as string,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimFna\nsource(output(\n\t\tFnaConfigurationAdviserKey as integer,\n\t\tFnaConfigurationAdviserId as integer,\n\t\tLastChangedDate as timestamp,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimFnaConfigurationAdviser\nsource(output(\n\t\tCompanyKey as integer,\n\t\tCompanyId as integer,\n\t\tName as string,\n\t\tDebtorNumber as string,\n\t\tCrmReferenceNumber as string,\n\t\tDebitOrderDay as integer,\n\t\tEntityStatus as string,\n\t\tEntityStatusReasonKey as integer,\n\t\tStatusChangeDate as timestamp,\n\t\tDeletionDate as timestamp,\n\t\tLastChangedBy as string,\n\t\tLastChangedDate as timestamp,\n\t\tCreationDate as timestamp,\n\t\tConsolidateInvoices as boolean,\n\t\tNote as string,\n\t\tCompanyGuid as string,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimCompany\nsource(output(\n\t\tFnaConfigurationBrokerCodeKey as integer,\n\t\tFnaConfigurationBrokerCodeId as integer,\n\t\tAisContentProviderId as integer,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimFnaConfigurationBrokerCode\nsource(output(\n\t\tFnaConfigurationStatusKey as integer,\n\t\tFnaConfigurationStatusId as integer,\n\t\tFnaConfigurationStatus as string,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimFnaConfigurationStatus\nSRCFnaConfiguration derive(isCurrentDefault = true(),\n\t\tFinMonth = case(toInteger(dayOfMonth(toDate(CreationDate))) > 25,toString(addMonths(toDate(CreationDate),1),'yyyy-MM-01'), toString(toDate(CreationDate),'yyyy-MM-01')),\n\t\tUpdatedDateDW = currentTimestamp(),\n\t\tCreatedDateDW = currentTimestamp(),\n\t\tSourceSystem = 'AstuteOnline',\n\t\tCreatedByDW = 'ADF Pipeline') ~> Constants\nDimFna select(mapColumn(\n\t\tFnaKey,\n\t\tFnaId,\n\t\tIsCurrent\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectFna\nConstants, SelectFna join(SRCFnaConfiguration@FnaId == SelectFna@FnaId\n\t&& isCurrentDefault == IsCurrent,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinFna\nJoinFna select(mapColumn(\n\t\tCompanyId,\n\t\tFnaId = SRCFnaConfiguration@FnaId,\n\t\tFnaConfigurationStatusId,\n\t\tFnaConfigurationId,\n\t\tCreationDate,\n\t\tFnaConfigurationAdviserId,\n\t\tFnaConfigurationBrokerCodeId,\n\t\tMonthlyBalanceControlId,\n\t\tComponentId,\n\t\tSubscriptionBandId,\n\t\tSubscriptionYear,\n\t\tSubscriptionMonth,\n\t\tSubscriptionStartDate,\n\t\tSubscriptionEndDate,\n\t\tisCurrentDefault,\n\t\tFinMonth,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tSourceSystem,\n\t\tCreatedByDW,\n\t\tFnaKey,\n\t\tDeleted\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixFna\nDimFnaConfigurationAdviser select(mapColumn(\n\t\tFnaConfigurationAdviserKey,\n\t\tFnaConfigurationAdviserId,\n\t\tIsCurrent\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectFnaConfigurationAdviser\nFixFna, SelectFnaConfigurationAdviser join(FixFna@FnaConfigurationAdviserId == SelectFnaConfigurationAdviser@FnaConfigurationAdviserId\n\t&& isCurrentDefault == IsCurrent,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinFnaConfigurationAdviser\nJoinFnaConfigurationAdviser select(mapColumn(\n\t\tCompanyId,\n\t\tFnaId,\n\t\tFnaConfigurationStatusId,\n\t\tFnaConfigurationId,\n\t\tCreationDate,\n\t\tFnaConfigurationAdviserId = FixFna@FnaConfigurationAdviserId,\n\t\tFnaConfigurationBrokerCodeId,\n\t\tMonthlyBalanceControlId,\n\t\tComponentId,\n\t\tSubscriptionBandId,\n\t\tSubscriptionYear,\n\t\tSubscriptionMonth,\n\t\tSubscriptionStartDate,\n\t\tSubscriptionEndDate,\n\t\tisCurrentDefault,\n\t\tFinMonth,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tSourceSystem,\n\t\tCreatedByDW,\n\t\tFnaKey,\n\t\tFnaConfigurationAdviserKey,\n\t\tDeleted\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixFnaConfigurationAdviser\nDimCompany select(mapColumn(\n\t\tCompanyKey,\n\t\tCompanyId,\n\t\tIsCurrent,\n\t\tSourceSystem\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectCompany\nFixFnaConfigurationAdviser, SelectCompany join(FixFnaConfigurationAdviser@CompanyId == SelectCompany@CompanyId\n\t&& isCurrentDefault == IsCurrent\n\t&& FixFnaConfigurationAdviser@SourceSystem == SelectCompany@SourceSystem,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinCompany\nJoinCompany select(mapColumn(\n\t\tCompanyId = FixFnaConfigurationAdviser@CompanyId,\n\t\tFnaId,\n\t\tFnaConfigurationStatusId,\n\t\tFnaConfigurationId,\n\t\tCreationDate,\n\t\tFnaConfigurationAdviserId,\n\t\tFnaConfigurationBrokerCodeId,\n\t\tMonthlyBalanceControlId,\n\t\tComponentId,\n\t\tSubscriptionBandId,\n\t\tSubscriptionYear,\n\t\tSubscriptionMonth,\n\t\tSubscriptionStartDate,\n\t\tSubscriptionEndDate,\n\t\tisCurrentDefault,\n\t\tFinMonth,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tSourceSystem = FixFnaConfigurationAdviser@SourceSystem,\n\t\tCreatedByDW,\n\t\tFnaKey,\n\t\tFnaConfigurationAdviserKey,\n\t\tCompanyKey,\n\t\tDeleted\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixCompany\nDimFnaConfigurationBrokerCode select(mapColumn(\n\t\tFnaConfigurationBrokerCodeKey,\n\t\tFnaConfigurationBrokerCodeId,\n\t\tIsCurrent\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectFnaConfigurationBrokerCode\nDimFnaConfigurationStatus select(mapColumn(\n\t\tFnaConfigurationStatusKey,\n\t\tFnaConfigurationStatusId,\n\t\tIsCurrent\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectFnaConfigurationStatus\nFixCompany, SelectFnaConfigurationBrokerCode join(FixCompany@FnaConfigurationBrokerCodeId == SelectFnaConfigurationBrokerCode@FnaConfigurationBrokerCodeId\n\t&& isCurrentDefault == IsCurrent,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinFnaConfigurationBrokerCode\nJoinFnaConfigurationBrokerCode select(mapColumn(\n\t\tCompanyId,\n\t\tFnaId,\n\t\tFnaConfigurationStatusId,\n\t\tFnaConfigurationId,\n\t\tCreationDate,\n\t\tFnaConfigurationAdviserId,\n\t\tFnaConfigurationBrokerCodeId = FixCompany@FnaConfigurationBrokerCodeId,\n\t\tMonthlyBalanceControlId,\n\t\tComponentId,\n\t\tSubscriptionBandId,\n\t\tSubscriptionYear,\n\t\tSubscriptionMonth,\n\t\tSubscriptionStartDate,\n\t\tSubscriptionEndDate,\n\t\tisCurrentDefault,\n\t\tFinMonth,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tSourceSystem,\n\t\tCreatedByDW,\n\t\tFnaKey,\n\t\tFnaConfigurationAdviserKey,\n\t\tCompanyKey,\n\t\tFnaConfigurationBrokerCodeKey,\n\t\tDeleted\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixFnaConfigurationBrokerCode\nFixFnaConfigurationBrokerCode, SelectFnaConfigurationStatus join(FixFnaConfigurationBrokerCode@FnaConfigurationStatusId == SelectFnaConfigurationStatus@FnaConfigurationStatusId\n\t&& isCurrentDefault == IsCurrent,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinFnaConfigurationStatus\nJoinFnaConfigurationStatus select(mapColumn(\n\t\tCompanyId,\n\t\tFnaId,\n\t\tFnaConfigurationStatusId = FixFnaConfigurationBrokerCode@FnaConfigurationStatusId,\n\t\tFnaConfigurationId,\n\t\tCreationDate,\n\t\tFnaConfigurationAdviserId,\n\t\tFnaConfigurationBrokerCodeId,\n\t\tMonthlyBalanceControlId,\n\t\tComponentId,\n\t\tSubscriptionBandId,\n\t\tSubscriptionYear,\n\t\tSubscriptionMonth,\n\t\tSubscriptionStartDate,\n\t\tSubscriptionEndDate,\n\t\tisCurrentDefault,\n\t\tFinMonth,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tSourceSystem,\n\t\tCreatedByDW,\n\t\tFnaKey,\n\t\tFnaConfigurationAdviserKey,\n\t\tCompanyKey,\n\t\tFnaConfigurationBrokerCodeKey,\n\t\tFnaConfigurationStatusKey,\n\t\tDeleted\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixFnaConfigurationStatus\nFixFnaConfigurationStatus sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tFnaConfigurationAdviserKey as integer,\n\t\tCompanyKey as integer,\n\t\tFnaKey as integer,\n\t\tFnaConfigurationBrokerCodeKey as integer,\n\t\tFnaConfigurationStatusKey as integer,\n\t\tFinMonth as date,\n\t\tFnaId as integer,\n\t\tDeleted as boolean,\n\t\tFnaConfigurationStatusId as integer,\n\t\tFnaConfigurationId as integer,\n\t\tFnaConfigurationAdviserId as integer,\n\t\tMonthlyBalanceControlId as integer,\n\t\tComponentId as integer,\n\t\tSubscriptionBandId as integer,\n\t\tSubscriptionYear as integer,\n\t\tSubscriptionMonth as integer,\n\t\tSubscriptionStartDate as date,\n\t\tSubscriptionEndDate as date,\n\t\tCreationDate as timestamp,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tstaged: true,\n\tallowCopyCommand: true,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tFnaConfigurationAdviserKey,\n\t\tCompanyKey,\n\t\tFnaKey,\n\t\tFnaConfigurationBrokerCodeKey,\n\t\tFnaConfigurationStatusKey,\n\t\tFinMonth,\n\t\tFnaId,\n\t\tFnaConfigurationStatusId,\n\t\tFnaConfigurationId,\n\t\tFnaConfigurationAdviserId,\n\t\tMonthlyBalanceControlId,\n\t\tComponentId,\n\t\tSubscriptionBandId,\n\t\tSubscriptionYear,\n\t\tSubscriptionMonth,\n\t\tSubscriptionStartDate,\n\t\tSubscriptionEndDate,\n\t\tCreationDate,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tCreatedByDW,\n\t\tSourceSystem,\n\t\tDeleted\n\t)) ~> SinkFactFnaConfiguration"
+		}
+	}
+}

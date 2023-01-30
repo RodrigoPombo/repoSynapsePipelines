@@ -1,0 +1,166 @@
+{
+	"name": "DF_LoadFacts_Policy",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_PolicySRC",
+						"type": "DatasetReference"
+					},
+					"name": "SRCPolicy"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimProfile",
+						"type": "DatasetReference"
+					},
+					"name": "DimProfile"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimCompany",
+						"type": "DatasetReference"
+					},
+					"name": "DimCompany"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimRequestSource",
+						"type": "DatasetReference"
+					},
+					"name": "DimRequestSource"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimClient",
+						"type": "DatasetReference"
+					},
+					"name": "DimClient"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimEntityStatusReason",
+						"type": "DatasetReference"
+					},
+					"name": "DimEntityStatusReason"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_LacNotificationTypeSRC",
+						"type": "DatasetReference"
+					},
+					"name": "SRCNotificationType"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_LacPolicyTypeSRC",
+						"type": "DatasetReference"
+					},
+					"name": "SRCLacPolicyType"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimGroup",
+						"type": "DatasetReference"
+					},
+					"name": "DimGroup"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_FactPolicy",
+						"type": "DatasetReference"
+					},
+					"name": "DSTFactPolicy"
+				}
+			],
+			"transformations": [
+				{
+					"name": "SelectDimProfile"
+				},
+				{
+					"name": "SelectDimCompany"
+				},
+				{
+					"name": "SelectDimRequestSource"
+				},
+				{
+					"name": "SelectDimClient"
+				},
+				{
+					"name": "SelectDimEntityStatusReason"
+				},
+				{
+					"name": "FixPolicyColumns"
+				},
+				{
+					"name": "JoinSRCLacNotificationType"
+				},
+				{
+					"name": "JoinSRCLacPolicyType"
+				},
+				{
+					"name": "FixLacPolicyType"
+				},
+				{
+					"name": "JoinDimRequestSource"
+				},
+				{
+					"name": "FixRequestSource"
+				},
+				{
+					"name": "setisCurrentDefault"
+				},
+				{
+					"name": "JoinDimCompany"
+				},
+				{
+					"name": "FixCompanyColumns"
+				},
+				{
+					"name": "JoinDimEntityStatusReason"
+				},
+				{
+					"name": "FixEntityStatusReasonColumns"
+				},
+				{
+					"name": "JoinDimProfile"
+				},
+				{
+					"name": "FixProfileColumns"
+				},
+				{
+					"name": "JoinDimClient"
+				},
+				{
+					"name": "FixClientColumns"
+				},
+				{
+					"name": "DefaultColumns"
+				},
+				{
+					"name": "SelectLacNotificationType"
+				},
+				{
+					"name": "SelectLacPolicyType"
+				},
+				{
+					"name": "FixLacNotificationTypeColumns"
+				},
+				{
+					"name": "SelectGroup"
+				},
+				{
+					"name": "JoinGroup"
+				},
+				{
+					"name": "DimensionDefaults"
+				}
+			],
+			"script": "source(output(\n\t\tPolicyId as long,\n\t\tFriendlyId as string,\n\t\tLacPolicyTypeId as integer,\n\t\tCompanyRegistrationNumber as string,\n\t\tSchemeNumber as string,\n\t\tSchemeName as string,\n\t\tInceptionDate as timestamp,\n\t\tMemberNumber as string,\n\t\tPersonId as long,\n\t\tIsDeleted as boolean,\n\t\tDeleteReasonId as integer,\n\t\tDeletionDate as timestamp,\n\t\tLastChangedBy as string,\n\t\tLastChangedDate as timestamp,\n\t\tCreationDate as timestamp,\n\t\tLacNotificationTypeId as integer,\n\t\tUserLoginId as string,\n\t\tTransRefGuid as string,\n\t\tLacNotificationStatusId as integer,\n\t\tLacRequestSourceId as integer,\n\t\tTranContentCode as integer,\n\t\tCompanyId as integer,\n\t\tGroupId as integer,\n\t\tProfileId as integer,\n\t\tAIModifiedDateTime as timestamp,\n\t\tRequestFlag as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: true,\n\tformat: 'parquet',\n\twildcardPaths:['staging/Policy/*']) ~> SRCPolicy\nsource(output(\n\t\tProfileKey as integer,\n\t\tProfileId as integer,\n\t\tCompanyKey as integer,\n\t\tIdNumber as string,\n\t\tEmailAddress as string,\n\t\tFirstName as string,\n\t\tSurname as string,\n\t\tLastLoginDate as timestamp,\n\t\tProfileStatus as integer,\n\t\tIsConfirmed as boolean,\n\t\tLastPasswordFailureDate as timestamp,\n\t\tPasswordFailuresSinceLastSuccess as integer,\n\t\tAdministrationLevel as integer,\n\t\tIdType as integer,\n\t\tTitle as integer,\n\t\tInitials as string,\n\t\tCellNumber as string,\n\t\tWorkNumber as string,\n\t\tFaxNumber as string,\n\t\tAreTermsAndConditionsAccepted as boolean,\n\t\tTermsAndConditionsAcceptDate as timestamp,\n\t\tDefaultPageSize as integer,\n\t\tDefaultParentProfileKey as integer,\n\t\tEntityStatus as string,\n\t\tStatusChangeDate as timestamp,\n\t\tDeletionDate as timestamp,\n\t\tLastChangedBy as string,\n\t\tLastChangedDate as timestamp,\n\t\tCreationDate as timestamp,\n\t\tNote as string,\n\t\tHashAlgorithm as string,\n\t\tProfileGuid as string,\n\t\tDebtorNumber as string,\n\t\tBillingTermsAccepted as boolean,\n\t\tBillingTermsDate as timestamp,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimProfile\nsource(output(\n\t\tCompanyKey as integer,\n\t\tCompanyId as integer,\n\t\tName as string,\n\t\tDebtorNumber as string,\n\t\tCrmReferenceNumber as string,\n\t\tDebitOrderDay as integer,\n\t\tEntityStatus as string,\n\t\tEntityStatusReasonKey as integer,\n\t\tStatusChangeDate as timestamp,\n\t\tDeletionDate as timestamp,\n\t\tLastChangedBy as string,\n\t\tLastChangedDate as timestamp,\n\t\tCreationDate as timestamp,\n\t\tConsolidateInvoices as boolean,\n\t\tNote as string,\n\t\tCompanyGuid as string,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimCompany\nsource(output(\n\t\tRequestSourceKey as integer,\n\t\tRequestSourceId as string,\n\t\tIsEnabled as boolean,\n\t\tVersionIdentifier as string,\n\t\tSourceType as string,\n\t\tDescription as string,\n\t\tSourceProduct as string,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimRequestSource\nsource(output(\n\t\tClientKey as integer,\n\t\tIdNumber as string,\n\t\tIdType as integer,\n\t\tInitials as string,\n\t\tSurname as string,\n\t\tCellNumber as string,\n\t\tEmailAddress as string,\n\t\tFirstName as string,\n\t\tDateOfBirth as date,\n\t\tPersonId as integer,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimClient\nsource(output(\n\t\tEntityStatusReasonKey as integer,\n\t\tEntityStatusReasonId as integer,\n\t\tEntityType as integer,\n\t\tReason as string,\n\t\tIsActive as boolean,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimEntityStatusReason\nsource(output(\n\t\tLacNotificationTypeId as integer,\n\t\tDescription as string,\n\t\tAIModifiedDateTime as timestamp,\n\t\tRequestFlag as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet') ~> SRCNotificationType\nsource(output(\n\t\tLacPolicyTypeId as integer,\n\t\tName as string,\n\t\tDescription as string,\n\t\tAIModifiedDateTime as timestamp,\n\t\tRequestFlag as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet') ~> SRCLacPolicyType\nsource(output(\n\t\tGroupKey as integer,\n\t\tGroupId as integer,\n\t\tCompanyKey as integer,\n\t\tParentGroupId as integer,\n\t\tName as string,\n\t\tEntityStatusReasonKey as integer,\n\t\tStatusChangeDate as timestamp,\n\t\tDeleteReasonId as integer,\n\t\tDeletionDate as timestamp,\n\t\tLastChangedBy as string,\n\t\tLastChangedDate as timestamp,\n\t\tCreationDate as timestamp,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string,\n\t\tRequestFlag as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimGroup\nDimProfile select(mapColumn(\n\t\tProfileKey,\n\t\tProfileId,\n\t\tCompanyKey,\n\t\tIsCurrent\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectDimProfile\nDimCompany select(mapColumn(\n\t\tCompanyKey,\n\t\tCompanyId,\n\t\tIsCurrent,\n\t\tSourceSystem\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectDimCompany\nDimRequestSource select(mapColumn(\n\t\tRequestSourceKey,\n\t\tRequestSourceId,\n\t\tIsCurrent\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectDimRequestSource\nDimClient select(mapColumn(\n\t\tClientKey,\n\t\tIdNumber,\n\t\tIsCurrent,\n\t\tSourceSystem\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectDimClient\nDimEntityStatusReason select(mapColumn(\n\t\tEntityStatusReasonKey,\n\t\tEntityStatusReasonId,\n\t\tIsCurrent\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectDimEntityStatusReason\nSRCPolicy select(mapColumn(\n\t\tPolicyId,\n\t\tFriendlyId,\n\t\tLacPolicyTypeId,\n\t\tCompanyRegistrationNumber,\n\t\tSchemeNumber,\n\t\tSchemeName,\n\t\tInceptionDate,\n\t\tMemberNumber,\n\t\tPersonId,\n\t\tIsDeleted,\n\t\tDeleteReasonId,\n\t\tDeletionDate,\n\t\tLastChangedBy,\n\t\tLastChangedDate,\n\t\tCreationDate,\n\t\tLacNotificationTypeId,\n\t\tUserLoginId,\n\t\tTransRefGuid,\n\t\tLacNotificationStatusId,\n\t\tLacRequestSourceId,\n\t\tTranContentCode,\n\t\tCompanyId,\n\t\tGroupId,\n\t\tProfileId,\n\t\tAIModifiedDateTime,\n\t\tRequestFlag\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixPolicyColumns\nDimensionDefaults, SelectLacNotificationType join(FixPolicyColumns@LacNotificationTypeId == SelectLacNotificationType@LacNotificationTypeId,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinSRCLacNotificationType\nFixLacNotificationTypeColumns, SelectLacPolicyType join(FixLacNotificationTypeColumns@LacPolicyTypeId == SelectLacPolicyType@LacPolicyTypeId,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinSRCLacPolicyType\nJoinSRCLacPolicyType select(mapColumn(\n\t\tPolicyId,\n\t\tFriendlyId,\n\t\tLacPolicyTypeId = FixLacNotificationTypeColumns@LacPolicyTypeId,\n\t\tCompanyRegistrationNumber,\n\t\tSchemeNumber,\n\t\tSchemeName,\n\t\tInceptionDate,\n\t\tMemberNumber,\n\t\tPersonId,\n\t\tIsDeleted,\n\t\tDeleteReasonId,\n\t\tDeletionDate,\n\t\tLastChangedBy,\n\t\tLastChangedDate,\n\t\tCreationDate,\n\t\tLacNotificationTypeId,\n\t\tUserLoginId,\n\t\tTransRefGuid,\n\t\tLacNotificationStatusId,\n\t\tLacRequestSourceId,\n\t\tTranContentCode,\n\t\tCompanyId,\n\t\tGroupId,\n\t\tProfileId,\n\t\tAIModifiedDateTime,\n\t\tRequestFlag,\n\t\tNotificationType,\n\t\tPolicyType,\n\t\tSourceSystem\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixLacPolicyType\nsetisCurrentDefault, SelectDimRequestSource join(toString(LacRequestSourceId) == RequestSourceId\n\t&& isCurrentDefault == IsCurrent,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinDimRequestSource\nJoinDimRequestSource select(mapColumn(\n\t\tPolicyId,\n\t\tFriendlyId,\n\t\tLacPolicyTypeId,\n\t\tCompanyRegistrationNumber,\n\t\tSchemeNumber,\n\t\tSchemeName,\n\t\tInceptionDate,\n\t\tMemberNumber,\n\t\tPersonId,\n\t\tIsDeleted,\n\t\tDeleteReasonId,\n\t\tDeletionDate,\n\t\tLastChangedBy,\n\t\tLastChangedDate,\n\t\tCreationDate,\n\t\tLacNotificationTypeId,\n\t\tUserLoginId,\n\t\tTransRefGuid,\n\t\tLacNotificationStatusId,\n\t\tTranContentCode,\n\t\tCompanyId,\n\t\tGroupId,\n\t\tProfileId,\n\t\tAIModifiedDateTime,\n\t\tRequestFlag,\n\t\tNotificationType,\n\t\tPolicyType,\n\t\tisCurrentDefault,\n\t\tRequestSourceKey,\n\t\tIsCurrent,\n\t\tSourceSystem\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixRequestSource\nFixLacPolicyType derive(isCurrentDefault = true()) ~> setisCurrentDefault\nFixRequestSource, SelectDimCompany join(FixRequestSource@CompanyId == SelectDimCompany@CompanyId\n\t&& FixRequestSource@SourceSystem == SelectDimCompany@SourceSystem\n\t&& isCurrentDefault == SelectDimCompany@IsCurrent,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinDimCompany\nJoinDimCompany select(mapColumn(\n\t\tPolicyId,\n\t\tFriendlyId,\n\t\tLacPolicyTypeId,\n\t\tCompanyRegistrationNumber,\n\t\tSchemeNumber,\n\t\tSchemeName,\n\t\tInceptionDate,\n\t\tMemberNumber,\n\t\tPersonId,\n\t\tIsDeleted,\n\t\tDeleteReasonId,\n\t\tDeletionDate,\n\t\tLastChangedBy,\n\t\tLastChangedDate,\n\t\tCreationDate,\n\t\tLacNotificationTypeId,\n\t\tUserLoginId,\n\t\tTransRefGuid,\n\t\tLacNotificationStatusId,\n\t\tTranContentCode,\n\t\tCompanyId = FixRequestSource@CompanyId,\n\t\tGroupId,\n\t\tProfileId,\n\t\tAIModifiedDateTime,\n\t\tRequestFlag,\n\t\tNotificationType,\n\t\tPolicyType,\n\t\tisCurrentDefault,\n\t\tRequestSourceKey,\n\t\tIsCurrent = FixRequestSource@IsCurrent,\n\t\tCompanyKey,\n\t\tCompanyId = SelectDimCompany@CompanyId,\n\t\tIsCurrent = SelectDimCompany@IsCurrent,\n\t\tSourceSystem = FixRequestSource@SourceSystem\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixCompanyColumns\nFixCompanyColumns, DimEntityStatusReason join(LacNotificationStatusId == EntityStatusReasonId\n\t&& FixCompanyColumns@SourceSystem == DimEntityStatusReason@SourceSystem\n\t&& isCurrentDefault == DimEntityStatusReason@IsCurrent,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinDimEntityStatusReason\nJoinDimEntityStatusReason select(mapColumn(\n\t\tPolicyId,\n\t\tFriendlyId,\n\t\tLacPolicyTypeId,\n\t\tCompanyRegistrationNumber,\n\t\tSchemeNumber,\n\t\tSchemeName,\n\t\tInceptionDate,\n\t\tMemberNumber,\n\t\tPersonId,\n\t\tIsDeleted = FixCompanyColumns@IsDeleted,\n\t\tDeleteReasonId,\n\t\tDeletionDate,\n\t\tLastChangedBy,\n\t\tLastChangedDate,\n\t\tCreationDate,\n\t\tLacNotificationTypeId,\n\t\tUserLoginId,\n\t\tTransRefGuid,\n\t\tLacNotificationStatusId,\n\t\tTranContentCode,\n\t\tCompanyId,\n\t\tGroupId,\n\t\tProfileId,\n\t\tAIModifiedDateTime,\n\t\tRequestFlag,\n\t\tNotificationType,\n\t\tPolicyType,\n\t\tisCurrentDefault,\n\t\tRequestSourceKey,\n\t\tIsCurrent = FixCompanyColumns@IsCurrent,\n\t\tCompanyKey,\n\t\tEntityStatusReasonKey,\n\t\tEntityStatusReasonId,\n\t\tEntityType,\n\t\tReason,\n\t\tIsActive,\n\t\tIsDeleted = DimEntityStatusReason@IsDeleted,\n\t\tIsCurrent = DimEntityStatusReason@IsCurrent,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tCreatedByDW,\n\t\tSourceSystem = FixCompanyColumns@SourceSystem\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixEntityStatusReasonColumns\nFixEntityStatusReasonColumns, DimProfile join(FixEntityStatusReasonColumns@ProfileId == DimProfile@ProfileId\n\t&& FixEntityStatusReasonColumns@SourceSystem == DimProfile@SourceSystem\n\t&& isCurrentDefault == DimProfile@IsCurrent,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinDimProfile\nJoinDimProfile select(mapColumn(\n\t\tPolicyId,\n\t\tFriendlyId,\n\t\tLacPolicyTypeId,\n\t\tCompanyRegistrationNumber,\n\t\tSchemeNumber,\n\t\tSchemeName,\n\t\tInceptionDate,\n\t\tMemberNumber,\n\t\tPersonId,\n\t\tIsDeleted = FixEntityStatusReasonColumns@IsDeleted,\n\t\tDeleteReasonId,\n\t\tDeletionDate = FixEntityStatusReasonColumns@DeletionDate,\n\t\tLastChangedBy = FixEntityStatusReasonColumns@LastChangedBy,\n\t\tLastChangedDate = FixEntityStatusReasonColumns@LastChangedDate,\n\t\tCreationDate = FixEntityStatusReasonColumns@CreationDate,\n\t\tLacNotificationTypeId,\n\t\tUserLoginId,\n\t\tTransRefGuid,\n\t\tLacNotificationStatusId,\n\t\tTranContentCode,\n\t\tCompanyId,\n\t\tGroupId,\n\t\tProfileId = FixEntityStatusReasonColumns@ProfileId,\n\t\tAIModifiedDateTime,\n\t\tRequestFlag,\n\t\tNotificationType,\n\t\tPolicyType,\n\t\tisCurrentDefault,\n\t\tRequestSourceKey,\n\t\tIsCurrent = FixEntityStatusReasonColumns@IsCurrent,\n\t\tCompanyKey = FixEntityStatusReasonColumns@CompanyKey,\n\t\tEntityStatusReasonKey,\n\t\tEntityStatusReasonId,\n\t\tEntityType,\n\t\tReason,\n\t\tIsActive,\n\t\tUpdatedDateDW = FixEntityStatusReasonColumns@UpdatedDateDW,\n\t\tCreatedDateDW = FixEntityStatusReasonColumns@CreatedDateDW,\n\t\tCreatedByDW = FixEntityStatusReasonColumns@CreatedByDW,\n\t\tSourceSystem = FixEntityStatusReasonColumns@SourceSystem,\n\t\tProfileKey,\n\t\tProfileId = DimProfile@ProfileId,\n\t\tCompanyKey = DimProfile@CompanyKey,\n\t\tIdNumber,\n\t\tEmailAddress,\n\t\tFirstName,\n\t\tSurname,\n\t\tLastLoginDate,\n\t\tProfileStatus,\n\t\tIsConfirmed,\n\t\tLastPasswordFailureDate,\n\t\tPasswordFailuresSinceLastSuccess,\n\t\tAdministrationLevel,\n\t\tIdType,\n\t\tTitle,\n\t\tInitials,\n\t\tCellNumber,\n\t\tWorkNumber,\n\t\tFaxNumber,\n\t\tAreTermsAndConditionsAccepted,\n\t\tTermsAndConditionsAcceptDate,\n\t\tDefaultPageSize,\n\t\tDefaultParentProfileKey,\n\t\tEntityStatus,\n\t\tStatusChangeDate,\n\t\tDeletionDate = DimProfile@DeletionDate,\n\t\tLastChangedBy = DimProfile@LastChangedBy,\n\t\tLastChangedDate = DimProfile@LastChangedDate,\n\t\tCreationDate = DimProfile@CreationDate,\n\t\tNote,\n\t\tHashAlgorithm,\n\t\tProfileGuid,\n\t\tDebtorNumber,\n\t\tBillingTermsAccepted,\n\t\tBillingTermsDate,\n\t\tIsDeleted = DimProfile@IsDeleted,\n\t\tIsCurrent = DimProfile@IsCurrent,\n\t\tUpdatedDateDW = DimProfile@UpdatedDateDW,\n\t\tCreatedDateDW = DimProfile@CreatedDateDW,\n\t\tCreatedByDW = DimProfile@CreatedByDW,\n\t\tSourceSystem = FixEntityStatusReasonColumns@SourceSystem\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixProfileColumns\nFixProfileColumns, DimClient join(FixProfileColumns@PersonId == DimClient@PersonId\n\t&& FixProfileColumns@SourceSystem == DimClient@SourceSystem\n\t&& isCurrentDefault == DimClient@IsCurrent,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinDimClient\nJoinDimClient select(mapColumn(\n\t\tPolicyId,\n\t\tFriendlyId,\n\t\tLacPolicyTypeId,\n\t\tCompanyRegistrationNumber,\n\t\tSchemeNumber,\n\t\tSchemeName,\n\t\tInceptionDate,\n\t\tMemberNumber,\n\t\tPersonId = FixProfileColumns@PersonId,\n\t\tIsDeleted = FixProfileColumns@IsDeleted,\n\t\tDeleteReasonId,\n\t\tDeletionDate,\n\t\tLastChangedBy,\n\t\tLastChangedDate,\n\t\tCreationDate,\n\t\tLacNotificationTypeId,\n\t\tUserLoginId,\n\t\tTransRefGuid,\n\t\tLacNotificationStatusId,\n\t\tTranContentCode,\n\t\tCompanyId,\n\t\tGroupId,\n\t\tProfileId,\n\t\tAIModifiedDateTime,\n\t\tRequestFlag,\n\t\tNotificationType,\n\t\tPolicyType,\n\t\tisCurrentDefault,\n\t\tRequestSourceKey,\n\t\tIsCurrent = FixProfileColumns@IsCurrent,\n\t\tCompanyKey,\n\t\tEntityStatusReasonKey,\n\t\tEntityStatusReasonId,\n\t\tEntityType,\n\t\tReason,\n\t\tIsActive,\n\t\tUpdatedDateDW = FixProfileColumns@UpdatedDateDW,\n\t\tCreatedDateDW = FixProfileColumns@CreatedDateDW,\n\t\tCreatedByDW = FixProfileColumns@CreatedByDW,\n\t\tSourceSystem = FixProfileColumns@SourceSystem,\n\t\tProfileKey,\n\t\tIdNumber = FixProfileColumns@IdNumber,\n\t\tEmailAddress = FixProfileColumns@EmailAddress,\n\t\tFirstName = FixProfileColumns@FirstName,\n\t\tSurname = FixProfileColumns@Surname,\n\t\tLastLoginDate,\n\t\tProfileStatus,\n\t\tIsConfirmed,\n\t\tLastPasswordFailureDate,\n\t\tPasswordFailuresSinceLastSuccess,\n\t\tAdministrationLevel,\n\t\tIdType = FixProfileColumns@IdType,\n\t\tTitle,\n\t\tInitials = FixProfileColumns@Initials,\n\t\tCellNumber = FixProfileColumns@CellNumber,\n\t\tWorkNumber,\n\t\tFaxNumber,\n\t\tAreTermsAndConditionsAccepted,\n\t\tTermsAndConditionsAcceptDate,\n\t\tDefaultPageSize,\n\t\tDefaultParentProfileKey,\n\t\tEntityStatus,\n\t\tStatusChangeDate,\n\t\tNote,\n\t\tHashAlgorithm,\n\t\tProfileGuid,\n\t\tDebtorNumber,\n\t\tBillingTermsAccepted,\n\t\tBillingTermsDate,\n\t\tClientKey,\n\t\tIdNumber = DimClient@IdNumber,\n\t\tIdType = DimClient@IdType,\n\t\tInitials = DimClient@Initials,\n\t\tSurname = DimClient@Surname,\n\t\tCellNumber = DimClient@CellNumber,\n\t\tEmailAddress = DimClient@EmailAddress,\n\t\tFirstName = DimClient@FirstName,\n\t\tDateOfBirth,\n\t\tIsDeleted = DimClient@IsDeleted,\n\t\tIsCurrent = DimClient@IsCurrent,\n\t\tUpdatedDateDW = DimClient@UpdatedDateDW,\n\t\tCreatedDateDW = DimClient@CreatedDateDW,\n\t\tCreatedByDW = DimClient@CreatedByDW,\n\t\tSourceSystem = FixProfileColumns@SourceSystem\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixClientColumns\nJoinGroup derive(UpdatedDateDW = currentTimestamp(),\n\t\tCreatedDateDW = currentTimestamp(),\n\t\tCreatedByDW = 'ADF Pipeline',\n\t\tCreationFinMonth = toDate(case(and(toInteger(dayOfMonth(CreationDate))>25,toInteger(month(CreationDate))==12),concat(toString(toInteger(year(CreationDate))+1),'-01','-01'),case(toInteger(dayOfMonth(CreationDate))>25,concat(toString(year(CreationDate)),'-',case(length(toString(month(CreationDate)))<2,concat('0',toString(month(CreationDate))),toString(toInteger(month(CreationDate))+1)),'-01'),concat(toString(year(CreationDate)),'-',case(length(toString(month(CreationDate)))<2,concat('0',toString(month(CreationDate))),toString(month(CreationDate))),'-01'))))) ~> DefaultColumns\nSRCNotificationType select(mapColumn(\n\t\tLacNotificationTypeId,\n\t\tNotificationType = Description\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectLacNotificationType\nSRCLacPolicyType select(mapColumn(\n\t\tLacPolicyTypeId,\n\t\tPolicyType = Name\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectLacPolicyType\nJoinSRCLacNotificationType select(mapColumn(\n\t\tPolicyId,\n\t\tFriendlyId,\n\t\tLacPolicyTypeId,\n\t\tCompanyRegistrationNumber,\n\t\tSchemeNumber,\n\t\tSchemeName,\n\t\tInceptionDate,\n\t\tMemberNumber,\n\t\tPersonId,\n\t\tIsDeleted,\n\t\tDeleteReasonId,\n\t\tDeletionDate,\n\t\tLastChangedBy,\n\t\tLastChangedDate,\n\t\tCreationDate,\n\t\tLacNotificationTypeId = FixPolicyColumns@LacNotificationTypeId,\n\t\tUserLoginId,\n\t\tTransRefGuid,\n\t\tLacNotificationStatusId,\n\t\tLacRequestSourceId,\n\t\tTranContentCode,\n\t\tCompanyId,\n\t\tGroupId,\n\t\tProfileId,\n\t\tAIModifiedDateTime,\n\t\tRequestFlag,\n\t\tNotificationType,\n\t\tSourceSystem\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixLacNotificationTypeColumns\nDimGroup select(mapColumn(\n\t\tGroupId,\n\t\tCompanyKey,\n\t\tIsCurrent,\n\t\tGroupKey,\n\t\tSourceSystem\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectGroup\nFixClientColumns, SelectGroup join(FixClientColumns@GroupId == SelectGroup@GroupId\n\t&& FixClientColumns@SourceSystem == SelectGroup@SourceSystem\n\t&& isCurrentDefault == SelectGroup@IsCurrent,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinGroup\nFixPolicyColumns derive(SourceSystem = case(RequestFlag=='HighVolume', 'AstuteOnlineHV', 'AstuteOnline')) ~> DimensionDefaults\nDefaultColumns sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tPolicyId as integer,\n\t\tFriendlyId as string,\n\t\tLacPolicyTypeId as integer,\n\t\tCompanyRegistrationNumber as string,\n\t\tSchemeNumber as string,\n\t\tSchemeName as string,\n\t\tInceptionDate as timestamp,\n\t\tMemberNumber as string,\n\t\tClientKey as integer,\n\t\tisDeleted as boolean,\n\t\tDeleteReasonId as integer,\n\t\tDeletionDate as timestamp,\n\t\tLastChangedBy as string,\n\t\tLastChangedDate as timestamp,\n\t\tCreationFinMonth as date,\n\t\tCreationDate as timestamp,\n\t\tLacNotificationTypeId as integer,\n\t\tUserLoginId as string,\n\t\tTransRefGuid as string,\n\t\tEntityStatusReasonKey as integer,\n\t\tRequestSourceKey as integer,\n\t\tTranContentCode as integer,\n\t\tCompanyKey as integer,\n\t\tGroupKey as integer,\n\t\tProfilekey as integer,\n\t\tPersonId as integer,\n\t\tLacMessageLogId as integer,\n\t\tTransactionDateTime as timestamp,\n\t\tErrorMessage as string,\n\t\tMessageLogGuid as string,\n\t\tNotificationType as string,\n\t\tPolicyType as string,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string,\n\t\tRequestFlag as string\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tstaged: true,\n\tallowCopyCommand: true,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 1,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tPolicyId,\n\t\tFriendlyId,\n\t\tLacPolicyTypeId,\n\t\tCompanyRegistrationNumber,\n\t\tSchemeNumber,\n\t\tSchemeName,\n\t\tInceptionDate,\n\t\tMemberNumber,\n\t\tClientKey,\n\t\tisDeleted = IsDeleted,\n\t\tDeleteReasonId,\n\t\tDeletionDate,\n\t\tLastChangedBy,\n\t\tLastChangedDate,\n\t\tCreationFinMonth,\n\t\tCreationDate,\n\t\tLacNotificationTypeId,\n\t\tUserLoginId,\n\t\tTransRefGuid,\n\t\tEntityStatusReasonKey,\n\t\tRequestSourceKey,\n\t\tTranContentCode,\n\t\tCompanyKey = FixClientColumns@CompanyKey,\n\t\tGroupKey,\n\t\tProfilekey = ProfileKey,\n\t\tNotificationType,\n\t\tPolicyType,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tCreatedByDW,\n\t\tSourceSystem = FixClientColumns@SourceSystem,\n\t\tRequestFlag,\n\t\tPersonId\n\t)) ~> DSTFactPolicy"
+		}
+	}
+}

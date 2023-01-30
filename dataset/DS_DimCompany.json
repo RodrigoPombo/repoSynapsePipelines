@@ -1,0 +1,125 @@
+{
+	"name": "DS_DimCompany",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_Synapse",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Dimensions"
+		},
+		"annotations": [],
+		"type": "AzureSqlDWTable",
+		"schema": [
+			{
+				"name": "CompanyKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CompanyId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Name",
+				"type": "varchar"
+			},
+			{
+				"name": "DebtorNumber",
+				"type": "varchar"
+			},
+			{
+				"name": "CrmReferenceNumber",
+				"type": "varchar"
+			},
+			{
+				"name": "DebitOrderDay",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "EntityStatus",
+				"type": "varchar"
+			},
+			{
+				"name": "EntityStatusReasonKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "StatusChangeDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "DeletionDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "LastChangedBy",
+				"type": "varchar"
+			},
+			{
+				"name": "LastChangedDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CreationDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "ConsolidateInvoices",
+				"type": "bit"
+			},
+			{
+				"name": "Note",
+				"type": "varchar"
+			},
+			{
+				"name": "CompanyGuid",
+				"type": "varchar"
+			},
+			{
+				"name": "IsDeleted",
+				"type": "bit"
+			},
+			{
+				"name": "IsCurrent",
+				"type": "bit"
+			},
+			{
+				"name": "UpdatedDateDW",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CreatedDateDW",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CreatedByDW",
+				"type": "varchar"
+			},
+			{
+				"name": "SourceSystem",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "Dim",
+			"table": "DimCompany"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,112 @@
+{
+	"name": "DS_MonthlyBalanceControlSRC",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_DataLakeEnriched",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"tableName": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": {
+					"value": "@concat('staging/',dataset().tableName)",
+					"type": "Expression"
+				},
+				"fileSystem": "immersive"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "MonthlyBalanceControlId",
+				"type": "INT32"
+			},
+			{
+				"name": "CompanyId",
+				"type": "INT32"
+			},
+			{
+				"name": "ComponentId",
+				"type": "INT32"
+			},
+			{
+				"name": "SubscriptionBandId",
+				"type": "INT32"
+			},
+			{
+				"name": "SubscriptionYear",
+				"type": "INT32"
+			},
+			{
+				"name": "SubscriptionMonth",
+				"type": "INT32"
+			},
+			{
+				"name": "CreditLimit",
+				"type": "DECIMAL",
+				"precision": 38,
+				"scale": 18
+			},
+			{
+				"name": "CreditLimitAdjustmentAmount",
+				"type": "DECIMAL",
+				"precision": 38,
+				"scale": 18
+			},
+			{
+				"name": "SubscriptionStartDate",
+				"type": "INT96"
+			},
+			{
+				"name": "SubscriptionEndDate",
+				"type": "INT96"
+			},
+			{
+				"name": "CreditLimitExceededMailSent",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "SubscriptionAmountExceededMailSent",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "IsInitialized",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "IsFinalized",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "LastUpdate",
+				"type": "INT96"
+			},
+			{
+				"name": "OpeningBalance",
+				"type": "DECIMAL",
+				"precision": 38,
+				"scale": 18
+			},
+			{
+				"name": "ProfileId",
+				"type": "INT32"
+			},
+			{
+				"name": "AIModifiedDateTime",
+				"type": "INT96"
+			},
+			{
+				"name": "RequestFlag",
+				"type": "UTF8"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

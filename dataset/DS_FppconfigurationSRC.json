@@ -1,0 +1,66 @@
+{
+	"name": "DS_FppconfigurationSRC",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_DataLakeEnriched",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "AstuteOnline/FSPE/Fppconfiguration",
+				"fileSystem": "immersive"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "FppConfigurationId",
+				"type": "INT32"
+			},
+			{
+				"name": "ReceiveDebarredFileFlag",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "ReceiveDeltaFileFlag",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "MessageSchemaId",
+				"type": "INT32"
+			},
+			{
+				"name": "CompanyId",
+				"type": "INT32"
+			},
+			{
+				"name": "PrimaryIntegrationPortId",
+				"type": "INT32"
+			},
+			{
+				"name": "SecondaryIntegrationPortId",
+				"type": "INT32"
+			},
+			{
+				"name": "MQErrorIntegrationPortId",
+				"type": "INT32"
+			},
+			{
+				"name": "ReceivesConfirmationOfSubsListLoading",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "AIModifiedDateTime",
+				"type": "INT96"
+			},
+			{
+				"name": "RequestFlag",
+				"type": "UTF8"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

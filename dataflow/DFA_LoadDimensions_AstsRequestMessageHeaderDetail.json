@@ -1,0 +1,57 @@
+{
+	"name": "DFA_LoadDimensions_AstsRequestMessageHeaderDetail",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_AstsRequestMessageHeaderDetailSRC",
+						"type": "DatasetReference"
+					},
+					"name": "SourceAstsRequestMessageHeaderDetail"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimAstsRequestMessageHeaderDetail",
+						"type": "DatasetReference"
+					},
+					"name": "DimAstsRequestMessageHeaderDetail"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_DimAstsRequestMessageHeaderDetail",
+						"type": "DatasetReference"
+					},
+					"name": "SinkAstsRequestMessageHeaderDetail"
+				}
+			],
+			"transformations": [
+				{
+					"name": "SetDefaultFields"
+				},
+				{
+					"name": "AllowUpserts"
+				},
+				{
+					"name": "selectDimAstsRequestMessageHeaderDetail"
+				},
+				{
+					"name": "JoinAstsRequestMessageHeaderDetail"
+				},
+				{
+					"name": "FixAstsRequestMessageHeaderDetail"
+				},
+				{
+					"name": "DoesnotExist"
+				},
+				{
+					"name": "SetIsCurrentDefault"
+				}
+			],
+			"script": "source(output(\n\t\tAstsRequestMessageHeaderDetailId as integer,\n\t\tAstsRequestId as integer,\n\t\tACORDStandardVersionCode as string,\n\t\tSenderRoleCode as string,\n\t\tSenderOrganizationName as string,\n\t\tReceiverRoleCode as string,\n\t\tReceiverOrganizationName as string,\n\t\tProcessingIntermediaryRoleCode as string,\n\t\tProcessingIntermediaryOrganizationName as string,\n\t\tMessageDocumentCount as integer,\n\t\tBatchPeriodStartDate as timestamp,\n\t\tBatchPeriodEndDate as timestamp,\n\t\tMessageSubmissionTypeCode as string,\n\t\tMessageDateTimeUTC as timestamp,\n\t\tDetailMessageId as string,\n\t\tCorrelationId as string,\n\t\tAIModifiedDateTime as timestamp,\n\t\tRequestFlag as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: true,\n\tformat: 'parquet',\n\twildcardPaths:['AstuteOnline/ASTS/AstsRequestMessageHeaderDetail/**/*']) ~> SourceAstsRequestMessageHeaderDetail\nsource(output(\n\t\tAstsRequestKey as integer,\n\t\tAstsRequestMessageHeaderDetailId as integer,\n\t\tAstsRequestId as integer,\n\t\tProcessingIntermediaryOrganizationName as string,\n\t\tCorrelationId as string,\n\t\tMessageSubmissionTypeCode as string,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimAstsRequestMessageHeaderDetail\nFixAstsRequestMessageHeaderDetail derive(IsDeleted = false(),\n\t\tIsCurrent = true(),\n\t\tUpdatedDateDW = currentTimestamp(),\n\t\tCreatedDateDW = currentTimestamp(),\n\t\tCreatedByDW = 'AzureDataFactory',\n\t\tSourceSystem = 'AstuteOnline') ~> SetDefaultFields\nSetDefaultFields alterRow(upsertIf(true())) ~> AllowUpserts\nDimAstsRequestMessageHeaderDetail select(mapColumn(\n\t\tAstsRequestKey,\n\t\tAstsRequestMessageHeaderDetailId,\n\t\tAstsRequestId,\n\t\tIsCurrent\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> selectDimAstsRequestMessageHeaderDetail\nSetIsCurrentDefault, selectDimAstsRequestMessageHeaderDetail join(SourceAstsRequestMessageHeaderDetail@AstsRequestMessageHeaderDetailId == selectDimAstsRequestMessageHeaderDetail@AstsRequestMessageHeaderDetailId\n\t&& IsCurrentDefault == IsCurrent,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinAstsRequestMessageHeaderDetail\nJoinAstsRequestMessageHeaderDetail select(mapColumn(\n\t\tAstsRequestMessageHeaderDetailId = SourceAstsRequestMessageHeaderDetail@AstsRequestMessageHeaderDetailId,\n\t\tAstsRequestId = SourceAstsRequestMessageHeaderDetail@AstsRequestId,\n\t\tACORDStandardVersionCode,\n\t\tSenderRoleCode,\n\t\tSenderOrganizationName,\n\t\tReceiverRoleCode,\n\t\tReceiverOrganizationName,\n\t\tProcessingIntermediaryRoleCode,\n\t\tProcessingIntermediaryOrganizationName,\n\t\tMessageDocumentCount,\n\t\tBatchPeriodStartDate,\n\t\tBatchPeriodEndDate,\n\t\tMessageSubmissionTypeCode,\n\t\tMessageDateTimeUTC,\n\t\tDetailMessageId,\n\t\tCorrelationId,\n\t\tAIModifiedDateTime,\n\t\tRequestFlag,\n\t\tIsCurrentDefault,\n\t\tAstsRequestKey\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixAstsRequestMessageHeaderDetail\nSourceAstsRequestMessageHeaderDetail, selectDimAstsRequestMessageHeaderDetail exists(SourceAstsRequestMessageHeaderDetail@AstsRequestMessageHeaderDetailId==selectDimAstsRequestMessageHeaderDetail@AstsRequestMessageHeaderDetailId,\n\tnegate:true,\n\tbroadcast: 'auto')~> DoesnotExist\nDoesnotExist derive(IsCurrentDefault = true()) ~> SetIsCurrentDefault\nAllowUpserts sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tAstsRequestKey as integer,\n\t\tAstsRequestMessageHeaderDetailId as integer,\n\t\tAstsRequestId as integer,\n\t\tProcessingIntermediaryOrganizationName as string,\n\t\tCorrelationId as string,\n\t\tMessageSubmissionTypeCode as string,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:false,\n\tupsertable:true,\n\tkeys:['AstsRequestMessageHeaderDetailId'],\n\tformat: 'table',\n\tstaged: true,\n\tallowCopyCommand: true,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tAstsRequestMessageHeaderDetailId,\n\t\tAstsRequestId,\n\t\tProcessingIntermediaryOrganizationName,\n\t\tCorrelationId,\n\t\tMessageSubmissionTypeCode,\n\t\tIsDeleted,\n\t\tIsCurrent,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tCreatedByDW,\n\t\tSourceSystem\n\t),\n\tpreCommands: [],\n\tpostCommands: []) ~> SinkAstsRequestMessageHeaderDetail"
+		}
+	}
+}

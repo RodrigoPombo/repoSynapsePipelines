@@ -1,0 +1,40 @@
+{
+	"name": "pipeline5",
+	"properties": {
+		"activities": [
+			{
+				"name": "Data flow1",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "dataflowCDCSQLTEST",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine",
+					"continuationSettings": {
+						"customizedCheckpointKey": "223471ca-5414-4376-8753-f7364634250d"
+					}
+				}
+			}
+		],
+		"folder": {
+			"name": "testCDC"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-11-30T17:56:34Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,57 @@
+{
+	"name": "DFA_LoadDimensions_AstsRealTimeStatus",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_AstsRealTimeStatusSRC",
+						"type": "DatasetReference"
+					},
+					"name": "SourceAstsRealTimeStatus"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimAstsRealTimeStatus",
+						"type": "DatasetReference"
+					},
+					"name": "DimAstsRealTimeStatus"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_DimAstsRealTimeStatus",
+						"type": "DatasetReference"
+					},
+					"name": "SinkAstsRealTimeStatus"
+				}
+			],
+			"transformations": [
+				{
+					"name": "SetDefaultFields"
+				},
+				{
+					"name": "AllowUpserts"
+				},
+				{
+					"name": "selectDimAstsRealTimeStatus"
+				},
+				{
+					"name": "JoinAstsRealTimeStatus"
+				},
+				{
+					"name": "FixAstsRealTimeStatus"
+				},
+				{
+					"name": "DoesnotExist"
+				},
+				{
+					"name": "SetIsCurrentDefault"
+				}
+			],
+			"script": "source(output(\n\t\tAstsRealTimeStatusId as integer,\n\t\tDescription as string,\n\t\tAIModifiedDateTime as timestamp,\n\t\tRequestFlag as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: true,\n\tformat: 'parquet',\n\twildcardPaths:['AstuteOnline/ASTS/AstsRealTimeStatus/**/*']) ~> SourceAstsRealTimeStatus\nsource(output(\n\t\tAstsRealTimeStatusKey as integer,\n\t\tAstsRealTimeStatusId as integer,\n\t\tDescription as string,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimAstsRealTimeStatus\nFixAstsRealTimeStatus derive(IsDeleted = false(),\n\t\tIsCurrent = true(),\n\t\tUpdatedDateDW = currentTimestamp(),\n\t\tCreatedDateDW = currentTimestamp(),\n\t\tCreatedByDW = 'AzureDataFactory',\n\t\tSourceSystem = 'AstuteOnline') ~> SetDefaultFields\nSetDefaultFields alterRow(upsertIf(true())) ~> AllowUpserts\nDimAstsRealTimeStatus select(mapColumn(\n\t\tAstsRealTimeStatusKey,\n\t\tAstsRealTimeStatusId,\n\t\tIsCurrent\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> selectDimAstsRealTimeStatus\nSetIsCurrentDefault, selectDimAstsRealTimeStatus join(SourceAstsRealTimeStatus@AstsRealTimeStatusId == selectDimAstsRealTimeStatus@AstsRealTimeStatusId\n\t&& IsCurrentDefault == IsCurrent,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinAstsRealTimeStatus\nJoinAstsRealTimeStatus select(mapColumn(\n\t\tAstsRealTimeStatusId = SourceAstsRealTimeStatus@AstsRealTimeStatusId,\n\t\tDescription,\n\t\tAIModifiedDateTime,\n\t\tRequestFlag,\n\t\tIsCurrentDefault,\n\t\tAstsRealTimeStatusKey\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixAstsRealTimeStatus\nSourceAstsRealTimeStatus, selectDimAstsRealTimeStatus exists(SourceAstsRealTimeStatus@AstsRealTimeStatusId==selectDimAstsRealTimeStatus@AstsRealTimeStatusId,\n\tnegate:true,\n\tbroadcast: 'auto')~> DoesnotExist\nDoesnotExist derive(IsCurrentDefault = true()) ~> SetIsCurrentDefault\nAllowUpserts sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tAstsRealTimeStatusKey as integer,\n\t\tAstsRealTimeStatusId as integer,\n\t\tDescription as string,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:false,\n\tupsertable:true,\n\tkeys:['AstsRealTimeStatusId'],\n\tformat: 'table',\n\tstaged: true,\n\tallowCopyCommand: true,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tAstsRealTimeStatusId,\n\t\tDescription,\n\t\tIsDeleted,\n\t\tIsCurrent,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tCreatedByDW,\n\t\tSourceSystem\n\t),\n\tpreCommands: [],\n\tpostCommands: []) ~> SinkAstsRealTimeStatus"
+		}
+	}
+}

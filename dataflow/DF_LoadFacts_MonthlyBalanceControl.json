@@ -1,0 +1,121 @@
+{
+	"name": "DF_LoadFacts_MonthlyBalanceControl",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_MonthlyBalanceControlSRC",
+						"type": "DatasetReference"
+					},
+					"name": "SRCMonthlyBalanceControl"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimProfile",
+						"type": "DatasetReference"
+					},
+					"name": "DimProfile"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimDate",
+						"type": "DatasetReference"
+					},
+					"name": "DimDate"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimSubscriptionBand",
+						"type": "DatasetReference"
+					},
+					"name": "DimSubscriptionBand"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimComponent",
+						"type": "DatasetReference"
+					},
+					"name": "DimComponent"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimCompany",
+						"type": "DatasetReference"
+					},
+					"name": "DimCompany"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_FactMonthlyBalanceControl",
+						"type": "DatasetReference"
+					},
+					"name": "DSTFactMonthlyBalanceControl"
+				}
+			],
+			"transformations": [
+				{
+					"name": "JoinProfile"
+				},
+				{
+					"name": "JoinDate"
+				},
+				{
+					"name": "SelectDimProfile"
+				},
+				{
+					"name": "SelectDimDate"
+				},
+				{
+					"name": "FixProfileColumns"
+				},
+				{
+					"name": "FixDateColumns"
+				},
+				{
+					"name": "DefaultColumns"
+				},
+				{
+					"name": "SetisCurrentDefault"
+				},
+				{
+					"name": "FixMonthlyBalanceControlColumns"
+				},
+				{
+					"name": "SelectDimSubscriptionBand"
+				},
+				{
+					"name": "SetBilledSubscriptionDate"
+				},
+				{
+					"name": "SelectDimComponent"
+				},
+				{
+					"name": "JoinComponent"
+				},
+				{
+					"name": "FixComponentColumns"
+				},
+				{
+					"name": "JoinSubscriptionBand"
+				},
+				{
+					"name": "FixSubscriptionBandColumns"
+				},
+				{
+					"name": "SelectDimCompany"
+				},
+				{
+					"name": "JoinDimCompany"
+				},
+				{
+					"name": "FixCompanyColumns"
+				}
+			],
+			"script": "parameters{\n\tsourcesystem as string (case(RequestFlag=='SingleRequest','AstuteOnline','AstuteOnlineHV'))\n}\nsource(output(\n\t\tMonthlyBalanceControlId as integer,\n\t\tCompanyId as integer,\n\t\tComponentId as integer,\n\t\tSubscriptionBandId as integer,\n\t\tSubscriptionYear as integer,\n\t\tSubscriptionMonth as integer,\n\t\tCreditLimit as decimal(38,18),\n\t\tCreditLimitAdjustmentAmount as decimal(38,18),\n\t\tSubscriptionStartDate as timestamp,\n\t\tSubscriptionEndDate as timestamp,\n\t\tCreditLimitExceededMailSent as boolean,\n\t\tSubscriptionAmountExceededMailSent as boolean,\n\t\tIsInitialized as boolean,\n\t\tIsFinalized as boolean,\n\t\tLastUpdate as timestamp,\n\t\tOpeningBalance as decimal(38,18),\n\t\tProfileId as integer,\n\t\tAIModifiedDateTime as timestamp,\n\t\tRequestFlag as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: true,\n\tformat: 'parquet') ~> SRCMonthlyBalanceControl\nsource(output(\n\t\tProfileKey as integer,\n\t\tProfileId as integer,\n\t\tCompanyKey as integer,\n\t\tIdNumber as string,\n\t\tEmailAddress as string,\n\t\tFirstName as string,\n\t\tSurname as string,\n\t\tLastLoginDate as timestamp,\n\t\tProfileStatus as integer,\n\t\tIsConfirmed as boolean,\n\t\tLastPasswordFailureDate as timestamp,\n\t\tPasswordFailuresSinceLastSuccess as integer,\n\t\tAdministrationLevel as integer,\n\t\tIdType as integer,\n\t\tTitle as integer,\n\t\tInitials as string,\n\t\tCellNumber as string,\n\t\tWorkNumber as string,\n\t\tFaxNumber as string,\n\t\tAreTermsAndConditionsAccepted as boolean,\n\t\tTermsAndConditionsAcceptDate as timestamp,\n\t\tDefaultPageSize as integer,\n\t\tDefaultParentProfileKey as integer,\n\t\tEntityStatus as string,\n\t\tStatusChangeDate as timestamp,\n\t\tDeletionDate as timestamp,\n\t\tLastChangedBy as string,\n\t\tLastChangedDate as timestamp,\n\t\tCreationDate as timestamp,\n\t\tNote as string,\n\t\tHashAlgorithm as string,\n\t\tProfileGuid as string,\n\t\tDebtorNumber as string,\n\t\tBillingTermsAccepted as boolean,\n\t\tBillingTermsDate as timestamp,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimProfile\nsource(output(\n\t\tDateKey as integer,\n\t\tDate as timestamp,\n\t\tFullDateUK as string,\n\t\tFullDateUSA as string,\n\t\tDayOfMonth as string,\n\t\tDaySuffix as string,\n\t\tDayName as string,\n\t\tDayOfWeekInMonth as string,\n\t\tDayOfWeekInYear as string,\n\t\tDayOfQuarter as string,\n\t\tDayOfYear as string,\n\t\tWeekOfMonth as string,\n\t\tWeekOfQuarter as string,\n\t\tWeekOfYear as string,\n\t\tMonth as string,\n\t\tMonthName as string,\n\t\tMonthOfQuarter as string,\n\t\tQuarter as string,\n\t\tQuarterName as string,\n\t\tYear as string,\n\t\tYearName as string,\n\t\tMonthYear as string,\n\t\tMMYYYY as string,\n\t\tFirstDayOfMonth as date,\n\t\tLastDayOfMonth as date,\n\t\tFirstDayOfQuarter as date,\n\t\tLastDayOfQuarter as date,\n\t\tFirstDayOfYear as date,\n\t\tLastDayOfYear as date,\n\t\tIsWeekday as boolean,\n\t\tFinancialMonth as string,\n\t\tFinancialMonthName as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimDate\nsource(output(\n\t\tSubscriptionBandKey as integer,\n\t\tSubscriptionBandId as integer,\n\t\tName as string,\n\t\tDescription as string,\n\t\tIsEnabled as boolean,\n\t\tDefaultCostCentreCode as string,\n\t\tDeletionDate as timestamp,\n\t\tLastChangedBy as string,\n\t\tLastChangedDate as timestamp,\n\t\tCreationDate as timestamp,\n\t\tIndividualSubscription as boolean,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimSubscriptionBand\nsource(output(\n\t\tComponentKey as integer,\n\t\tComponentId as integer,\n\t\tComponentName as string,\n\t\tOrderRank as integer,\n\t\tIsSystemServiceComponent as boolean,\n\t\tIsMandatoryComponent as boolean,\n\t\tIsUserSelectableComponent as boolean,\n\t\tRequiresFsbValidaionCheck as boolean,\n\t\tComponentCode as string,\n\t\tFinancialCompany as string,\n\t\tExcludeFromMonthBalance as boolean,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimComponent\nsource(output(\n\t\tCompanyKey as integer,\n\t\tCompanyId as integer,\n\t\tName as string,\n\t\tDebtorNumber as string,\n\t\tCrmReferenceNumber as string,\n\t\tDebitOrderDay as integer,\n\t\tEntityStatus as string,\n\t\tEntityStatusReasonKey as integer,\n\t\tStatusChangeDate as timestamp,\n\t\tDeletionDate as timestamp,\n\t\tLastChangedBy as string,\n\t\tLastChangedDate as timestamp,\n\t\tCreationDate as timestamp,\n\t\tConsolidateInvoices as boolean,\n\t\tNote as string,\n\t\tCompanyGuid as string,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimCompany\nSetisCurrentDefault, SelectDimProfile join(FixMonthlyBalanceControlColumns@ProfileId == SelectDimProfile@ProfileId\n\t&& SetisCurrentDefault@SourceSystem == SelectDimProfile@SourceSystem\n\t&& isCurrentDefault == IsCurrent,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinProfile\nSetBilledSubscriptionDate, SelectDimDate join(BilledSubscriptionFinMonth == toDate(Date),\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinDate\nDimProfile select(mapColumn(\n\t\tProfileKey,\n\t\tProfileId,\n\t\tIsCurrent,\n\t\tSourceSystem\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectDimProfile\nDimDate select(mapColumn(\n\t\tDateKey,\n\t\tDate,\n\t\tFinancialMonth,\n\t\tFinancialMonthName\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectDimDate\nJoinProfile select(mapColumn(\n\t\tMonthlyBalanceControlId,\n\t\tCompanyId,\n\t\tComponentId,\n\t\tSubscriptionBandId,\n\t\tSubscriptionYear,\n\t\tSubscriptionMonth,\n\t\tCreditLimit,\n\t\tCreditLimitAdjustmentAmount,\n\t\tSubscriptionStartDate,\n\t\tSubscriptionEndDate,\n\t\tCreditLimitExceededMailSent,\n\t\tSubscriptionAmountExceededMailSent,\n\t\tIsInitialized,\n\t\tIsFinalized,\n\t\tLastUpdate,\n\t\tOpeningBalance,\n\t\tProfileId = FixMonthlyBalanceControlColumns@ProfileId,\n\t\tAIModifiedDateTime,\n\t\tisCurrentDefault,\n\t\tProfileKey,\n\t\tProfileId = SelectDimProfile@ProfileId,\n\t\tRequestFlag,\n\t\tSourceSystem = SetisCurrentDefault@SourceSystem\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixProfileColumns\nJoinDate select(mapColumn(\n\t\tMonthlyBalanceControlId,\n\t\tCompanyId,\n\t\tComponentId,\n\t\tSubscriptionBandId,\n\t\tSubscriptionYear,\n\t\tSubscriptionMonth,\n\t\tCreditLimit,\n\t\tCreditLimitAdjustmentAmount,\n\t\tSubscriptionStartDate,\n\t\tSubscriptionEndDate,\n\t\tCreditLimitExceededMailSent,\n\t\tSubscriptionAmountExceededMailSent,\n\t\tIsInitialized,\n\t\tIsFinalized,\n\t\tLastUpdate,\n\t\tOpeningBalance,\n\t\tProfileId,\n\t\tAIModifiedDateTime,\n\t\tisCurrentDefault,\n\t\tProfileKey,\n\t\tBilledSubscriptionFinMonth,\n\t\tRequestFlag,\n\t\tSourceSystem\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixDateColumns\nFixCompanyColumns derive(UpdatedDateDW = currentTimestamp(),\n\t\tCreatedDateDW = currentTimestamp(),\n\t\tCreatedByDW = 'ADF Pipeline',\n\t\tSourceSystem = $sourcesystem,\n\t\tBilledSubscriptionFinMonth = BilledSubscriptionFinMonth) ~> DefaultColumns\nFixMonthlyBalanceControlColumns derive(isCurrentDefault = true(),\n\t\tSourceSystem = case(RequestFlag=='HighVolume', 'AstuteOnlineHV', 'AstuteOnline')) ~> SetisCurrentDefault\nSRCMonthlyBalanceControl select(mapColumn(\n\t\tMonthlyBalanceControlId,\n\t\tCompanyId,\n\t\tComponentId,\n\t\tSubscriptionBandId,\n\t\tSubscriptionYear,\n\t\tSubscriptionMonth,\n\t\tCreditLimit,\n\t\tCreditLimitAdjustmentAmount,\n\t\tSubscriptionStartDate,\n\t\tSubscriptionEndDate,\n\t\tCreditLimitExceededMailSent,\n\t\tSubscriptionAmountExceededMailSent,\n\t\tIsInitialized,\n\t\tIsFinalized,\n\t\tLastUpdate,\n\t\tOpeningBalance,\n\t\tProfileId,\n\t\tAIModifiedDateTime,\n\t\tRequestFlag\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixMonthlyBalanceControlColumns\nDimSubscriptionBand select(mapColumn(\n\t\tSubscriptionBandKey,\n\t\tSubscriptionBandId,\n\t\tIsCurrent\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectDimSubscriptionBand\nFixProfileColumns derive(BilledSubscriptionFinMonth = toDate(\r\nconcat(toString(SubscriptionYear), '-',\r\ncase(length(toString(SubscriptionMonth))<2, concat('0', toString(SubscriptionMonth)), toString(SubscriptionMonth)),\r\n'-01'))) ~> SetBilledSubscriptionDate\nDimComponent select(mapColumn(\n\t\tComponentKey,\n\t\tComponentId,\n\t\tIsCurrent\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectDimComponent\nFixDateColumns, SelectDimComponent join(FixDateColumns@ComponentId == SelectDimComponent@ComponentId\n\t&& isCurrentDefault == IsCurrent,\n\tjoinType:'inner',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinComponent\nJoinComponent select(mapColumn(\n\t\tMonthlyBalanceControlId,\n\t\tCompanyId,\n\t\tSubscriptionBandId,\n\t\tSubscriptionYear,\n\t\tSubscriptionMonth,\n\t\tCreditLimit,\n\t\tCreditLimitAdjustmentAmount,\n\t\tSubscriptionStartDate,\n\t\tSubscriptionEndDate,\n\t\tCreditLimitExceededMailSent,\n\t\tSubscriptionAmountExceededMailSent,\n\t\tIsInitialized,\n\t\tIsFinalized,\n\t\tLastUpdate,\n\t\tOpeningBalance,\n\t\tProfileId,\n\t\tAIModifiedDateTime,\n\t\tisCurrentDefault,\n\t\tProfileKey,\n\t\tBilledSubscriptionFinMonth,\n\t\tComponentKey,\n\t\tRequestFlag,\n\t\tSourceSystem\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixComponentColumns\nFixComponentColumns, SelectDimSubscriptionBand join(FixComponentColumns@SubscriptionBandId == SelectDimSubscriptionBand@SubscriptionBandId\n\t&& isCurrentDefault == IsCurrent,\n\tjoinType:'inner',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinSubscriptionBand\nJoinSubscriptionBand select(mapColumn(\n\t\tMonthlyBalanceControlId,\n\t\tCompanyId,\n\t\tSubscriptionYear,\n\t\tSubscriptionMonth,\n\t\tCreditLimit,\n\t\tCreditLimitAdjustmentAmount,\n\t\tSubscriptionStartDate,\n\t\tSubscriptionEndDate,\n\t\tCreditLimitExceededMailSent,\n\t\tSubscriptionAmountExceededMailSent,\n\t\tIsInitialized,\n\t\tIsFinalized,\n\t\tLastUpdate,\n\t\tOpeningBalance,\n\t\tProfileId,\n\t\tAIModifiedDateTime,\n\t\tisCurrentDefault,\n\t\tProfileKey,\n\t\tBilledSubscriptionFinMonth,\n\t\tComponentKey,\n\t\tSubscriptionBandKey,\n\t\tRequestFlag,\n\t\tSourceSystem\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixSubscriptionBandColumns\nDimCompany select(mapColumn(\n\t\tCompanyKey,\n\t\tCompanyId,\n\t\tIsCurrent,\n\t\tSourceSystem\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectDimCompany\nFixSubscriptionBandColumns, SelectDimCompany join(FixSubscriptionBandColumns@CompanyId == SelectDimCompany@CompanyId\n\t&& FixSubscriptionBandColumns@SourceSystem == SelectDimCompany@SourceSystem\n\t&& isCurrentDefault == IsCurrent,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinDimCompany\nJoinDimCompany select(mapColumn(\n\t\tMonthlyBalanceControlId,\n\t\tSubscriptionYear,\n\t\tSubscriptionMonth,\n\t\tCreditLimit,\n\t\tCreditLimitAdjustmentAmount,\n\t\tSubscriptionStartDate,\n\t\tSubscriptionEndDate,\n\t\tCreditLimitExceededMailSent,\n\t\tSubscriptionAmountExceededMailSent,\n\t\tIsInitialized,\n\t\tIsFinalized,\n\t\tLastUpdate,\n\t\tOpeningBalance,\n\t\tProfileId,\n\t\tAIModifiedDateTime,\n\t\tisCurrentDefault,\n\t\tProfileKey,\n\t\tBilledSubscriptionFinMonth,\n\t\tComponentKey,\n\t\tSubscriptionBandKey,\n\t\tCompanyKey,\n\t\tRequestFlag,\n\t\tSourceSystem = FixSubscriptionBandColumns@SourceSystem\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixCompanyColumns\nDefaultColumns sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tMonthlyBalanceControlId as integer,\n\t\tCompanyKey as integer,\n\t\tComponentKey as integer,\n\t\tSubscriptionBandKey as integer,\n\t\tBilledSubscriptionFinMonth as date,\n\t\tSubscriptionYear as integer,\n\t\tSubscriptionMonth as integer,\n\t\tCreditLimit as decimal(19,4),\n\t\tCreditLimitAdjustmentAmount as decimal(19,4),\n\t\tSubscriptionStartDate as date,\n\t\tSubscriptionEndDate as date,\n\t\tCreditLimitExceededMailSent as boolean,\n\t\tSubscriptionAmountExceededMailSent as boolean,\n\t\tIsInitialized as boolean,\n\t\tIsFinalized as boolean,\n\t\tLastUpdate as timestamp,\n\t\tOpeningBalance as decimal(19,4),\n\t\tProfileKey as integer,\n\t\tRequestFlag as string,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tstaged: true,\n\tallowCopyCommand: true,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 1,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tMonthlyBalanceControlId,\n\t\tCompanyKey,\n\t\tComponentKey,\n\t\tSubscriptionBandKey,\n\t\tBilledSubscriptionFinMonth,\n\t\tSubscriptionYear,\n\t\tSubscriptionMonth,\n\t\tCreditLimit,\n\t\tCreditLimitAdjustmentAmount,\n\t\tSubscriptionStartDate,\n\t\tSubscriptionEndDate,\n\t\tCreditLimitExceededMailSent,\n\t\tSubscriptionAmountExceededMailSent,\n\t\tIsInitialized,\n\t\tIsFinalized,\n\t\tLastUpdate,\n\t\tOpeningBalance,\n\t\tProfileKey,\n\t\tRequestFlag,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tCreatedByDW,\n\t\tSourceSystem\n\t)) ~> DSTFactMonthlyBalanceControl"
+		}
+	}
+}

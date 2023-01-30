@@ -1,0 +1,23 @@
+{
+	"name": "LS_Metadatastore",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"type": "AzureSqlDatabase",
+		"typeProperties": {
+			"connectionString": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=tcp:immersivemetastore.database.windows.net,1433;Initial Catalog=immersivemetastore;User ID=sqlmetadatastore;Persist Security Info=False;MultipleActiveResultSets=False;TrustServerCertificate=False",
+			"password": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "AzureKeyVaultImmersiveLinkedService",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "sqlmetadatastore"
+			}
+		},
+		"connectVia": {
+			"referenceName": "IR-QuickReUse",
+			"type": "IntegrationRuntimeReference"
+		},
+		"annotations": []
+	}
+}

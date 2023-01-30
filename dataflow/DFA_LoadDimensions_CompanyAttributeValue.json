@@ -1,0 +1,64 @@
+{
+	"name": "DFA_LoadDimensions_CompanyAttributeValue",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_CompanyAttributeValueSRC",
+						"type": "DatasetReference"
+					},
+					"name": "SourceCompanyAttributeValue"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimCompanyAttributeValue",
+						"type": "DatasetReference"
+					},
+					"name": "DimCompanyAttributeValue"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimCompany",
+						"type": "DatasetReference"
+					},
+					"name": "DimCompany"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_DimCompanyAttributeValue",
+						"type": "DatasetReference"
+					},
+					"name": "SinkCompanyAttributeValue"
+				}
+			],
+			"transformations": [
+				{
+					"name": "SetDefaultFields"
+				},
+				{
+					"name": "AllowUpserts"
+				},
+				{
+					"name": "DoesNotExist"
+				},
+				{
+					"name": "SelectDimCompanyAttributeValue"
+				},
+				{
+					"name": "SelectDimCompany"
+				},
+				{
+					"name": "JoinDimCompany"
+				},
+				{
+					"name": "FixDimcompany"
+				}
+			],
+			"script": "source(output(\n\t\tAttributeValueId as integer,\n\t\tAttributeId as integer,\n\t\tCompanyId as integer,\n\t\tDateValue as timestamp,\n\t\tNumericValue as integer,\n\t\tStringValue as string,\n\t\tLookUpValue as integer,\n\t\tLastChangedBy as string,\n\t\tLastChangedDate as timestamp,\n\t\tCreationDate as timestamp,\n\t\tAIModifiedDateTime as timestamp,\n\t\tRequestFlag as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: true,\n\tformat: 'parquet',\n\twildcardPaths:['AstuteOnline/Administration/CompanyAttributeValue/**/*']) ~> SourceCompanyAttributeValue\nsource(output(\n\t\tAttributeValueKey as integer,\n\t\tAttributeValueId as integer,\n\t\tAttributeId as integer,\n\t\tCompanyKey as integer,\n\t\tStringValue as string,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimCompanyAttributeValue\nsource(output(\n\t\tCompanyKey as integer,\n\t\tCompanyId as integer,\n\t\tName as string,\n\t\tDebtorNumber as string,\n\t\tCrmReferenceNumber as string,\n\t\tDebitOrderDay as integer,\n\t\tEntityStatus as string,\n\t\tEntityStatusReasonKey as integer,\n\t\tStatusChangeDate as timestamp,\n\t\tDeletionDate as timestamp,\n\t\tLastChangedBy as string,\n\t\tLastChangedDate as timestamp,\n\t\tCreationDate as timestamp,\n\t\tConsolidateInvoices as boolean,\n\t\tNote as string,\n\t\tCompanyGuid as string,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimCompany\nDoesNotExist derive(IsDeleted = false(),\n\t\tIsCurrent = true(),\n\t\tUpdatedDateDW = currentTimestamp(),\n\t\tCreatedDateDW = currentTimestamp(),\n\t\tCreatedByDW = 'AzureDataFactory',\n\t\tSourceSystem = 'AstuteOnline') ~> SetDefaultFields\nFixDimcompany alterRow(upsertIf(true())) ~> AllowUpserts\nSourceCompanyAttributeValue, SelectDimCompanyAttributeValue exists(SourceCompanyAttributeValue@AttributeValueId==SelectDimCompanyAttributeValue@AttributeValueId,\n\tnegate:true,\n\tbroadcast: 'auto')~> DoesNotExist\nDimCompanyAttributeValue select(mapColumn(\n\t\tAttributeValueKey,\n\t\tAttributeValueId,\n\t\tIsCurrent\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectDimCompanyAttributeValue\nDimCompany select(mapColumn(\n\t\tCompanyKey,\n\t\tCompanyId,\n\t\tIsCurrent\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectDimCompany\nSetDefaultFields, SelectDimCompany join(SourceCompanyAttributeValue@CompanyId == SelectDimCompany@CompanyId\n\t&& SetDefaultFields@IsCurrent == SelectDimCompany@IsCurrent,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinDimCompany\nJoinDimCompany select(mapColumn(\n\t\tAttributeValueId,\n\t\tAttributeId,\n\t\tCompanyId = SourceCompanyAttributeValue@CompanyId,\n\t\tDateValue,\n\t\tNumericValue,\n\t\tStringValue,\n\t\tLookUpValue,\n\t\tLastChangedBy,\n\t\tLastChangedDate,\n\t\tCreationDate,\n\t\tAIModifiedDateTime,\n\t\tRequestFlag,\n\t\tIsDeleted,\n\t\tIsCurrent = SetDefaultFields@IsCurrent,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tCreatedByDW,\n\t\tSourceSystem,\n\t\tCompanyKey\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixDimcompany\nAllowUpserts sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tAttributeValueKey as integer,\n\t\tAttributeValueId as integer,\n\t\tAttributeId as integer,\n\t\tCompanyKey as integer,\n\t\tCompanyId as integer,\n\t\tStringValue as string,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:false,\n\tupsertable:true,\n\tkeys:['AttributeValueId'],\n\tformat: 'table',\n\tstaged: true,\n\tallowCopyCommand: true,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tAttributeValueId,\n\t\tAttributeId,\n\t\tCompanyKey,\n\t\tStringValue,\n\t\tIsDeleted,\n\t\tIsCurrent,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tCreatedByDW,\n\t\tSourceSystem,\n\t\tCompanyId\n\t),\n\tpreCommands: [],\n\tpostCommands: []) ~> SinkCompanyAttributeValue"
+		}
+	}
+}

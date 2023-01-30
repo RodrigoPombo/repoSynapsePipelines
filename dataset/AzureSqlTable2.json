@@ -1,0 +1,64 @@
+{
+	"name": "AzureSqlTable2",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabase1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "portuguese_passport",
+				"type": "nvarchar"
+			},
+			{
+				"name": "area",
+				"type": "nvarchar"
+			},
+			{
+				"name": "endpoint",
+				"type": "nvarchar"
+			},
+			{
+				"name": "partition",
+				"type": "nvarchar"
+			},
+			{
+				"name": "installation",
+				"type": "nvarchar"
+			},
+			{
+				"name": "parameter",
+				"type": "nvarchar"
+			},
+			{
+				"name": "time",
+				"type": "datetime2",
+				"scale": 7
+			},
+			{
+				"name": "value",
+				"type": "bit"
+			},
+			{
+				"name": "Daily",
+				"type": "date"
+			},
+			{
+				"name": "Weekly",
+				"type": "smallint",
+				"precision": 5
+			},
+			{
+				"name": "col_derived",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "finalpostgres"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

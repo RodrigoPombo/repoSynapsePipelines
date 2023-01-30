@@ -1,0 +1,78 @@
+{
+	"name": "DS_AstsServiceTypeSRC",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_DataLakeEnriched",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "AstuteOnline/ASTS/ServiceType",
+				"fileSystem": "immersive"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "ServiceTypeId",
+				"type": "INT32"
+			},
+			{
+				"name": "ServiceTypeName",
+				"type": "UTF8"
+			},
+			{
+				"name": "ServiceTypeDescription",
+				"type": "UTF8"
+			},
+			{
+				"name": "WSAction",
+				"type": "UTF8"
+			},
+			{
+				"name": "AstsMessageTypeId",
+				"type": "INT32"
+			},
+			{
+				"name": "MessageTransferModeLite",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "IsDeleted",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "DeleteReasonId",
+				"type": "INT32"
+			},
+			{
+				"name": "DeletionDate",
+				"type": "INT96"
+			},
+			{
+				"name": "LastChangedBy",
+				"type": "UTF8"
+			},
+			{
+				"name": "LastChangedDate",
+				"type": "INT96"
+			},
+			{
+				"name": "CreationDate",
+				"type": "INT96"
+			},
+			{
+				"name": "AIModifiedDateTime",
+				"type": "INT96"
+			},
+			{
+				"name": "RequestFlag",
+				"type": "UTF8"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

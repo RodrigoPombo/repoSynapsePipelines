@@ -1,0 +1,77 @@
+{
+	"name": "DS_DimFsp",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_Synapse",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlDWTable",
+		"schema": [
+			{
+				"name": "FspKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "FspId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "LegalCapacity",
+				"type": "varchar"
+			},
+			{
+				"name": "Status",
+				"type": "varchar"
+			},
+			{
+				"name": "CompanyType",
+				"type": "varchar"
+			},
+			{
+				"name": "FspNumber",
+				"type": "varchar"
+			},
+			{
+				"name": "SubscriptionListKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "IsDeleted",
+				"type": "bit"
+			},
+			{
+				"name": "IsCurrent",
+				"type": "bit"
+			},
+			{
+				"name": "UpdatedDateDW",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CreatedDateDW",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CreatedByDW",
+				"type": "varchar"
+			},
+			{
+				"name": "SourceSystem",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "Dim",
+			"table": "DimFsp"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

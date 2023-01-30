@@ -1,0 +1,85 @@
+{
+	"name": "DS_DimTransactionType",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_Synapse",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Dimensions"
+		},
+		"annotations": [],
+		"type": "AzureSqlDWTable",
+		"schema": [
+			{
+				"name": "TransactionTypeKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "TransactionTypeId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ComponentKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "TransactionCategoryKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Name",
+				"type": "varchar"
+			},
+			{
+				"name": "IsEnabled",
+				"type": "bit"
+			},
+			{
+				"name": "DefaultGeneralLedgerCode",
+				"type": "varchar"
+			},
+			{
+				"name": "IsExcludedFromCompliance",
+				"type": "bit"
+			},
+			{
+				"name": "IsDeleted",
+				"type": "bit"
+			},
+			{
+				"name": "IsCurrent",
+				"type": "bit"
+			},
+			{
+				"name": "UpdatedDateDW",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CreatedDateDW",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CreatedByDW",
+				"type": "varchar"
+			},
+			{
+				"name": "SourceSystem",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "Dim",
+			"table": "DimTransactionType"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

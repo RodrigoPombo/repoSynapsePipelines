@@ -1,0 +1,41 @@
+{
+	"name": "DS_Destination",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_DatalakeRaw",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"table_name": {
+				"type": "string"
+			},
+			"table_schema": {
+				"type": "string"
+			},
+			"table_catalog": {
+				"type": "string"
+			},
+			"loadDate": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "MetaDataDataset"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": {
+					"value": "@concat(dataset().table_catalog,\n'/',\ndataset().table_schema,\n'/',\ndataset().table_name,\n'/',\ndataset().loadDate)",
+					"type": "Expression"
+				},
+				"fileSystem": "immersive"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

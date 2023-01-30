@@ -1,0 +1,109 @@
+{
+	"name": "DS_CompanySRC",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_DataLakeEnriched",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Dimensions"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "AstuteOnline/Administration/Company",
+				"fileSystem": "immersive"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "CompanyId",
+				"type": "INT32"
+			},
+			{
+				"name": "Name",
+				"type": "UTF8"
+			},
+			{
+				"name": "HoldingCompanyId",
+				"type": "INT32"
+			},
+			{
+				"name": "DebtorNumber",
+				"type": "UTF8"
+			},
+			{
+				"name": "CrmReferenceNumber",
+				"type": "UTF8"
+			},
+			{
+				"name": "DebitOrderDay",
+				"type": "INT32"
+			},
+			{
+				"name": "CountryId",
+				"type": "INT32"
+			},
+			{
+				"name": "EntityStatus",
+				"type": "INT32"
+			},
+			{
+				"name": "EntityStatusReasonId",
+				"type": "INT32"
+			},
+			{
+				"name": "StatusChangeDate",
+				"type": "INT96"
+			},
+			{
+				"name": "IsDeleted",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "DeleteReasonId",
+				"type": "INT32"
+			},
+			{
+				"name": "DeletionDate",
+				"type": "INT96"
+			},
+			{
+				"name": "LastChangedBy",
+				"type": "UTF8"
+			},
+			{
+				"name": "LastChangedDate",
+				"type": "INT96"
+			},
+			{
+				"name": "CreationDate",
+				"type": "INT96"
+			},
+			{
+				"name": "ConsolidateInvoices",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "Note",
+				"type": "UTF8"
+			},
+			{
+				"name": "CompanyGuid",
+				"type": "UTF8"
+			},
+			{
+				"name": "AIModifiedDateTime",
+				"type": "INT96"
+			},
+			{
+				"name": "RequestFlag",
+				"type": "UTF8"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

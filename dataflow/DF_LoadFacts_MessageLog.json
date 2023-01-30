@@ -1,0 +1,102 @@
+{
+	"name": "DF_LoadFacts_MessageLog",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_MessageSRC",
+						"type": "DatasetReference"
+					},
+					"name": "SRCMessageLog"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimRequestSource",
+						"type": "DatasetReference"
+					},
+					"name": "DimRequestSource"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimCompany",
+						"type": "DatasetReference"
+					},
+					"name": "DimCompany"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimGroup",
+						"type": "DatasetReference"
+					},
+					"name": "DimGroup"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_LacNotificationSRC",
+						"type": "DatasetReference"
+					},
+					"name": "SRCLacNotificationStatus"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_FactMessageLog",
+						"type": "DatasetReference"
+					},
+					"name": "DSTMessageLog"
+				}
+			],
+			"transformations": [
+				{
+					"name": "setisCurrentDefault"
+				},
+				{
+					"name": "DefaultColumns"
+				},
+				{
+					"name": "FixMessagelogColumns"
+				},
+				{
+					"name": "JoinRequestSource"
+				},
+				{
+					"name": "SelectRequestSource"
+				},
+				{
+					"name": "SelectCompany"
+				},
+				{
+					"name": "FixRequestSourceColumns"
+				},
+				{
+					"name": "JoinGroup"
+				},
+				{
+					"name": "SelectGroup"
+				},
+				{
+					"name": "FixGroupColumns"
+				},
+				{
+					"name": "JoinCompany"
+				},
+				{
+					"name": "FixCompanyColumns"
+				},
+				{
+					"name": "JoinLacNotificationStatus"
+				},
+				{
+					"name": "FixLacNotificationStatusColumns"
+				},
+				{
+					"name": "SelectLacNotificationStatus"
+				}
+			],
+			"script": "source(output(\n\t\tLacMessageLogId as long,\n\t\tTransRefGuid as string,\n\t\tLacNotificationStatusId as integer,\n\t\tLacRequestSourceId as integer,\n\t\tTranContentCode as integer,\n\t\tTransactionDateTime as timestamp,\n\t\tErrorMessage as string,\n\t\tCreationDate as timestamp,\n\t\tLastChangedBy as string,\n\t\tLastChangedDate as timestamp,\n\t\tGroupId as integer,\n\t\tMessageLogGuid as string,\n\t\tAIModifiedDateTime as timestamp,\n\t\tRequestFlag as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: true,\n\tformat: 'parquet',\n\twildcardPaths:['staging/LacMessageLog/*']) ~> SRCMessageLog\nsource(output(\n\t\tRequestSourceKey as integer,\n\t\tRequestSourceId as string,\n\t\tIsEnabled as boolean,\n\t\tVersionIdentifier as string,\n\t\tSourceType as string,\n\t\tDescription as string,\n\t\tSourceProduct as string,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimRequestSource\nsource(output(\n\t\tCompanyKey as integer,\n\t\tCompanyId as integer,\n\t\tName as string,\n\t\tDebtorNumber as string,\n\t\tCrmReferenceNumber as string,\n\t\tDebitOrderDay as integer,\n\t\tEntityStatus as string,\n\t\tEntityStatusReasonKey as integer,\n\t\tStatusChangeDate as timestamp,\n\t\tDeletionDate as timestamp,\n\t\tLastChangedBy as string,\n\t\tLastChangedDate as timestamp,\n\t\tCreationDate as timestamp,\n\t\tConsolidateInvoices as boolean,\n\t\tNote as string,\n\t\tCompanyGuid as string,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimCompany\nsource(output(\n\t\tGroupKey as integer,\n\t\tGroupId as integer,\n\t\tCompanyKey as integer,\n\t\tParentGroupId as integer,\n\t\tName as string,\n\t\tEntityStatusReasonKey as integer,\n\t\tStatusChangeDate as timestamp,\n\t\tDeleteReasonId as integer,\n\t\tDeletionDate as timestamp,\n\t\tLastChangedBy as string,\n\t\tLastChangedDate as timestamp,\n\t\tCreationDate as timestamp,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string,\n\t\tRequestFlag as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimGroup\nsource(output(\n\t\tLacNotificationStatusId as integer,\n\t\tName as string,\n\t\tAIModifiedDateTime as timestamp,\n\t\tRequestFlag as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'parquet') ~> SRCLacNotificationStatus\nFixMessagelogColumns derive(isCurrentDefault = true(),\n\t\tSourceSystem = case(RequestFlag=='HighVolume', 'AstuteOnlineHV', 'AstuteOnline')) ~> setisCurrentDefault\nFixCompanyColumns derive(UpdatedDateDW = currentTimestamp(),\n\t\tCreatedDateDW = currentTimestamp(),\n\t\tCreatedByDW = 'ADF Pipeline',\n\t\tTransactionFinMonth = toDate(case(and(toInteger(dayOfMonth(CreationDate))>25,toInteger(month(CreationDate))==12),concat(toString(toInteger(year(CreationDate))+1),'-01','-01'),case(toInteger(dayOfMonth(CreationDate))>25,concat(toString(year(CreationDate)),'-',case(length(toString(month(CreationDate)))<2,concat('0',toString(month(CreationDate))),toString(toInteger(month(CreationDate))+1)),'-01'),concat(toString(year(CreationDate)),'-',case(length(toString(month(CreationDate)))<2,concat('0',toString(month(CreationDate))),toString(month(CreationDate))),'-01'))))) ~> DefaultColumns\nSRCMessageLog select(mapColumn(\n\t\tLacMessageLogId,\n\t\tTransRefGuid,\n\t\tLacNotificationStatusId,\n\t\tLacRequestSourceId,\n\t\tTranContentCode,\n\t\tTransactionDateTime,\n\t\tErrorMessage,\n\t\tCreationDate,\n\t\tLastChangedBy,\n\t\tLastChangedDate,\n\t\tGroupId,\n\t\tMessageLogGuid,\n\t\tAIModifiedDateTime,\n\t\tRequestFlag\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixMessagelogColumns\nFixLacNotificationStatusColumns, SelectRequestSource join(toString(LacRequestSourceId) == RequestSourceId\n\t&& isCurrentDefault == IsCurrent,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinRequestSource\nDimRequestSource select(mapColumn(\n\t\tRequestSourceKey,\n\t\tRequestSourceId,\n\t\tIsCurrent\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectRequestSource\nDimCompany select(mapColumn(\n\t\tCompanyKey,\n\t\tCompanyId,\n\t\tIsCurrent,\n\t\tSourceSystem\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectCompany\nJoinRequestSource select(mapColumn(\n\t\tLacMessageLogId,\n\t\tTransRefGuid,\n\t\tLacNotificationStatusId,\n\t\tLacRequestSourceId,\n\t\tTranContentCode,\n\t\tTransactionDateTime,\n\t\tErrorMessage,\n\t\tCreationDate,\n\t\tLastChangedBy,\n\t\tLastChangedDate,\n\t\tGroupId,\n\t\tMessageLogGuid,\n\t\tAIModifiedDateTime,\n\t\tRequestFlag,\n\t\tisCurrentDefault,\n\t\tNotificationStatus,\n\t\tRequestSourceKey,\n\t\tRequestSourceId,\n\t\tIsCurrent,\n\t\tSourceSystem\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixRequestSourceColumns\nFixRequestSourceColumns, SelectGroup join(FixRequestSourceColumns@GroupId == SelectGroup@GroupId\n\t&& FixRequestSourceColumns@SourceSystem == SelectGroup@SourceSystem\n\t&& isCurrentDefault == SelectGroup@IsCurrent,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinGroup\nDimGroup select(mapColumn(\n\t\tGroupKey,\n\t\tGroupId,\n\t\tCompanyKey,\n\t\tIsCurrent,\n\t\tSourceSystem\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectGroup\nJoinGroup select(mapColumn(\n\t\tLacMessageLogId,\n\t\tTransRefGuid,\n\t\tLacNotificationStatusId,\n\t\tLacRequestSourceId,\n\t\tTranContentCode,\n\t\tTransactionDateTime,\n\t\tErrorMessage,\n\t\tCreationDate,\n\t\tLastChangedBy,\n\t\tLastChangedDate,\n\t\tGroupId = FixRequestSourceColumns@GroupId,\n\t\tMessageLogGuid,\n\t\tAIModifiedDateTime,\n\t\tRequestFlag,\n\t\tisCurrentDefault,\n\t\tNotificationStatus,\n\t\tRequestSourceKey,\n\t\tRequestSourceId,\n\t\tIsCurrent = FixRequestSourceColumns@IsCurrent,\n\t\tGroupKey,\n\t\tCompanyKey,\n\t\tSourceSystem = FixRequestSourceColumns@SourceSystem\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixGroupColumns\nFixGroupColumns, SelectCompany join(FixGroupColumns@CompanyKey == SelectCompany@CompanyKey\n\t&& FixGroupColumns@SourceSystem == SelectCompany@SourceSystem\n\t&& isCurrentDefault == SelectCompany@IsCurrent,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinCompany\nJoinCompany select(mapColumn(\n\t\tLacMessageLogId,\n\t\tTransRefGuid,\n\t\tLacNotificationStatusId,\n\t\tLacRequestSourceId,\n\t\tTranContentCode,\n\t\tTransactionDateTime,\n\t\tErrorMessage,\n\t\tCreationDate,\n\t\tLastChangedBy,\n\t\tLastChangedDate,\n\t\tGroupId,\n\t\tMessageLogGuid,\n\t\tAIModifiedDateTime,\n\t\tRequestFlag,\n\t\tisCurrentDefault,\n\t\tNotificationStatus,\n\t\tRequestSourceKey,\n\t\tRequestSourceId,\n\t\tIsCurrent = FixGroupColumns@IsCurrent,\n\t\tGroupKey,\n\t\tCompanyKey = FixGroupColumns@CompanyKey,\n\t\tSourceSystem = FixGroupColumns@SourceSystem\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixCompanyColumns\nsetisCurrentDefault, SelectLacNotificationStatus join(FixMessagelogColumns@LacNotificationStatusId == SelectLacNotificationStatus@LacNotificationStatusId,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinLacNotificationStatus\nJoinLacNotificationStatus select(mapColumn(\n\t\tLacMessageLogId,\n\t\tTransRefGuid,\n\t\tLacNotificationStatusId = FixMessagelogColumns@LacNotificationStatusId,\n\t\tLacRequestSourceId,\n\t\tTranContentCode,\n\t\tTransactionDateTime,\n\t\tErrorMessage,\n\t\tCreationDate,\n\t\tLastChangedBy,\n\t\tLastChangedDate,\n\t\tGroupId,\n\t\tMessageLogGuid,\n\t\tAIModifiedDateTime,\n\t\tRequestFlag,\n\t\tisCurrentDefault,\n\t\tLacNotificationStatusId = SelectLacNotificationStatus@LacNotificationStatusId,\n\t\tNotificationStatus,\n\t\tSourceSystem\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixLacNotificationStatusColumns\nSRCLacNotificationStatus select(mapColumn(\n\t\tLacNotificationStatusId,\n\t\tNotificationStatus = Name\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectLacNotificationStatus\nDefaultColumns sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tLacMessageLogId as long,\n\t\tTransRefGuid as string,\n\t\tNotificationStatus as string,\n\t\tRequestSourceKey as integer,\n\t\tTranContentCode as integer,\n\t\tTransactionFinMonth as date,\n\t\tTransactionDateTime as timestamp,\n\t\tErrorMessage as string,\n\t\tCreationDate as timestamp,\n\t\tLastChangedBy as string,\n\t\tLastChangedDate as timestamp,\n\t\tGroupKey as integer,\n\t\tCompanyKey as integer,\n\t\tMessageLogGuid as string,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string,\n\t\tRequestFlag as string\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tstaged: true,\n\tallowCopyCommand: true,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tLacMessageLogId,\n\t\tTransRefGuid,\n\t\tNotificationStatus,\n\t\tRequestSourceKey,\n\t\tTranContentCode,\n\t\tTransactionDateTime,\n\t\tErrorMessage,\n\t\tCreationDate,\n\t\tLastChangedBy,\n\t\tLastChangedDate,\n\t\tGroupKey,\n\t\tCompanyKey,\n\t\tMessageLogGuid,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tCreatedByDW,\n\t\tSourceSystem,\n\t\tRequestFlag,\n\t\tTransactionFinMonth\n\t)) ~> DSTMessageLog"
+		}
+	}
+}

@@ -1,0 +1,74 @@
+{
+	"name": "DFA_LoadDimensions_TransactionType",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_TransactionTypeSRC",
+						"type": "DatasetReference"
+					},
+					"name": "SourceTransactionType"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimComponent",
+						"type": "DatasetReference"
+					},
+					"name": "DimComponent"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimTransactionType",
+						"type": "DatasetReference"
+					},
+					"name": "DimTransactionType"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimTransactionCategory",
+						"type": "DatasetReference"
+					},
+					"name": "DimTransactionCategory"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_DimTransactionType",
+						"type": "DatasetReference"
+					},
+					"name": "SinkTransactionType"
+				}
+			],
+			"transformations": [
+				{
+					"name": "SetDefaultFields4"
+				},
+				{
+					"name": "AlterRow2"
+				},
+				{
+					"name": "SelectDimComponent"
+				},
+				{
+					"name": "SelectDimTransactionType"
+				},
+				{
+					"name": "DoesNotExists"
+				},
+				{
+					"name": "JoinComponent"
+				},
+				{
+					"name": "SelectDimTransactionCategory"
+				},
+				{
+					"name": "JoinTransactionCategory"
+				}
+			],
+			"script": "source(output(\n\t\tTransactionTypeId as integer,\n\t\tComponentId as integer,\n\t\tTransactionCategoryId as integer,\n\t\tName as string,\n\t\tIsEnabled as boolean,\n\t\tSecurityClaimId as integer,\n\t\tDefaultGeneralLedgerCode as string,\n\t\tIsExcludedFromCompliance as boolean,\n\t\tAIModifiedDateTime as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: true,\n\tformat: 'parquet',\n\twildcardPaths:['AstuteOnline/Billing/TransactionType/**/*']) ~> SourceTransactionType\nsource(output(\n\t\tComponentKey as integer,\n\t\tComponentId as integer,\n\t\tComponentName as string,\n\t\tOrderRank as integer,\n\t\tIsSystemServiceComponent as boolean,\n\t\tIsMandatoryComponent as boolean,\n\t\tIsUserSelectableComponent as boolean,\n\t\tRequiresFsbValidaionCheck as boolean,\n\t\tComponentCode as string,\n\t\tFinancialCompany as string,\n\t\tExcludeFromMonthBalance as boolean,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimComponent\nsource(output(\n\t\tTransactionTypeKey as integer,\n\t\tTransactionTypeId as integer,\n\t\tComponentKey as integer,\n\t\tTransactionCategoryKey as integer,\n\t\tName as string,\n\t\tIsEnabled as boolean,\n\t\tDefaultGeneralLedgerCode as string,\n\t\tIsExcludedFromCompliance as boolean,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimTransactionType\nsource(output(\n\t\tTransactionCategoryKey as integer,\n\t\tTransactionCategoryId as integer,\n\t\tName as string,\n\t\tPerUseBilling as boolean,\n\t\tIsEnabled as boolean,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimTransactionCategory\nJoinTransactionCategory derive(IsDeleted = false(),\n\t\tIsCurrent = true(),\n\t\tUpdatedDateDW = currentTimestamp(),\n\t\tCreatedDateDW = currentTimestamp(),\n\t\tCreatedByDW = 'AzureDataFactory',\n\t\tSourceSystem = 'AstuteOnline') ~> SetDefaultFields4\nSetDefaultFields4 alterRow(upsertIf(true())) ~> AlterRow2\nDimComponent select(mapColumn(\n\t\tComponentKey,\n\t\tComponentId,\n\t\tComponentName,\n\t\tOrderRank,\n\t\tIsSystemServiceComponent,\n\t\tIsMandatoryComponent,\n\t\tIsUserSelectableComponent,\n\t\tRequiresFsbValidaionCheck,\n\t\tComponentCode,\n\t\tFinancialCompany,\n\t\tExcludeFromMonthBalance,\n\t\tIsDeleted,\n\t\tIsCurrent,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tCreatedByDW,\n\t\tSourceSystem\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectDimComponent\nDimTransactionType select(mapColumn(\n\t\tTransactionTypeKey,\n\t\tTransactionTypeId,\n\t\tComponentKey,\n\t\tTransactionCategoryKey,\n\t\tName,\n\t\tIsEnabled,\n\t\tDefaultGeneralLedgerCode,\n\t\tIsExcludedFromCompliance,\n\t\tIsDeleted,\n\t\tIsCurrent,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tCreatedByDW,\n\t\tSourceSystem\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectDimTransactionType\nSourceTransactionType, SelectDimTransactionType exists(SourceTransactionType@TransactionTypeId == SelectDimTransactionType@TransactionTypeId,\n\tnegate:true,\n\tbroadcast: 'auto')~> DoesNotExists\nDoesNotExists, SelectDimComponent join(SourceTransactionType@ComponentId == SelectDimComponent@ComponentId,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinComponent\nDimTransactionCategory select(mapColumn(\n\t\tTransactionCategoryKey,\n\t\tTransactionCategoryId,\n\t\tName,\n\t\tPerUseBilling,\n\t\tIsEnabled,\n\t\tIsDeleted,\n\t\tIsCurrent,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tCreatedByDW,\n\t\tSourceSystem\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectDimTransactionCategory\nJoinComponent, SelectDimTransactionCategory join(SourceTransactionType@TransactionCategoryId == SelectDimTransactionCategory@TransactionCategoryId,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinTransactionCategory\nAlterRow2 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tTransactionTypeKey as integer,\n\t\tTransactionTypeId as integer,\n\t\tComponentKey as integer,\n\t\tTransactionCategoryKey as integer,\n\t\tName as string,\n\t\tIsEnabled as boolean,\n\t\tDefaultGeneralLedgerCode as string,\n\t\tIsExcludedFromCompliance as boolean,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:false,\n\tupsertable:true,\n\tkeys:['TransactionTypeId'],\n\tformat: 'table',\n\tstaged: true,\n\tallowCopyCommand: true,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tTransactionTypeId,\n\t\tComponentKey,\n\t\tTransactionCategoryKey,\n\t\tName = SourceTransactionType@Name,\n\t\tDefaultGeneralLedgerCode,\n\t\tIsExcludedFromCompliance,\n\t\tIsEnabled = SourceTransactionType@IsEnabled,\n\t\tIsDeleted,\n\t\tIsCurrent,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tCreatedByDW,\n\t\tSourceSystem\n\t)) ~> SinkTransactionType"
+		}
+	}
+}

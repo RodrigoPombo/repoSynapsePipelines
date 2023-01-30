@@ -1,0 +1,170 @@
+{
+	"name": "DS_FactAstsRequest",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_Synapse",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlDWTable",
+		"schema": [
+			{
+				"name": "ServiceTypeKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "AstsRequestKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "AstsLobKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "AstsRealTimeStatusKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "AstsStatusCodeKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "FromCompanyKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ToCompanyKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "PolicyKey",
+				"type": "varchar"
+			},
+			{
+				"name": "AstsRequestId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CreationDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "FinMonth",
+				"type": "date"
+			},
+			{
+				"name": "Reference",
+				"type": "varchar"
+			},
+			{
+				"name": "FromCompanyId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ToCompanyId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ServiceTypeId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "FaultTouRI",
+				"type": "varchar"
+			},
+			{
+				"name": "FromUri",
+				"type": "varchar"
+			},
+			{
+				"name": "ToURI",
+				"type": "varchar"
+			},
+			{
+				"name": "ACORDversiom",
+				"type": "varchar"
+			},
+			{
+				"name": "MessageSize",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "MessageCount",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "AstsStatusCodeid",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "AstsRealTimeStatusId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "MessageId",
+				"type": "varchar"
+			},
+			{
+				"name": "Requestid",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "AstsLobId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Error",
+				"type": "varchar"
+			},
+			{
+				"name": "AstsRequestDetailsId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "UpdatedDateDW",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CreatedDateDW",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CreatedByDW",
+				"type": "varchar"
+			},
+			{
+				"name": "SourceSystem",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "Fact",
+			"table": "FactAstsRequest"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

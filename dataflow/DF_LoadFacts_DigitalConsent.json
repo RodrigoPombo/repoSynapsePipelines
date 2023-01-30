@@ -1,0 +1,41 @@
+{
+	"name": "DF_LoadFacts_DigitalConsent",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_DigitalConsent",
+						"type": "DatasetReference"
+					},
+					"name": "SRCDigitalConsent"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_FactDigitalConsent",
+						"type": "DatasetReference"
+					},
+					"name": "DSTFactDigitalConsent"
+				}
+			],
+			"transformations": [
+				{
+					"name": "SetisCurrentDefault"
+				},
+				{
+					"name": "FixDigitalConsentColumns"
+				},
+				{
+					"name": "DefaultColumns"
+				},
+				{
+					"name": "FixDigitalConsent"
+				}
+			],
+			"script": "source(output(\n\t\tProfileId as integer,\n\t\tDigitalConsentStatusId as integer,\n\t\tComponentId as integer,\n\t\tmyclientid as integer,\n\t\tIsDeleted as boolean,\n\t\tIsDcCustomer as boolean,\n\t\tRequestSourceCode as string,\n\t\tUnitOfWorkId as integer,\n\t\tDaterequested as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: true,\n\tformat: 'parquet',\n\twildcardPaths:['staging/MyClient/*']) ~> SRCDigitalConsent\nFixDigitalConsentColumns derive(isCurrentDefault = true(),\n\t\tFinMonth = case(toInteger(dayOfMonth(toDate(Daterequested))) > 25,toString(addMonths(toDate(Daterequested),1),'yyyy-MM-01'), toString(toDate(Daterequested),'yyyy-MM-01'))) ~> SetisCurrentDefault\nSRCDigitalConsent select(mapColumn(\n\t\tProfileId,\n\t\tDigitalConsentStatusId,\n\t\tComponentId,\n\t\tmyclientid,\n\t\tIsDeleted,\n\t\tIsDcCustomer,\n\t\tRequestSourceCode,\n\t\tUnitOfWorkId,\n\t\tDaterequested\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixDigitalConsentColumns\nFixDigitalConsent derive(UpdatedDateDW = currentTimestamp(),\n\t\tCreatedDateDW = currentTimestamp(),\n\t\tCreatedByDW = 'ADF Pipeline',\n\t\tSourceSystem = 'AstuteOnline') ~> DefaultColumns\nSetisCurrentDefault select(mapColumn(\n\t\tProfileId,\n\t\tDigitalConsentStatusId,\n\t\tComponentId,\n\t\tmyclientid,\n\t\tIsDeleted,\n\t\tIsDcCustomer,\n\t\tRequestSourceCode,\n\t\tUnitOfWorkId,\n\t\tDaterequested,\n\t\tisCurrentDefault,\n\t\tFinMonth\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixDigitalConsent\nDefaultColumns sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tProfileKey as integer,\n\t\tProfileId as integer,\n\t\tDigitalConsentStatusId as integer,\n\t\tComponentId as integer,\n\t\tIsDeleted as boolean,\n\t\tIsDcCustomer as boolean,\n\t\tRequestSourceCode as string,\n\t\tUnitOfWorkId as integer,\n\t\tDaterequested as timestamp,\n\t\tFinMonth as date,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tstaged: true,\n\tallowCopyCommand: true,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\tsaveOrder: 1,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tProfileId,\n\t\tDigitalConsentStatusId,\n\t\tComponentId,\n\t\tIsDeleted,\n\t\tIsDcCustomer,\n\t\tRequestSourceCode,\n\t\tUnitOfWorkId,\n\t\tDaterequested,\n\t\tFinMonth,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tCreatedByDW,\n\t\tSourceSystem\n\t)) ~> DSTFactDigitalConsent"
+		}
+	}
+}

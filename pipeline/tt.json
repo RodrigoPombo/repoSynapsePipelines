@@ -1,0 +1,76 @@
+{
+	"name": "tt",
+	"properties": {
+		"activities": [
+			{
+				"name": "Web1",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://adb-3013469236012232.12.azuredatabricks.net/api/2.0/jobs/run-now",
+					"method": "POST",
+					"headers": {
+						"Authorization": "Bearer dapi50bb8d74e389a58f0510a218c34f62a3"
+					},
+					"body": "{\"job_id\": 1}"
+				}
+			},
+			{
+				"name": "Until1",
+				"type": "Until",
+				"dependsOn": [
+					{
+						"activity": "Web1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@or(equals('TERMINATED', activity('check_if_done').output['state']['life_cycle_state']),equals('INTERNAL_ERROR', activity('check_if_done').output['state']['life_cycle_state']))",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "check_if_done",
+							"type": "WebActivity",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"url": {
+									"value": "@concat('https://adb-3013469236012232.12.azuredatabricks.net/api/2.0/jobs/runs/get?run_id=',activity('Web1').output['run_id'])",
+									"type": "Expression"
+								},
+								"method": "GET",
+								"headers": {
+									"Authorization": "Bearer dapi50bb8d74e389a58f0510a218c34f62a3"
+								}
+							}
+						}
+					],
+					"timeout": "7.00:00:00"
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2022-01-28T16:48:28Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

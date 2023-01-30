@@ -1,0 +1,54 @@
+{
+	"name": "DS_Ums",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_DataLakeEnriched",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "AstuteOnline/Administration/GroupAttributeValue",
+				"fileSystem": "immersive"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "companyid",
+				"type": "INT32"
+			},
+			{
+				"name": "CompanyName",
+				"type": "UTF8"
+			},
+			{
+				"name": "DebtorNumber",
+				"type": "UTF8"
+			},
+			{
+				"name": "Name",
+				"type": "UTF8"
+			},
+			{
+				"name": "associationTypeNam",
+				"type": "UTF8"
+			},
+			{
+				"name": "SubscriptionMonth",
+				"type": "INT32"
+			},
+			{
+				"name": "subscriptionYear",
+				"type": "INT32"
+			},
+			{
+				"name": "FSPNumber",
+				"type": "UTF8"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

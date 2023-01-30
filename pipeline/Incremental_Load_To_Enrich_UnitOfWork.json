@@ -1,0 +1,236 @@
+{
+	"name": "Incremental_Load_To_Enrich_UnitOfWork",
+	"properties": {
+		"activities": [
+			{
+				"name": "LookupIfEmptyDataSet",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "ParquetSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"modifiedDatetimeStart": {
+								"value": "@pipeline().parameters.windowStart",
+								"type": "Expression"
+							},
+							"modifiedDatetimeEnd": {
+								"value": "@pipeline().parameters.windowEnd",
+								"type": "Expression"
+							},
+							"wildcardFileName": "*.parquet",
+							"enablePartitionDiscovery": false
+						}
+					},
+					"dataset": {
+						"referenceName": "DS_CopyFactFromRawToStagingSRC",
+						"type": "DatasetReference",
+						"parameters": {
+							"tablename": {
+								"value": "@pipeline().parameters.tablename",
+								"type": "Expression"
+							},
+							"schemaname": {
+								"value": "@pipeline().parameters.schemaname",
+								"type": "Expression"
+							},
+							"databasename": {
+								"value": "@pipeline().parameters.databasename",
+								"type": "Expression"
+							}
+						}
+					}
+				}
+			},
+			{
+				"name": "LoadDataIfNotEmpty",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "LookupIfEmptyDataSet",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@greater(indexOf(string(activity('LookupIfEmptyDataSet').output),'firstRow'),-1)",
+						"type": "Expression"
+					},
+					"ifFalseActivities": [
+						{
+							"name": "WaitFalse",
+							"type": "Wait",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"waitTimeInSeconds": 1
+							}
+						}
+					],
+					"ifTrueActivities": [
+						{
+							"name": "CopyFactFromRawToStaging",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "Set Load Date",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [
+								{
+									"name": "Source",
+									"value": "fse-test-sql/AstuteOnline/Billing/UnitOfWork/"
+								},
+								{
+									"name": "Destination",
+									"value": "fse-test-sql/unitofwork/"
+								}
+							],
+							"typeProperties": {
+								"source": {
+									"type": "ParquetSource",
+									"storeSettings": {
+										"type": "AzureBlobFSReadSettings",
+										"recursive": true,
+										"modifiedDatetimeStart": {
+											"value": "@pipeline().parameters.windowStart",
+											"type": "Expression"
+										},
+										"modifiedDatetimeEnd": {
+											"value": "@pipeline().parameters.windowEnd",
+											"type": "Expression"
+										},
+										"wildcardFileName": "*.parquet",
+										"enablePartitionDiscovery": false
+									}
+								},
+								"sink": {
+									"type": "ParquetSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings",
+										"copyBehavior": "FlattenHierarchy"
+									},
+									"formatSettings": {
+										"type": "ParquetWriteSettings"
+									}
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "DS_CopyFactFromRawToStagingSRC",
+									"type": "DatasetReference",
+									"parameters": {
+										"tablename": {
+											"value": "@pipeline().parameters.tablename",
+											"type": "Expression"
+										},
+										"schemaname": {
+											"value": "@pipeline().parameters.schemaname",
+											"type": "Expression"
+										},
+										"databasename": {
+											"value": "@pipeline().parameters.databasename",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "DS_LoadRawDataToEnrich_Fact",
+									"type": "DatasetReference",
+									"parameters": {
+										"enrichedTable": {
+											"value": "@pipeline().parameters.tablename",
+											"type": "Expression"
+										},
+										"enrichedSchema": {
+											"value": "@pipeline().parameters.schemaname",
+											"type": "Expression"
+										},
+										"enrichedDatabase": {
+											"value": "@pipeline().parameters.databasename",
+											"type": "Expression"
+										},
+										"loadDate": {
+											"value": "@variables('LoadDate')",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						},
+						{
+							"name": "Set Load Date",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "LoadDate",
+								"value": {
+									"value": "@concat(\nsubstring(pipeline().parameters.windowStart, 0,4),\n'/',\nsubstring(pipeline().parameters.windowStart, 5, 2),\n'/',\nsubstring(pipeline().parameters.windowStart, 8, 2)\n)\n",
+									"type": "Expression"
+								}
+							}
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"windowStart": {
+				"type": "String"
+			},
+			"windowEnd": {
+				"type": "String"
+			},
+			"tablename": {
+				"type": "string",
+				"defaultValue": "UnitOfWork"
+			},
+			"schemaname": {
+				"type": "string",
+				"defaultValue": "Billing"
+			},
+			"databasename": {
+				"type": "string",
+				"defaultValue": "AstuteOnline"
+			}
+		},
+		"variables": {
+			"LoadDate": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "Active/2202150050002247 - Arnab [ABN AMRO]"
+		},
+		"annotations": [],
+		"lastPublishTime": "2022-11-28T15:35:41Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

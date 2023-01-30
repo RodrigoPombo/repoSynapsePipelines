@@ -1,0 +1,78 @@
+{
+	"name": "DS_DimRequestSource",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_Synapse",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Dimensions"
+		},
+		"annotations": [],
+		"type": "AzureSqlDWTable",
+		"schema": [
+			{
+				"name": "RequestSourceKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "RequestSourceId",
+				"type": "varchar"
+			},
+			{
+				"name": "IsEnabled",
+				"type": "bit"
+			},
+			{
+				"name": "VersionIdentifier",
+				"type": "varchar"
+			},
+			{
+				"name": "SourceType",
+				"type": "varchar"
+			},
+			{
+				"name": "Description",
+				"type": "varchar"
+			},
+			{
+				"name": "SourceProduct",
+				"type": "varchar"
+			},
+			{
+				"name": "IsDeleted",
+				"type": "bit"
+			},
+			{
+				"name": "IsCurrent",
+				"type": "bit"
+			},
+			{
+				"name": "UpdatedDateDW",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CreatedDateDW",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CreatedByDW",
+				"type": "varchar"
+			},
+			{
+				"name": "SourceSystem",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "Dim",
+			"table": "DimRequestSource"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

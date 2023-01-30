@@ -1,0 +1,87 @@
+{
+	"name": "DFA_LoadDimensions_Rate",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_RateSRC",
+						"type": "DatasetReference"
+					},
+					"name": "SourceRate"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimRate",
+						"type": "DatasetReference"
+					},
+					"name": "DimRate"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimRateBatch",
+						"type": "DatasetReference"
+					},
+					"name": "DimRateBatch"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimTransactionType",
+						"type": "DatasetReference"
+					},
+					"name": "DimTransactionType"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimSubscriptionBand",
+						"type": "DatasetReference"
+					},
+					"name": "DimSubscriptionBand"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_DimRate",
+						"type": "DatasetReference"
+					},
+					"name": "SinkRate"
+				}
+			],
+			"transformations": [
+				{
+					"name": "JoinRateBatch"
+				},
+				{
+					"name": "JoinTransactionType"
+				},
+				{
+					"name": "JoinSubscriptionBand"
+				},
+				{
+					"name": "SetDefaultFields"
+				},
+				{
+					"name": "AllowUpserts"
+				},
+				{
+					"name": "SelectDimRate"
+				},
+				{
+					"name": "SelectDimRateBatch"
+				},
+				{
+					"name": "SelectTransactionType"
+				},
+				{
+					"name": "SelectSubscriptionBand"
+				},
+				{
+					"name": "DoesNotExists"
+				}
+			],
+			"script": "source(output(\n\t\tRateId as integer,\n\t\tRateBatchId as integer,\n\t\tTransactionTypeId as integer,\n\t\tSubscriptionBandId as integer,\n\t\tRangeStart as integer,\n\t\tRangeEnd as integer,\n\t\tValue as decimal(19,4),\n\t\tLastChangedBy as string,\n\t\tLastChangedDate as timestamp,\n\t\tCreationDate as timestamp,\n\t\tAIModifiedDateTime as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: true,\n\tformat: 'parquet',\n\twildcardPaths:['AstuteOnline/Billing/Rate/**/*']) ~> SourceRate\nsource(output(\n\t\tRateKey as integer,\n\t\tRateId as integer,\n\t\tRateBatchKey as integer,\n\t\tTransactionTypeKey as integer,\n\t\tSubscriptionBandKey as integer,\n\t\tRangeStart as integer,\n\t\tRangeEnd as integer,\n\t\tValue as decimal(19,4),\n\t\tLastChangedBy as string,\n\t\tLastChangedDate as timestamp,\n\t\tCreationDate as timestamp,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: false) ~> DimRate\nsource(output(\n\t\tRateBatchKey as integer,\n\t\tRateBatchId as integer,\n\t\tEffectiveDate as timestamp,\n\t\tUploadedBy as string,\n\t\tIsReviewed as boolean,\n\t\tReviewedBy as string,\n\t\tDateTimeUploaded as timestamp,\n\t\tDateTimeReviewed as timestamp,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimRateBatch\nsource(output(\n\t\tTransactionTypeKey as integer,\n\t\tTransactionTypeId as integer,\n\t\tComponentKey as integer,\n\t\tTransactionCategoryKey as integer,\n\t\tName as string,\n\t\tIsEnabled as boolean,\n\t\tDefaultGeneralLedgerCode as string,\n\t\tIsExcludedFromCompliance as boolean,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimTransactionType\nsource(output(\n\t\tSubscriptionBandKey as integer,\n\t\tSubscriptionBandId as integer,\n\t\tName as string,\n\t\tDescription as string,\n\t\tIsEnabled as boolean,\n\t\tDefaultCostCentreCode as string,\n\t\tDeletionDate as timestamp,\n\t\tLastChangedBy as string,\n\t\tLastChangedDate as timestamp,\n\t\tCreationDate as timestamp,\n\t\tIndividualSubscription as boolean,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: false) ~> DimSubscriptionBand\nJoinTransactionType, SelectDimRateBatch join(SourceRate@RateBatchId == SelectDimRateBatch@RateBatchId,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinRateBatch\nJoinSubscriptionBand, SelectTransactionType join(SourceRate@TransactionTypeId == SelectTransactionType@TransactionTypeId,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinTransactionType\nDoesNotExists, SelectSubscriptionBand join(SourceRate@SubscriptionBandId == SelectSubscriptionBand@SubscriptionBandId,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinSubscriptionBand\nJoinRateBatch derive(IsDeleted = false(),\n\t\tIsCurrent = true(),\n\t\tUpdatedDateDW = currentTimestamp(),\n\t\tCreatedDateDW = currentTimestamp(),\n\t\tCreatedByDW = 'AzureDataFactory',\n\t\tSourceSystem = 'AstuteOnline') ~> SetDefaultFields\nSetDefaultFields alterRow(upsertIf(true())) ~> AllowUpserts\nDimRate select(mapColumn(\n\t\tRateKey,\n\t\tRateId,\n\t\tRateBatchKey,\n\t\tTransactionTypeKey,\n\t\tSubscriptionBandKey,\n\t\tRangeStart,\n\t\tRangeEnd,\n\t\tValue,\n\t\tLastChangedBy,\n\t\tLastChangedDate,\n\t\tCreationDate,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tCreatedByDW,\n\t\tSourceSystem\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectDimRate\nDimRateBatch select(mapColumn(\n\t\tRateBatchKey,\n\t\tRateBatchId,\n\t\tEffectiveDate,\n\t\tUploadedBy,\n\t\tIsReviewed,\n\t\tReviewedBy,\n\t\tDateTimeUploaded,\n\t\tDateTimeReviewed,\n\t\tIsDeleted,\n\t\tIsCurrent,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tCreatedByDW,\n\t\tSourceSystem\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectDimRateBatch\nDimTransactionType select(mapColumn(\n\t\tTransactionTypeKey,\n\t\tTransactionTypeId,\n\t\tComponentKey,\n\t\tTransactionCategoryKey,\n\t\tName,\n\t\tIsEnabled,\n\t\tDefaultGeneralLedgerCode,\n\t\tIsExcludedFromCompliance,\n\t\tIsDeleted,\n\t\tIsCurrent,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tCreatedByDW,\n\t\tSourceSystem\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectTransactionType\nDimSubscriptionBand select(mapColumn(\n\t\tSubscriptionBandKey,\n\t\tSubscriptionBandId,\n\t\tName,\n\t\tDescription,\n\t\tIsEnabled,\n\t\tDefaultCostCentreCode,\n\t\tDeletionDate,\n\t\tLastChangedBy,\n\t\tLastChangedDate,\n\t\tCreationDate,\n\t\tIndividualSubscription,\n\t\tIsDeleted,\n\t\tIsCurrent,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tCreatedByDW,\n\t\tSourceSystem\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectSubscriptionBand\nSourceRate, SelectDimRate exists(SourceRate@RateId == SelectDimRate@RateId,\n\tnegate:true,\n\tbroadcast: 'auto')~> DoesNotExists\nAllowUpserts sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tRateKey as integer,\n\t\tRateId as integer,\n\t\tRateBatchKey as integer,\n\t\tTransactionTypeKey as integer,\n\t\tSubscriptionBandKey as integer,\n\t\tRangeStart as integer,\n\t\tRangeEnd as integer,\n\t\tValue as decimal(19,4),\n\t\tLastChangedBy as string,\n\t\tLastChangedDate as timestamp,\n\t\tCreationDate as timestamp,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:false,\n\tupsertable:true,\n\tkeys:['RateId'],\n\tformat: 'table',\n\tstaged: true,\n\tallowCopyCommand: true,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tRateId,\n\t\tRateBatchKey,\n\t\tTransactionTypeKey,\n\t\tSubscriptionBandKey,\n\t\tRangeStart,\n\t\tRangeEnd,\n\t\tValue,\n\t\tLastChangedBy = SourceRate@LastChangedBy,\n\t\tLastChangedDate = SourceRate@LastChangedDate,\n\t\tCreationDate = SourceRate@CreationDate,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tCreatedByDW,\n\t\tSourceSystem\n\t)) ~> SinkRate"
+		}
+	}
+}

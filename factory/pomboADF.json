@@ -1,0 +1,9 @@
+{
+	"name": "pomboADF",
+	"location": "westeurope",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "e035b516-a457-43e1-827a-3db403fd85de",
+		"tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47"
+	}
+}

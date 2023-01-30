@@ -1,0 +1,89 @@
+{
+	"name": "DS_DimRateBatch",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_Synapse",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Dimensions"
+		},
+		"annotations": [],
+		"type": "AzureSqlDWTable",
+		"schema": [
+			{
+				"name": "RateBatchKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "RateBatchId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "EffectiveDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "UploadedBy",
+				"type": "varchar"
+			},
+			{
+				"name": "IsReviewed",
+				"type": "bit"
+			},
+			{
+				"name": "ReviewedBy",
+				"type": "varchar"
+			},
+			{
+				"name": "DateTimeUploaded",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "DateTimeReviewed",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "IsDeleted",
+				"type": "bit"
+			},
+			{
+				"name": "IsCurrent",
+				"type": "bit"
+			},
+			{
+				"name": "UpdatedDateDW",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CreatedDateDW",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CreatedByDW",
+				"type": "varchar"
+			},
+			{
+				"name": "SourceSystem",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "Dim",
+			"table": "DimRateBatch"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

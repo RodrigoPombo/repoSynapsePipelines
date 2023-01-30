@@ -1,0 +1,17 @@
+{
+	"name": "OracleTable1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Oracle1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "OracleTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "POMBO1",
+			"table": "RISIKO_1"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

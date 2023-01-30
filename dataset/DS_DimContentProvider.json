@@ -1,0 +1,120 @@
+{
+	"name": "DS_DimContentProvider",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_Synapse",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlDWTable",
+		"schema": [
+			{
+				"name": "ContentProviderKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ContentProviderId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Name",
+				"type": "varchar"
+			},
+			{
+				"name": "ProviderCode",
+				"type": "varchar"
+			},
+			{
+				"name": "IntegrationPortId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ComponentKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "EntityStatus",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "EntityStatusReasonKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "StatusChangeDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "LastChangedBy",
+				"type": "varchar"
+			},
+			{
+				"name": "LastChangedDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CreationDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "HvIntegrationPortId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "MachineName",
+				"type": "varchar"
+			},
+			{
+				"name": "ScheduledTaskId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "IsDeleted",
+				"type": "bit"
+			},
+			{
+				"name": "IsCurrent",
+				"type": "bit"
+			},
+			{
+				"name": "UpdatedDateDW",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CreatedDateDW",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CreatedByDW",
+				"type": "varchar"
+			},
+			{
+				"name": "SourceSystem",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "Dim",
+			"table": "DimContentProvider"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

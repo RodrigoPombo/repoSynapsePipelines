@@ -1,0 +1,174 @@
+{
+	"name": "DS_FspSRC",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_DataLakeEnriched",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "AstuteOnline/FSPE/FSP",
+				"fileSystem": "immersive"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "FspId",
+				"type": "INT32"
+			},
+			{
+				"name": "FspNumber",
+				"type": "UTF8"
+			},
+			{
+				"name": "Name",
+				"type": "UTF8"
+			},
+			{
+				"name": "TradeName",
+				"type": "UTF8"
+			},
+			{
+				"name": "LegalCapacity",
+				"type": "UTF8"
+			},
+			{
+				"name": "RegNo",
+				"type": "UTF8"
+			},
+			{
+				"name": "Status",
+				"type": "UTF8"
+			},
+			{
+				"name": "Active",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "CompanyType",
+				"type": "UTF8"
+			},
+			{
+				"name": "ContactPersonTitle",
+				"type": "UTF8"
+			},
+			{
+				"name": "ContactPersonInitials",
+				"type": "UTF8"
+			},
+			{
+				"name": "ContactPersonSurname",
+				"type": "UTF8"
+			},
+			{
+				"name": "ContactPersonEmail",
+				"type": "UTF8"
+			},
+			{
+				"name": "PhysicalAddress1",
+				"type": "UTF8"
+			},
+			{
+				"name": "PhysicalAddress2",
+				"type": "UTF8"
+			},
+			{
+				"name": "PhysicalAddress3",
+				"type": "UTF8"
+			},
+			{
+				"name": "PhysicalAddressCode",
+				"type": "UTF8"
+			},
+			{
+				"name": "PostalAddress1",
+				"type": "UTF8"
+			},
+			{
+				"name": "PostalAddress2",
+				"type": "UTF8"
+			},
+			{
+				"name": "PostalAddress3",
+				"type": "UTF8"
+			},
+			{
+				"name": "PostalAddressCode",
+				"type": "UTF8"
+			},
+			{
+				"name": "TelCode",
+				"type": "UTF8"
+			},
+			{
+				"name": "TelNo",
+				"type": "UTF8"
+			},
+			{
+				"name": "FaxCode",
+				"type": "UTF8"
+			},
+			{
+				"name": "FaxNo",
+				"type": "UTF8"
+			},
+			{
+				"name": "WebSite",
+				"type": "UTF8"
+			},
+			{
+				"name": "FinYearEnd",
+				"type": "UTF8"
+			},
+			{
+				"name": "CompliancePracticeName",
+				"type": "UTF8"
+			},
+			{
+				"name": "ComplianceOfficerName",
+				"type": "UTF8"
+			},
+			{
+				"name": "ComplianceOfficeDateAppointed",
+				"type": "INT96"
+			},
+			{
+				"name": "ComplianceOfficerTelNo",
+				"type": "UTF8"
+			},
+			{
+				"name": "MedicalAccreditationNo",
+				"type": "UTF8"
+			},
+			{
+				"name": "RecordHash",
+				"type": "UTF8"
+			},
+			{
+				"name": "IsDeleted",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "DeleteReasonId",
+				"type": "INT32"
+			},
+			{
+				"name": "DeletionDate",
+				"type": "INT96"
+			},
+			{
+				"name": "AIModifiedDateTime",
+				"type": "INT96"
+			},
+			{
+				"name": "RequestFlag",
+				"type": "UTF8"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

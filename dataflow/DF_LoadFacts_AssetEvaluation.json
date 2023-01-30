@@ -1,0 +1,44 @@
+{
+	"name": "DF_LoadFacts_AssetEvaluation",
+	"properties": {
+		"folder": {
+			"name": "VOPD"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_AssetEvaluationSRC",
+						"type": "DatasetReference"
+					},
+					"name": "SRCAssetEvaluation"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_FactAssetEvaluation",
+						"type": "DatasetReference"
+					},
+					"name": "DSTAssetEvaluation"
+				}
+			],
+			"transformations": [
+				{
+					"name": "DefaultColumns"
+				},
+				{
+					"name": "FixAssetValuationColumns"
+				},
+				{
+					"name": "SetIsCurrentDefault"
+				},
+				{
+					"name": "FixAssetEvaluation"
+				}
+			],
+			"script": "source(output(\n\t\tPropertyHistoryId as long,\n\t\tprofileid as integer,\n\t\tRequestDateTime as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: true,\n\tformat: 'parquet',\n\twildcardPaths:['staging/PropertyHistory/*']) ~> SRCAssetEvaluation\nFixAssetEvaluation derive(UpdatedDateDW = currentTimestamp(),\n\t\tCreatedDateDW = currentTimestamp(),\n\t\tSourceSystem = 'AstuteOnline',\n\t\tCreatedByDW = 'ADF Pipeline') ~> DefaultColumns\nSRCAssetEvaluation select(mapColumn(\n\t\tPropertyHistoryId,\n\t\tprofileid,\n\t\tRequestDateTime\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixAssetValuationColumns\nFixAssetValuationColumns derive(isCurrentDefault = true(),\n\t\tFinMonth = case(toInteger(dayOfMonth(toDate(RequestDateTime))) > 25,toString(addMonths(toDate(RequestDateTime),1),'yyyy-MM-01'), toString(toDate(RequestDateTime),'yyyy-MM-01'))) ~> SetIsCurrentDefault\nSetIsCurrentDefault select(mapColumn(\n\t\tPropertyHistoryId,\n\t\tprofileid,\n\t\tRequestDateTime,\n\t\tisCurrentDefault,\n\t\tFinMonth\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixAssetEvaluation\nDefaultColumns sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tProfileKey as integer,\n\t\tProfileId as integer,\n\t\tPropertyHistoryId as integer,\n\t\tRequestDateTime as timestamp,\n\t\tFinMonth as date,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tstaged: true,\n\tallowCopyCommand: true,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tProfileId = profileid,\n\t\tPropertyHistoryId,\n\t\tRequestDateTime,\n\t\tFinMonth,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tCreatedByDW,\n\t\tSourceSystem\n\t)) ~> DSTAssetEvaluation"
+		}
+	}
+}

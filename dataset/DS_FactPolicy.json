@@ -1,0 +1,193 @@
+{
+	"name": "DS_FactPolicy",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_Synapse",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlDWTable",
+		"schema": [
+			{
+				"name": "PolicyId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "FriendlyId",
+				"type": "varchar"
+			},
+			{
+				"name": "LacPolicyTypeId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CompanyRegistrationNumber",
+				"type": "varchar"
+			},
+			{
+				"name": "SchemeNumber",
+				"type": "varchar"
+			},
+			{
+				"name": "SchemeName",
+				"type": "varchar"
+			},
+			{
+				"name": "InceptionDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "MemberNumber",
+				"type": "varchar"
+			},
+			{
+				"name": "ClientKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "isDeleted",
+				"type": "bit"
+			},
+			{
+				"name": "DeleteReasonId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "DeletionDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "LastChangedBy",
+				"type": "varchar"
+			},
+			{
+				"name": "LastChangedDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CreationFinMonth",
+				"type": "date"
+			},
+			{
+				"name": "CreationDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "LacNotificationTypeId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "UserLoginId",
+				"type": "varchar"
+			},
+			{
+				"name": "TransRefGuid",
+				"type": "varchar"
+			},
+			{
+				"name": "EntityStatusReasonKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "RequestSourceKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "TranContentCode",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CompanyKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "GroupKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Profilekey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "PersonId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "LacMessageLogId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "TransactionDateTime",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "ErrorMessage",
+				"type": "varchar"
+			},
+			{
+				"name": "MessageLogGuid",
+				"type": "uniqueidentifier"
+			},
+			{
+				"name": "NotificationType",
+				"type": "varchar"
+			},
+			{
+				"name": "PolicyType",
+				"type": "varchar"
+			},
+			{
+				"name": "UpdatedDateDW",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CreatedDateDW",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CreatedByDW",
+				"type": "varchar"
+			},
+			{
+				"name": "SourceSystem",
+				"type": "varchar"
+			},
+			{
+				"name": "RequestFlag",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "Fact",
+			"table": "FactPolicy"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

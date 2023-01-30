@@ -1,0 +1,80 @@
+{
+	"name": "DFA_LoadDimensions_SubscriptionList",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_SubscriptionListSRC",
+						"type": "DatasetReference"
+					},
+					"name": "SourceSubscriptionList"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimSubsriptionList",
+						"type": "DatasetReference"
+					},
+					"name": "DimSubscriptionlist"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimCompany",
+						"type": "DatasetReference"
+					},
+					"name": "DimCompany"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimFsp",
+						"type": "DatasetReference"
+					},
+					"name": "DimFsp"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_DimSubsriptionList",
+						"type": "DatasetReference"
+					},
+					"name": "SinkSubscriptionlist"
+				}
+			],
+			"transformations": [
+				{
+					"name": "SetDefaultFields"
+				},
+				{
+					"name": "AllowUpserts"
+				},
+				{
+					"name": "DoesNotExist"
+				},
+				{
+					"name": "SelectDimSubscriptionlist"
+				},
+				{
+					"name": "SelectDimCompany"
+				},
+				{
+					"name": "JoinDimCompany"
+				},
+				{
+					"name": "FixDimcompany"
+				},
+				{
+					"name": "SelectDimFsp"
+				},
+				{
+					"name": "JoinFsp"
+				},
+				{
+					"name": "FixDimFsp"
+				}
+			],
+			"script": "source(output(\n\t\tSubscriptionListId as integer,\n\t\tCompanyId as integer,\n\t\tFspNumber as string,\n\t\tIntermediaryIdNo as string,\n\t\tIntermediaryIdType as string,\n\t\tPartialIntermediaryIdNo as string,\n\t\tEnablePartialSAIDNumberSearch as boolean,\n\t\tCreateDate as timestamp,\n\t\tIsActive as boolean,\n\t\tInactiveDate as timestamp,\n\t\tReference as string,\n\t\tIsFspNumberSubscription as boolean,\n\t\tBatchNumber as integer,\n\t\tTotalInBatch as integer,\n\t\tIsProcessed as boolean,\n\t\tMachineLockedName as string,\n\t\tDateTimeLocked as timestamp,\n\t\tDateTimeProcessed as timestamp,\n\t\tAIModifiedDateTime as timestamp,\n\t\tRequestFlag as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: true,\n\tformat: 'parquet',\n\twildcardPaths:['AstuteOnline/FSPE/Subscriptionlist/**/*']) ~> SourceSubscriptionList\nsource(output(\n\t\tSubscriptionListKey as integer,\n\t\tSubscriptionListId as integer,\n\t\tCompanyKey as integer,\n\t\tFspNumber as string,\n\t\tIsActive as boolean,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimSubscriptionlist\nsource(output(\n\t\tCompanyKey as integer,\n\t\tCompanyId as integer,\n\t\tName as string,\n\t\tDebtorNumber as string,\n\t\tCrmReferenceNumber as string,\n\t\tDebitOrderDay as integer,\n\t\tEntityStatus as string,\n\t\tEntityStatusReasonKey as integer,\n\t\tStatusChangeDate as timestamp,\n\t\tDeletionDate as timestamp,\n\t\tLastChangedBy as string,\n\t\tLastChangedDate as timestamp,\n\t\tCreationDate as timestamp,\n\t\tConsolidateInvoices as boolean,\n\t\tNote as string,\n\t\tCompanyGuid as string,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimCompany\nsource(output(\n\t\tFspKey as integer,\n\t\tFspId as integer,\n\t\tLegalCapacity as string,\n\t\tStatus as string,\n\t\tCompanyType as string,\n\t\tFspNumber as string,\n\t\tSubscriptionListKey as integer,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimFsp\nDoesNotExist derive(IsDeleted = false(),\n\t\tIsCurrent = true(),\n\t\tUpdatedDateDW = currentTimestamp(),\n\t\tCreatedDateDW = currentTimestamp(),\n\t\tCreatedByDW = 'AzureDataFactory',\n\t\tSourceSystem = 'AstuteOnline') ~> SetDefaultFields\nFixDimcompany alterRow(upsertIf(true())) ~> AllowUpserts\nSourceSubscriptionList, SelectDimSubscriptionlist exists(SourceSubscriptionList@SubscriptionListId==SelectDimSubscriptionlist@SubscriptionListId,\n\tnegate:true,\n\tbroadcast: 'auto')~> DoesNotExist\nDimSubscriptionlist select(mapColumn(\n\t\tSubscriptionListKey,\n\t\tSubscriptionListId,\n\t\tFspNumber,\n\t\tIsCurrent\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectDimSubscriptionlist\nDimCompany select(mapColumn(\n\t\tCompanyKey,\n\t\tCompanyId,\n\t\tIsCurrent\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectDimCompany\nFixDimFsp, SelectDimCompany join(FixDimFsp@CompanyId == SelectDimCompany@CompanyId\n\t&& FixDimFsp@IsCurrent == SelectDimCompany@IsCurrent,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinDimCompany\nJoinDimCompany select(mapColumn(\n\t\tSubscriptionListId,\n\t\tCompanyId = FixDimFsp@CompanyId,\n\t\tFspNumber,\n\t\tIntermediaryIdNo,\n\t\tIntermediaryIdType,\n\t\tPartialIntermediaryIdNo,\n\t\tEnablePartialSAIDNumberSearch,\n\t\tCreateDate,\n\t\tIsActive,\n\t\tInactiveDate,\n\t\tReference,\n\t\tIsFspNumberSubscription,\n\t\tBatchNumber,\n\t\tTotalInBatch,\n\t\tIsProcessed,\n\t\tMachineLockedName,\n\t\tDateTimeLocked,\n\t\tDateTimeProcessed,\n\t\tAIModifiedDateTime,\n\t\tRequestFlag,\n\t\tIsDeleted,\n\t\tIsCurrent = FixDimFsp@IsCurrent,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tCreatedByDW,\n\t\tSourceSystem,\n\t\tFspKey,\n\t\tCompanyKey\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixDimcompany\nDimFsp select(mapColumn(\n\t\tFspKey,\n\t\tFspNumber,\n\t\tIsCurrent\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectDimFsp\nSetDefaultFields, SelectDimFsp join(SourceSubscriptionList@FspNumber == SelectDimFsp@FspNumber,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinFsp\nJoinFsp select(mapColumn(\n\t\tSubscriptionListId,\n\t\tCompanyId,\n\t\tFspNumber = SourceSubscriptionList@FspNumber,\n\t\tIntermediaryIdNo,\n\t\tIntermediaryIdType,\n\t\tPartialIntermediaryIdNo,\n\t\tEnablePartialSAIDNumberSearch,\n\t\tCreateDate,\n\t\tIsActive,\n\t\tInactiveDate,\n\t\tReference,\n\t\tIsFspNumberSubscription,\n\t\tBatchNumber,\n\t\tTotalInBatch,\n\t\tIsProcessed,\n\t\tMachineLockedName,\n\t\tDateTimeLocked,\n\t\tDateTimeProcessed,\n\t\tAIModifiedDateTime,\n\t\tRequestFlag,\n\t\tIsDeleted,\n\t\tIsCurrent = SetDefaultFields@IsCurrent,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tCreatedByDW,\n\t\tSourceSystem,\n\t\tFspKey\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixDimFsp\nAllowUpserts sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tSubscriptionListKey as integer,\n\t\tSubscriptionListId as integer,\n\t\tCompanyKey as integer,\n\t\tFspNumber as string,\n\t\tIsActive as boolean,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:false,\n\tupsertable:true,\n\tkeys:['SubscriptionListId'],\n\tformat: 'table',\n\tstaged: true,\n\tallowCopyCommand: true,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tSubscriptionListId,\n\t\tCompanyKey,\n\t\tFspNumber,\n\t\tIsActive,\n\t\tIsDeleted,\n\t\tIsCurrent,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tCreatedByDW,\n\t\tSourceSystem\n\t),\n\tpreCommands: [],\n\tpostCommands: []) ~> SinkSubscriptionlist"
+		}
+	}
+}

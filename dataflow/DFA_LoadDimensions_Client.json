@@ -1,0 +1,60 @@
+{
+	"name": "DFA_LoadDimensions_Client",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_UnitOfWorkSRC",
+						"type": "DatasetReference"
+					},
+					"name": "SourceUnitOfWork"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimClient",
+						"type": "DatasetReference"
+					},
+					"name": "DimClient"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_DimClient",
+						"type": "DatasetReference"
+					},
+					"name": "DSTDimClient"
+				}
+			],
+			"transformations": [
+				{
+					"name": "DoesNotEsxistInClient"
+				},
+				{
+					"name": "SelectDimClient"
+				},
+				{
+					"name": "setAttributes"
+				},
+				{
+					"name": "AllowUpserts"
+				},
+				{
+					"name": "DistinctClients"
+				},
+				{
+					"name": "CheckIdNumber"
+				},
+				{
+					"name": "NormalizeIdNumbers"
+				},
+				{
+					"name": "NormIdNumber"
+				}
+			],
+			"script": "parameters{\n\tis_current as boolean (true())\n}\nsource(output(\n\t\tUnitOfWorkId as integer,\n\t\tReferenceNumber as string,\n\t\tMonthlyBalanceControlId as integer,\n\t\tGroupId as integer,\n\t\tProfileId as integer,\n\t\tTransactionCategoryId as integer,\n\t\tEstimatedTransactionTypeId as integer,\n\t\tActualTransactionTypeId as integer,\n\t\tEstimatedTransactionValue as decimal(38,18),\n\t\tActualTransactionValue as decimal(38,18),\n\t\tExcessTransactionValue as decimal(38,18),\n\t\tIsTransactionComplete as boolean,\n\t\tIsExcessTransaction as boolean,\n\t\tIsDeferredPriceCalculation as boolean,\n\t\tRequiresInvoiceRequest as boolean,\n\t\tInvoiceRequestId as integer,\n\t\tDateTimeTransactionStarted as timestamp,\n\t\tDateTimeTransactionComplete as timestamp,\n\t\tIsContentProviderTransaction as boolean,\n\t\tContentProviderBillingId as integer,\n\t\tOnBehalfOfProfileId as integer,\n\t\tQuantity as integer,\n\t\tMyClientId as integer,\n\t\tCoreOrProducts as boolean,\n\t\tCcpServiceId as integer,\n\t\tCNFRateId as integer,\n\t\tParentId as integer,\n\t\tContentProviderTransTypeID as integer,\n\t\tCcpRequestId as integer,\n\t\tMessageId as string,\n\t\tCombineId as string,\n\t\tCcpProductId as integer,\n\t\tRequestSourceCode as string,\n\t\tIdNumber as string,\n\t\tIdType as integer,\n\t\tInitials as string,\n\t\tSurname as string,\n\t\tCellNumber as string,\n\t\tEmailAddress as string,\n\t\tFirstName as string,\n\t\tDateOfBirth as timestamp,\n\t\tIsArchived as boolean,\n\t\tCcpRequestBatchId as long,\n\t\tCore as boolean,\n\t\tRequestFlag as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: true,\n\tformat: 'parquet',\n\twildcardPaths:['staging/UnitOfWork/*']) ~> SourceUnitOfWork\nsource(output(\n\t\tClientKey as integer,\n\t\tIdNumber as string,\n\t\tIdType as integer,\n\t\tInitials as string,\n\t\tSurname as string,\n\t\tCellNumber as string,\n\t\tEmailAddress as string,\n\t\tFirstName as string,\n\t\tDateOfBirth as date,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimClient\nNormIdNumber, SelectDimClient exists(NormIdNumber@IdNumber == SelectDimClient@IdNumber,\n\tnegate:true,\n\tbroadcast: 'auto')~> DoesNotEsxistInClient\nNormalizeIdNumbers select(mapColumn(\n\t\tClientKey,\n\t\tIdNumber = IdNumberNorm,\n\t\tIsCurrent\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectDimClient\nDoesNotEsxistInClient derive(IsCurrent = $is_current,\n\t\tUpdatedDateDW = currentTimestamp(),\n\t\tCreatedDateDW = currentTimestamp(),\n\t\tCreatedByDW = 'AzureDataFactory',\n\t\tIsDeleted = false(),\n\t\tSourceSystem = 'AstuteOnline') ~> setAttributes\nsetAttributes alterRow(upsertIf(true())) ~> AllowUpserts\nCheckIdNumber@ValidIdNumber aggregate(groupBy(HashGroup = sha2(256,IdNumber)),\n\teach(match(true()), $$ = first($$))) ~> DistinctClients\nSourceUnitOfWork split(iif(isNull(IdNumber),false(),true()),\n\tdisjoint: false) ~> CheckIdNumber@(ValidIdNumber, InvalidIdNumber)\nDimClient derive(IdNumberNorm = upper(IdNumber)) ~> NormalizeIdNumbers\nDistinctClients derive(IdNumber = upper(IdNumber)) ~> NormIdNumber\nAllowUpserts sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tClientKey as integer,\n\t\tIdNumber as string,\n\t\tIdType as integer,\n\t\tInitials as string,\n\t\tSurname as string,\n\t\tCellNumber as string,\n\t\tEmailAddress as string,\n\t\tFirstName as string,\n\t\tDateOfBirth as date,\n\t\tPersonId as integer,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:false,\n\tupsertable:true,\n\tkeys:['IdNumber'],\n\tformat: 'table',\n\tstaged: true,\n\tallowCopyCommand: true,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tIdNumber,\n\t\tIdType,\n\t\tInitials,\n\t\tSurname,\n\t\tCellNumber,\n\t\tEmailAddress,\n\t\tFirstName,\n\t\tDateOfBirth,\n\t\tIsDeleted,\n\t\tIsCurrent,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tCreatedByDW,\n\t\tSourceSystem\n\t)) ~> DSTDimClient"
+		}
+	}
+}

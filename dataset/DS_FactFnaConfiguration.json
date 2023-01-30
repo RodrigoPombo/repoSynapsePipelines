@@ -1,0 +1,133 @@
+{
+	"name": "DS_FactFnaConfiguration",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_Synapse",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "VOPD"
+		},
+		"annotations": [],
+		"type": "AzureSqlDWTable",
+		"schema": [
+			{
+				"name": "FnaConfigurationAdviserKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CompanyKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "FnaKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "FnaConfigurationBrokerCodeKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "FnaConfigurationStatusKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "FinMonth",
+				"type": "date"
+			},
+			{
+				"name": "FnaId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Deleted",
+				"type": "bit"
+			},
+			{
+				"name": "FnaConfigurationStatusId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "FnaConfigurationId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "FnaConfigurationAdviserId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "MonthlyBalanceControlId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ComponentId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SubscriptionBandId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SubscriptionYear",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SubscriptionMonth",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SubscriptionStartDate",
+				"type": "date"
+			},
+			{
+				"name": "SubscriptionEndDate",
+				"type": "date"
+			},
+			{
+				"name": "CreationDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "UpdatedDateDW",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CreatedDateDW",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CreatedByDW",
+				"type": "varchar"
+			},
+			{
+				"name": "SourceSystem",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "Fact",
+			"table": "FactFnaConfiguration"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

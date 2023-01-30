@@ -1,0 +1,81 @@
+{
+	"name": "DS_ComponentSRC",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_DataLakeEnriched",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Dimensions"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "AstuteOnline/Master/Component",
+				"fileSystem": "immersive"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "ComponentId",
+				"type": "INT32"
+			},
+			{
+				"name": "ComponentName",
+				"type": "UTF8"
+			},
+			{
+				"name": "OrderRank",
+				"type": "INT32"
+			},
+			{
+				"name": "IsSystemServiceComponent",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "IsMandatoryComponent",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "IsUserSelectableComponent",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "RequiresFsbValidaionCheck",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "BillingModelId",
+				"type": "INT32"
+			},
+			{
+				"name": "ComponentCode",
+				"type": "UTF8"
+			},
+			{
+				"name": "BillingCycleId",
+				"type": "INT32"
+			},
+			{
+				"name": "FinancialCompany",
+				"type": "UTF8"
+			},
+			{
+				"name": "PlanId",
+				"type": "INT32"
+			},
+			{
+				"name": "ExcludeFromMonthBalance",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "AIModifiedDateTime",
+				"type": "INT96"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

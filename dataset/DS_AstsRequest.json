@@ -1,0 +1,102 @@
+{
+	"name": "DS_AstsRequest",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_DataLakeEnriched",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "staging/AstsRequest",
+				"fileSystem": "immersive"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "AstsRequestId",
+				"type": "INT32"
+			},
+			{
+				"name": "CreationDate",
+				"type": "INT96"
+			},
+			{
+				"name": "Reference",
+				"type": "UTF8"
+			},
+			{
+				"name": "FromCompanyId",
+				"type": "INT32"
+			},
+			{
+				"name": "ToCompanyId",
+				"type": "INT32"
+			},
+			{
+				"name": "FaultTouRI",
+				"type": "UTF8"
+			},
+			{
+				"name": "FromUri",
+				"type": "UTF8"
+			},
+			{
+				"name": "ToURI",
+				"type": "UTF8"
+			},
+			{
+				"name": "MessageSize",
+				"type": "INT32"
+			},
+			{
+				"name": "MessageCount",
+				"type": "INT32"
+			},
+			{
+				"name": "AstsStatusCodeId",
+				"type": "INT32"
+			},
+			{
+				"name": "AstsRealTimeStatusId",
+				"type": "INT32"
+			},
+			{
+				"name": "Requestid",
+				"type": "INT32"
+			},
+			{
+				"name": "PolicyKey",
+				"type": "UTF8"
+			},
+			{
+				"name": "ACORDVersion",
+				"type": "UTF8"
+			},
+			{
+				"name": "MessageId",
+				"type": "UTF8"
+			},
+			{
+				"name": "AstsLobId",
+				"type": "INT32"
+			},
+			{
+				"name": "Error",
+				"type": "UTF8"
+			},
+			{
+				"name": "AstsRequestDetailsId",
+				"type": "INT32"
+			},
+			{
+				"name": "ServiceTypeId",
+				"type": "INT32"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

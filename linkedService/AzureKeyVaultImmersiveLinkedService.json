@@ -1,0 +1,11 @@
+{
+	"name": "AzureKeyVaultImmersiveLinkedService",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"type": "AzureKeyVault",
+		"typeProperties": {
+			"baseUrl": "https://immsersivekeyvault.vault.azure.net/"
+		},
+		"annotations": []
+	}
+}

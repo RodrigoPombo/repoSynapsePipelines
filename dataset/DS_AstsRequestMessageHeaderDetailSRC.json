@@ -1,0 +1,94 @@
+{
+	"name": "DS_AstsRequestMessageHeaderDetailSRC",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_DataLakeEnriched",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "AstuteOnline/ASTS/AstsRequestMessageHeaderDetail",
+				"fileSystem": "immersive"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "AstsRequestMessageHeaderDetailId",
+				"type": "INT32"
+			},
+			{
+				"name": "AstsRequestId",
+				"type": "INT32"
+			},
+			{
+				"name": "ACORDStandardVersionCode",
+				"type": "UTF8"
+			},
+			{
+				"name": "SenderRoleCode",
+				"type": "UTF8"
+			},
+			{
+				"name": "SenderOrganizationName",
+				"type": "UTF8"
+			},
+			{
+				"name": "ReceiverRoleCode",
+				"type": "UTF8"
+			},
+			{
+				"name": "ReceiverOrganizationName",
+				"type": "UTF8"
+			},
+			{
+				"name": "ProcessingIntermediaryRoleCode",
+				"type": "UTF8"
+			},
+			{
+				"name": "ProcessingIntermediaryOrganizationName",
+				"type": "UTF8"
+			},
+			{
+				"name": "MessageDocumentCount",
+				"type": "INT32"
+			},
+			{
+				"name": "BatchPeriodStartDate",
+				"type": "INT96"
+			},
+			{
+				"name": "BatchPeriodEndDate",
+				"type": "INT96"
+			},
+			{
+				"name": "MessageSubmissionTypeCode",
+				"type": "UTF8"
+			},
+			{
+				"name": "MessageDateTimeUTC",
+				"type": "INT96"
+			},
+			{
+				"name": "DetailMessageId",
+				"type": "UTF8"
+			},
+			{
+				"name": "CorrelationId",
+				"type": "UTF8"
+			},
+			{
+				"name": "AIModifiedDateTime",
+				"type": "INT96"
+			},
+			{
+				"name": "RequestFlag",
+				"type": "UTF8"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

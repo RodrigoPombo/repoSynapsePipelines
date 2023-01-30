@@ -1,0 +1,280 @@
+{
+	"name": "DS_UnitOfWorkSRC",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_DataLakeEnriched",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "staging/UnitOfWork",
+				"fileSystem": "immersive"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "UnitOfWorkId",
+				"type": "INT32"
+			},
+			{
+				"name": "ReferenceNumber",
+				"type": "UTF8"
+			},
+			{
+				"name": "MonthlyBalanceControlId",
+				"type": "INT32"
+			},
+			{
+				"name": "GroupId",
+				"type": "INT32"
+			},
+			{
+				"name": "ProfileId",
+				"type": "INT32"
+			},
+			{
+				"name": "TransactionCategoryId",
+				"type": "INT32"
+			},
+			{
+				"name": "EstimatedTransactionTypeId",
+				"type": "INT32"
+			},
+			{
+				"name": "ActualTransactionTypeId",
+				"type": "INT32"
+			},
+			{
+				"name": "EstimatedTransactionValue",
+				"type": "DECIMAL",
+				"precision": 38,
+				"scale": 18
+			},
+			{
+				"name": "ActualTransactionValue",
+				"type": "DECIMAL",
+				"precision": 38,
+				"scale": 18
+			},
+			{
+				"name": "ExcessTransactionValue",
+				"type": "DECIMAL",
+				"precision": 38,
+				"scale": 18
+			},
+			{
+				"name": "IsTransactionComplete",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "IsExcessTransaction",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "IsDeferredPriceCalculation",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "RequiresInvoiceRequest",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "InvoiceRequestId",
+				"type": "INT32"
+			},
+			{
+				"name": "DateTimeTransactionStarted",
+				"type": "INT96"
+			},
+			{
+				"name": "DateTimeTransactionComplete",
+				"type": "INT96"
+			},
+			{
+				"name": "IsContentProviderTransaction",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "ContentProviderBillingId",
+				"type": "INT32"
+			},
+			{
+				"name": "OnBehalfOfProfileId",
+				"type": "INT32"
+			},
+			{
+				"name": "Quantity",
+				"type": "INT32"
+			},
+			{
+				"name": "MyClientId",
+				"type": "INT32"
+			},
+			{
+				"name": "CoreOrProducts",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "CcpServiceId",
+				"type": "INT32"
+			},
+			{
+				"name": "CNFRateId",
+				"type": "INT32"
+			},
+			{
+				"name": "ParentId",
+				"type": "INT32"
+			},
+			{
+				"name": "ContentProviderTransTypeID",
+				"type": "INT32"
+			},
+			{
+				"name": "CcpRequestId",
+				"type": "INT32"
+			},
+			{
+				"name": "MessageId",
+				"type": "UTF8"
+			},
+			{
+				"name": "CombineId",
+				"type": "UTF8"
+			},
+			{
+				"name": "CcpProductId",
+				"type": "INT32"
+			},
+			{
+				"name": "RequestSourceCode",
+				"type": "UTF8"
+			},
+			{
+				"name": "IdNumber",
+				"type": "UTF8"
+			},
+			{
+				"name": "IdType",
+				"type": "INT32"
+			},
+			{
+				"name": "Initials",
+				"type": "UTF8"
+			},
+			{
+				"name": "Surname",
+				"type": "UTF8"
+			},
+			{
+				"name": "CellNumber",
+				"type": "UTF8"
+			},
+			{
+				"name": "EmailAddress",
+				"type": "UTF8"
+			},
+			{
+				"name": "FirstName",
+				"type": "UTF8"
+			},
+			{
+				"name": "DateOfBirth",
+				"type": "INT96"
+			},
+			{
+				"name": "IsArchived",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "CcpRequestBatchId",
+				"type": "INT64"
+			},
+			{
+				"name": "Core",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "CcpRequestDetailId",
+				"type": "INT32"
+			},
+			{
+				"name": "ContentProviderId",
+				"type": "INT32"
+			},
+			{
+				"name": "PolicyNumber",
+				"type": "UTF8"
+			},
+			{
+				"name": "IsComplete",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "ResultCode",
+				"type": "INT32"
+			},
+			{
+				"name": "ResultInfoCode",
+				"type": "INT32"
+			},
+			{
+				"name": "HighVolumeRequest",
+				"type": "INT32"
+			},
+			{
+				"name": "SingleRequestDateTime",
+				"type": "INT96"
+			},
+			{
+				"name": "SingleResponseDateTime",
+				"type": "INT96"
+			},
+			{
+				"name": "BatchRefId",
+				"type": "UTF8"
+			},
+			{
+				"name": "IsCompleted",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "IntegrationPortId",
+				"type": "INT32"
+			},
+			{
+				"name": "HighVolumeRequestDateTime",
+				"type": "INT96"
+			},
+			{
+				"name": "HighVolumeResponseDateTime",
+				"type": "INT96"
+			},
+			{
+				"name": "SourceCcpRequestBatchId",
+				"type": "INT64"
+			},
+			{
+				"name": "FileName",
+				"type": "UTF8"
+			},
+			{
+				"name": "MedicalScheme",
+				"type": "UTF8"
+			},
+			{
+				"name": "RequestJSON",
+				"type": "INT32"
+			},
+			{
+				"name": "RequestFlag",
+				"type": "UTF8"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

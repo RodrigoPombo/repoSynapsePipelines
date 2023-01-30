@@ -1,0 +1,29 @@
+{
+	"name": "Parquet6",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage10",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"ParameterCopy": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": {
+					"value": "@dataset().ParameterCopy",
+					"type": "Expression"
+				},
+				"fileSystem": "containeroutputsapdata"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

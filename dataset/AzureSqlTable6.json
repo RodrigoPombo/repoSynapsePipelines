@@ -1,0 +1,35 @@
+{
+	"name": "AzureSqlTable6",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabase3",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "AccountKey",
+				"type": "varchar"
+			},
+			{
+				"name": "name",
+				"type": "varchar"
+			},
+			{
+				"name": "Amount",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "EnglishDayNameOfWeek",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "dummy"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

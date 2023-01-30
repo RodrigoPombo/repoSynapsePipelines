@@ -1,0 +1,98 @@
+{
+	"name": "DS_RmsScorecardRequestSRC",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_DataLakeEnriched",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "staging/ScorecardRequest",
+				"fileSystem": "immersive"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "ScoreCardRequestId",
+				"type": "INT64"
+			},
+			{
+				"name": "ScorecardRequestBatchId",
+				"type": "UTF8"
+			},
+			{
+				"name": "TransRefGuid",
+				"type": "UTF8"
+			},
+			{
+				"name": "TransactionReference",
+				"type": "UTF8"
+			},
+			{
+				"name": "ClientScoreCardReference",
+				"type": "UTF8"
+			},
+			{
+				"name": "OrganizationId",
+				"type": "INT32"
+			},
+			{
+				"name": "ProfileId",
+				"type": "INT32"
+			},
+			{
+				"name": "GroupId",
+				"type": "INT32"
+			},
+			{
+				"name": "RmsScoreCardStatusId",
+				"type": "INT32"
+			},
+			{
+				"name": "SourceRmsEventId",
+				"type": "INT64"
+			},
+			{
+				"name": "DHA1663",
+				"type": "UTF8"
+			},
+			{
+				"name": "RequestDateTime",
+				"type": "INT96"
+			},
+			{
+				"name": "CreationDate",
+				"type": "INT96"
+			},
+			{
+				"name": "LastChangedBy",
+				"type": "UTF8"
+			},
+			{
+				"name": "LastChangedDate",
+				"type": "INT96"
+			},
+			{
+				"name": "IsArchived",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "companyId",
+				"type": "INT32"
+			},
+			{
+				"name": "AIModifiedDateTime",
+				"type": "INT96"
+			},
+			{
+				"name": "RequestFlag",
+				"type": "UTF8"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

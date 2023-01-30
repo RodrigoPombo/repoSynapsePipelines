@@ -1,0 +1,98 @@
+{
+	"name": "DS_ContentProviderSRC",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_DataLakeEnriched",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "AstuteOnline/ContentProviders/ContentProvider",
+				"fileSystem": "immersive"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "ContentProviderId",
+				"type": "INT32"
+			},
+			{
+				"name": "Name",
+				"type": "UTF8"
+			},
+			{
+				"name": "ProviderCode",
+				"type": "UTF8"
+			},
+			{
+				"name": "IntegrationPortId",
+				"type": "INT32"
+			},
+			{
+				"name": "ComponentId",
+				"type": "INT32"
+			},
+			{
+				"name": "EntityStatus",
+				"type": "INT32"
+			},
+			{
+				"name": "EntityStatusReasonId",
+				"type": "INT32"
+			},
+			{
+				"name": "StatusChangeDate",
+				"type": "INT96"
+			},
+			{
+				"name": "IsDeleted",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "DeleteReasonId",
+				"type": "INT32"
+			},
+			{
+				"name": "DeletionDate",
+				"type": "INT96"
+			},
+			{
+				"name": "LastChangedBy",
+				"type": "UTF8"
+			},
+			{
+				"name": "LastChangedDate",
+				"type": "INT96"
+			},
+			{
+				"name": "CreationDate",
+				"type": "INT96"
+			},
+			{
+				"name": "HvIntegrationPortId",
+				"type": "INT32"
+			},
+			{
+				"name": "MachineName",
+				"type": "UTF8"
+			},
+			{
+				"name": "ScheduledTaskId",
+				"type": "INT32"
+			},
+			{
+				"name": "AIModifiedDateTime",
+				"type": "INT96"
+			},
+			{
+				"name": "RequestFlag",
+				"type": "UTF8"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,150 @@
+{
+	"name": "DS_FactVopdRequest",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_Synapse",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "VOPD"
+		},
+		"annotations": [],
+		"type": "AzureSqlDWTable",
+		"schema": [
+			{
+				"name": "VOPDRequestDetailID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "MessageId",
+				"type": "varchar"
+			},
+			{
+				"name": "IdReferenceNo",
+				"type": "varchar"
+			},
+			{
+				"name": "VOPDRequestId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CompanyKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ProfileKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "TransRefGuid",
+				"type": "uniqueidentifier"
+			},
+			{
+				"name": "TrackingReference",
+				"type": "varchar"
+			},
+			{
+				"name": "ResponseFinMonth",
+				"type": "date"
+			},
+			{
+				"name": "RequestDateTime",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "ResponseDateTime",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "IsBulkRequest",
+				"type": "bit"
+			},
+			{
+				"name": "IsArchived",
+				"type": "bit"
+			},
+			{
+				"name": "IsResponseDelivered",
+				"type": "bit"
+			},
+			{
+				"name": "QTRequest",
+				"type": "bit"
+			},
+			{
+				"name": "IsComprehensive",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "DhaTransactionId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "NumberOfRetries",
+				"type": "smallint",
+				"precision": 5
+			},
+			{
+				"name": "ResponseStatus",
+				"type": "varchar"
+			},
+			{
+				"name": "RequestStatus",
+				"type": "varchar"
+			},
+			{
+				"name": "RequestSourceKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "IdType",
+				"type": "varchar"
+			},
+			{
+				"name": "VOPDVerificationTypeId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "VerificationType",
+				"type": "varchar"
+			},
+			{
+				"name": "UpdatedDateDW",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CreatedDateDW",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CreatedByDW",
+				"type": "varchar"
+			},
+			{
+				"name": "SourceSystem",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "Fact",
+			"table": "FactVOPDRequest"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

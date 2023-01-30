@@ -1,0 +1,83 @@
+{
+	"name": "DFA_LoadDimensions_Group",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_GroupSRC",
+						"type": "DatasetReference"
+					},
+					"name": "SourceGroup"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimCompany",
+						"type": "DatasetReference"
+					},
+					"name": "DimCompany"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimEntityStatusReason",
+						"type": "DatasetReference"
+					},
+					"name": "DimEntityStatusReason"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimGroup",
+						"type": "DatasetReference"
+					},
+					"name": "DimGroup"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_DimGroup",
+						"type": "DatasetReference"
+					},
+					"name": "DSTDimGroup"
+				}
+			],
+			"transformations": [
+				{
+					"name": "SetDefaultFields"
+				},
+				{
+					"name": "AllowUpserts"
+				},
+				{
+					"name": "SelectDimCompany"
+				},
+				{
+					"name": "SelectDimEntityStatusReason"
+				},
+				{
+					"name": "SelectGroup"
+				},
+				{
+					"name": "JoinGroup"
+				},
+				{
+					"name": "JoinCompany"
+				},
+				{
+					"name": "FixGroup"
+				},
+				{
+					"name": "JoinEntityStatusReason"
+				},
+				{
+					"name": "DoesNotExist"
+				},
+				{
+					"name": "DimensionDefault"
+				}
+			],
+			"script": "parameters{\n\tis_current as boolean (true())\n}\nsource(output(\n\t\tGroupId as integer,\n\t\tCompanyId as integer,\n\t\tParentGroupId as integer,\n\t\tName as string,\n\t\tEntityStatus as integer,\n\t\tEntityStatusReasonId as integer,\n\t\tStatusChangeDate as timestamp,\n\t\tIsDeleted as boolean,\n\t\tDeleteReasonId as integer,\n\t\tDeletionDate as timestamp,\n\t\tLastChangedBy as string,\n\t\tLastChangedDate as timestamp,\n\t\tCreationDate as timestamp,\n\t\tAIModifiedDateTime as timestamp,\n\t\tRequestFlag as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: true,\n\tformat: 'parquet',\n\twildcardPaths:['AstuteOnline/Administration/Group/**/*']) ~> SourceGroup\nsource(output(\n\t\tCompanyKey as integer,\n\t\tCompanyId as integer,\n\t\tName as string,\n\t\tDebtorNumber as string,\n\t\tCrmReferenceNumber as string,\n\t\tDebitOrderDay as integer,\n\t\tEntityStatus as string,\n\t\tEntityStatusReasonKey as integer,\n\t\tStatusChangeDate as timestamp,\n\t\tDeletionDate as timestamp,\n\t\tLastChangedBy as string,\n\t\tLastChangedDate as timestamp,\n\t\tCreationDate as timestamp,\n\t\tConsolidateInvoices as boolean,\n\t\tNote as string,\n\t\tCompanyGuid as string,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimCompany\nsource(output(\n\t\tEntityStatusReasonKey as integer,\n\t\tEntityStatusReasonId as integer,\n\t\tEntityType as integer,\n\t\tReason as string,\n\t\tIsActive as boolean,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimEntityStatusReason\nsource(output(\n\t\tGroupKey as integer,\n\t\tGroupId as integer,\n\t\tCompanyKey as integer,\n\t\tParentGroupId as integer,\n\t\tName as string,\n\t\tEntityStatusReasonKey as integer,\n\t\tStatusChangeDate as timestamp,\n\t\tDeleteReasonId as integer,\n\t\tDeletionDate as timestamp,\n\t\tLastChangedBy as string,\n\t\tLastChangedDate as timestamp,\n\t\tCreationDate as timestamp,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string,\n\t\tRequestFlag as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimGroup\nJoinEntityStatusReason derive(IsDeleted = false(),\n\t\tIsCurrent = $is_current,\n\t\tUpdatedDateDW = currentTimestamp(),\n\t\tCreatedDateDW = currentTimestamp(),\n\t\tCreatedByDW = 'AzureDataFactory') ~> SetDefaultFields\nSetDefaultFields alterRow(upsertIf(true())) ~> AllowUpserts\nDimCompany select(mapColumn(\n\t\tCompanyKey,\n\t\tCompanyId,\n\t\tIsCurrent,\n\t\tSourceSystem\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectDimCompany\nDimEntityStatusReason select(mapColumn(\n\t\tEntityStatusReasonKey,\n\t\tEntityStatusReasonId,\n\t\tIsCurrent\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectDimEntityStatusReason\nDimGroup select(mapColumn(\n\t\tGroupId,\n\t\tCompanyKey,\n\t\tIsCurrent,\n\t\tSourceSystem\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectGroup\nDoesNotExist, SelectGroup join(FixGroup@GroupId == SelectGroup@GroupId\n\t&& DimensionDefault@SourceSystem == SelectGroup@SourceSystem\n\t&& IsCurrentDefault == IsCurrent,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinGroup\nJoinGroup, SelectDimCompany join(FixGroup@CompanyId == SelectDimCompany@CompanyId\n\t&& DimensionDefault@SourceSystem == SelectDimCompany@SourceSystem\n\t&& IsCurrentDefault == SelectDimCompany@IsCurrent,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinCompany\nSourceGroup select(mapColumn(\n\t\tGroupId,\n\t\tCompanyId,\n\t\tParentGroupId,\n\t\tName,\n\t\tEntityStatus,\n\t\tEntityStatusReasonId,\n\t\tStatusChangeDate,\n\t\tIsDeleted,\n\t\tDeleteReasonId,\n\t\tDeletionDate,\n\t\tLastChangedBy,\n\t\tLastChangedDate,\n\t\tCreationDate,\n\t\tAIModifiedDateTime,\n\t\tRequestFlag\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixGroup\nJoinCompany, SelectDimEntityStatusReason join(EntityStatus == SelectDimEntityStatusReason@EntityStatusReasonId,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinEntityStatusReason\nDimensionDefault, SelectGroup exists(FixGroup@GroupId == SelectGroup@GroupId,\n\tnegate:true,\n\tbroadcast: 'auto')~> DoesNotExist\nFixGroup derive(IsCurrentDefault = true(),\n\t\tSourceSystem = case(RequestFlag=='HighVolume', 'AstuteOnlineHV', 'AstuteOnline')) ~> DimensionDefault\nAllowUpserts sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tGroupKey as integer,\n\t\tGroupId as integer,\n\t\tCompanyKey as integer,\n\t\tParentGroupId as integer,\n\t\tName as string,\n\t\tEntityStatusReasonKey as integer,\n\t\tStatusChangeDate as timestamp,\n\t\tDeleteReasonId as integer,\n\t\tDeletionDate as timestamp,\n\t\tLastChangedBy as string,\n\t\tLastChangedDate as timestamp,\n\t\tCreationDate as timestamp,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string,\n\t\tRequestFlag as string\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tstaged: true,\n\tallowCopyCommand: true,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tGroupId,\n\t\tCompanyKey = SelectDimCompany@CompanyKey,\n\t\tParentGroupId,\n\t\tName,\n\t\tStatusChangeDate,\n\t\tDeleteReasonId,\n\t\tDeletionDate,\n\t\tLastChangedBy,\n\t\tLastChangedDate,\n\t\tCreationDate,\n\t\tIsDeleted,\n\t\tIsCurrent,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tCreatedByDW,\n\t\tSourceSystem = DimensionDefault@SourceSystem,\n\t\tRequestFlag,\n\t\tEntityStatusReasonKey\n\t)) ~> DSTDimGroup"
+		}
+	}
+}

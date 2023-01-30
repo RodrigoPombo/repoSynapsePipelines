@@ -1,0 +1,95 @@
+{
+	"name": "DS_DimRate",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_Synapse",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlDWTable",
+		"schema": [
+			{
+				"name": "RateKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "RateId",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "RateBatchKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "TransactionTypeKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SubscriptionBandKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "RangeStart",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "RangeEnd",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Value",
+				"type": "money",
+				"precision": 19,
+				"scale": 4
+			},
+			{
+				"name": "LastChangedBy",
+				"type": "varchar"
+			},
+			{
+				"name": "LastChangedDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CreationDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "UpdatedDateDW",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CreatedDateDW",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "CreatedByDW",
+				"type": "varchar"
+			},
+			{
+				"name": "SourceSystem",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "Dim",
+			"table": "DimRate"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

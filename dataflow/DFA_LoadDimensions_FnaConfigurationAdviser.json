@@ -1,0 +1,48 @@
+{
+	"name": "DFA_LoadDimensions_FnaConfigurationAdviser",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_FnaConfigurationAdviserSRC",
+						"type": "DatasetReference"
+					},
+					"name": "SourceFnaConfigurationAdviser"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimFnaConfigurationAdviser",
+						"type": "DatasetReference"
+					},
+					"name": "DimFnaConfigurationAdviser"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_DimFnaConfigurationAdviser",
+						"type": "DatasetReference"
+					},
+					"name": "SinkFnaConfigurationAdviser"
+				}
+			],
+			"transformations": [
+				{
+					"name": "SetDefaultFields"
+				},
+				{
+					"name": "AllowUpserts"
+				},
+				{
+					"name": "DoesNotExist"
+				},
+				{
+					"name": "selectDimFnaConfigurationAdviser"
+				}
+			],
+			"script": "source(output(\n\t\tFnaConfigurationAdviserId as integer,\n\t\tFnaConfigurationAdviserGuid as string,\n\t\tFnaConfigurationId as integer,\n\t\tIdNumber as string,\n\t\tFirstName as string,\n\t\tLastName as string,\n\t\tDeleted as boolean,\n\t\tLastChangedBy as string,\n\t\tLastChangedDate as timestamp,\n\t\tCreationDate as timestamp,\n\t\tAIModifiedDateTime as timestamp,\n\t\tRequestFlag as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: true,\n\tformat: 'parquet',\n\twildcardPaths:['AstuteOnline/AIS/FnaConfigurationAdviser/**/*']) ~> SourceFnaConfigurationAdviser\nsource(output(\n\t\tFnaConfigurationAdviserKey as integer,\n\t\tFnaConfigurationAdviserId as integer,\n\t\tLastChangedDate as timestamp,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimFnaConfigurationAdviser\nDoesNotExist derive(IsDeleted = false(),\n\t\tIsCurrent = true(),\n\t\tUpdatedDateDW = currentTimestamp(),\n\t\tCreatedDateDW = currentTimestamp(),\n\t\tCreatedByDW = 'AzureDataFactory',\n\t\tSourceSystem = 'AstuteOnline') ~> SetDefaultFields\nSetDefaultFields alterRow(upsertIf(true())) ~> AllowUpserts\nSourceFnaConfigurationAdviser, selectDimFnaConfigurationAdviser exists(SourceFnaConfigurationAdviser@FnaConfigurationAdviserId==selectDimFnaConfigurationAdviser@FnaConfigurationAdviserId,\n\tnegate:true,\n\tbroadcast: 'auto')~> DoesNotExist\nDimFnaConfigurationAdviser select(mapColumn(\n\t\tFnaConfigurationAdviserKey,\n\t\tFnaConfigurationAdviserId,\n\t\tIsCurrent\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> selectDimFnaConfigurationAdviser\nAllowUpserts sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tFnaConfigurationAdviserKey as integer,\n\t\tFnaConfigurationAdviserId as integer,\n\t\tLastChangedDate as timestamp,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:false,\n\tupsertable:true,\n\tkeys:['FnaConfigurationAdviserId'],\n\tformat: 'table',\n\tstaged: true,\n\tallowCopyCommand: true,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tFnaConfigurationAdviserId,\n\t\tLastChangedDate,\n\t\tIsDeleted = Deleted,\n\t\tIsCurrent,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tCreatedByDW,\n\t\tSourceSystem\n\t),\n\tpreCommands: [],\n\tpostCommands: []) ~> SinkFnaConfigurationAdviser"
+		}
+	}
+}

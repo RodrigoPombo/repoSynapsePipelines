@@ -1,0 +1,20 @@
+{
+	"name": "Parquet7",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage11",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileSystem": "cdc2output"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

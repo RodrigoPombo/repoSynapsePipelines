@@ -1,0 +1,23 @@
+{
+	"name": "LS_SynapseStaging",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"type": "AzureBlobFS",
+		"typeProperties": {
+			"url": "https://immersivesynapse.dfs.core.windows.net",
+			"accountKey": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "AzureKeyVaultImmersiveLinkedService",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "immersivesynapse-sa-kv"
+			}
+		},
+		"connectVia": {
+			"referenceName": "IR-QuickReUse",
+			"type": "IntegrationRuntimeReference"
+		},
+		"annotations": []
+	}
+}

@@ -1,0 +1,48 @@
+{
+	"name": "DFA_LoadDimensions_RmsEventType",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_RmsEventTypeSRC",
+						"type": "DatasetReference"
+					},
+					"name": "SourceRmsEventTypeSRC"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimRmsEventType",
+						"type": "DatasetReference"
+					},
+					"name": "DimRmsEventType"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_DimRmsEventType",
+						"type": "DatasetReference"
+					},
+					"name": "SinkRMSEventType"
+				}
+			],
+			"transformations": [
+				{
+					"name": "SetDefaultFields"
+				},
+				{
+					"name": "AllowUpserts"
+				},
+				{
+					"name": "DoesNotExist"
+				},
+				{
+					"name": "selectDimRmsEventType"
+				}
+			],
+			"script": "source(output(\n\t\tRmsEventTypeId as integer,\n\t\tDescription as string,\n\t\tAIModifiedDateTime as timestamp,\n\t\tRequestFlag as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: true,\n\tformat: 'parquet',\n\twildcardPaths:['FIDS_RMS/Master/RmsEventType/**/*']) ~> SourceRmsEventTypeSRC\nsource(output(\n\t\tRmsEventTypeKey as integer,\n\t\tRmsEventTypeId as integer,\n\t\tDescription as string,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimRmsEventType\nDoesNotExist derive(IsDeleted = false(),\n\t\tIsCurrent = true(),\n\t\tUpdatedDateDW = currentTimestamp(),\n\t\tCreatedDateDW = currentTimestamp(),\n\t\tCreatedByDW = 'AzureDataFactory',\n\t\tSourceSystem = 'AstuteOnline') ~> SetDefaultFields\nSetDefaultFields alterRow(upsertIf(true())) ~> AllowUpserts\nSourceRmsEventTypeSRC, selectDimRmsEventType exists(SourceRmsEventTypeSRC@RmsEventTypeId == selectDimRmsEventType@RmsEventTypeId,\n\tnegate:true,\n\tbroadcast: 'auto')~> DoesNotExist\nDimRmsEventType select(mapColumn(\n\t\tRmsEventTypeKey,\n\t\tRmsEventTypeId,\n\t\tIsCurrent\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> selectDimRmsEventType\nAllowUpserts sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tRmsEventTypeKey as integer,\n\t\tRmsEventTypeId as integer,\n\t\tDescription as string,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:false,\n\tupsertable:true,\n\tkeys:['RmsEventTypeId'],\n\tformat: 'table',\n\tstaged: true,\n\tallowCopyCommand: true,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tRmsEventTypeId,\n\t\tDescription,\n\t\tIsDeleted,\n\t\tIsCurrent,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tCreatedByDW,\n\t\tSourceSystem\n\t),\n\tpreCommands: [],\n\tpostCommands: []) ~> SinkRMSEventType"
+		}
+	}
+}

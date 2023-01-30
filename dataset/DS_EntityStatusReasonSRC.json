@@ -1,0 +1,45 @@
+{
+	"name": "DS_EntityStatusReasonSRC",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_DataLakeEnriched",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Dimensions"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "AstuteOnline/Master/EntityStatusReason",
+				"fileSystem": "immersive"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "EntityStatusReasonId",
+				"type": "INT32"
+			},
+			{
+				"name": "EntityTypeId",
+				"type": "INT32"
+			},
+			{
+				"name": "Reason",
+				"type": "UTF8"
+			},
+			{
+				"name": "IsActive",
+				"type": "BOOLEAN"
+			},
+			{
+				"name": "AIModifiedDateTime",
+				"type": "INT96"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

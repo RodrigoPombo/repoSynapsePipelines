@@ -1,0 +1,48 @@
+{
+	"name": "DFA_LoadDimensions_Product",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_ProductSRC",
+						"type": "DatasetReference"
+					},
+					"name": "SourceProduct"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_Product",
+						"type": "DatasetReference"
+					},
+					"name": "DimProduct"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_Product",
+						"type": "DatasetReference"
+					},
+					"name": "SinkProduct"
+				}
+			],
+			"transformations": [
+				{
+					"name": "SelectDimProduct"
+				},
+				{
+					"name": "DoesNotExists"
+				},
+				{
+					"name": "SetDefaultFields"
+				},
+				{
+					"name": "AllowUpsert"
+				}
+			],
+			"script": "source(output(\n\t\tCcpProductId as integer,\n\t\tProductName as string,\n\t\tAIModifiedDateTime as timestamp,\n\t\tRequestFlag as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: true,\n\tformat: 'parquet',\n\twildcardPaths:['AstuteOnline/Ccp/CcpProduct/**/*']) ~> SourceProduct\nsource(output(\n\t\tProductKey as integer,\n\t\tProductId as integer,\n\t\tProductName as string,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimProduct\nDimProduct select(mapColumn(\n\t\tProductKey,\n\t\tProductId,\n\t\tIsCurrent\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectDimProduct\nSourceProduct, SelectDimProduct exists(CcpProductId == ProductId,\n\tnegate:true,\n\tbroadcast: 'auto')~> DoesNotExists\nDoesNotExists derive(IsDeleted = false(),\n\t\tIsCurrent = true(),\n\t\tUpdatedDateDW = currentTimestamp(),\n\t\tCreatedDateDW = currentTimestamp(),\n\t\tCreatedByDW = 'AzureDataFactory',\n\t\tSourceSystem = 'AstuteOnline') ~> SetDefaultFields\nSetDefaultFields alterRow(upsertIf(true())) ~> AllowUpsert\nAllowUpsert sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tProductKey as integer,\n\t\tProductId as integer,\n\t\tProductName as string,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:true,\n\tkeys:['ProductId'],\n\tformat: 'table',\n\tstaged: true,\n\tallowCopyCommand: true,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tProductId = CcpProductId,\n\t\tProductName,\n\t\tIsDeleted,\n\t\tIsCurrent,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tCreatedByDW,\n\t\tSourceSystem\n\t)) ~> SinkProduct"
+		}
+	}
+}

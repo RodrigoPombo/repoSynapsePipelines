@@ -1,0 +1,22 @@
+{
+	"name": "SqlServerTable4",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "sqlonpremcheck",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [
+			{
+				"name": "x",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "x"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

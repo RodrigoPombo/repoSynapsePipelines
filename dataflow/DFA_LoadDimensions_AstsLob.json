@@ -1,0 +1,57 @@
+{
+	"name": "DFA_LoadDimensions_AstsLob",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_AstsLobSRC",
+						"type": "DatasetReference"
+					},
+					"name": "SourceAstsLob"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_DimAstsLob",
+						"type": "DatasetReference"
+					},
+					"name": "DimAstsLob"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_DimAstsLob",
+						"type": "DatasetReference"
+					},
+					"name": "SinkAstsLob"
+				}
+			],
+			"transformations": [
+				{
+					"name": "SetDefaultFields"
+				},
+				{
+					"name": "AllowUpserts"
+				},
+				{
+					"name": "selectDimAstsLob"
+				},
+				{
+					"name": "JoinAstsLob"
+				},
+				{
+					"name": "FixAstsLob"
+				},
+				{
+					"name": "DoesnotExist"
+				},
+				{
+					"name": "SetIsCurrentDefault"
+				}
+			],
+			"script": "source(output(\n\t\tAstsLobId as integer,\n\t\tDescription as string,\n\t\tAIModifiedDateTime as timestamp,\n\t\tRequestFlag as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: true,\n\tformat: 'parquet',\n\twildcardPaths:['AstuteOnline/ASTS/AstsLob/**/*']) ~> SourceAstsLob\nsource(output(\n\t\tAstsLobKey as integer,\n\t\tAstsLobId as integer,\n\t\tDescription as string,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table',\n\tstaged: true) ~> DimAstsLob\nFixAstsLob derive(IsDeleted = false(),\n\t\tIsCurrent = true(),\n\t\tUpdatedDateDW = currentTimestamp(),\n\t\tCreatedDateDW = currentTimestamp(),\n\t\tCreatedByDW = 'AzureDataFactory',\n\t\tSourceSystem = 'AstuteOnline') ~> SetDefaultFields\nSetDefaultFields alterRow(upsertIf(true())) ~> AllowUpserts\nDimAstsLob select(mapColumn(\n\t\tAstsLobKey,\n\t\tAstsLobId,\n\t\tIsCurrent\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> selectDimAstsLob\nSetIsCurrentDefault, selectDimAstsLob join(SourceAstsLob@AstsLobId == selectDimAstsLob@AstsLobId\n\t&& IsCurrentDefault == IsCurrent,\n\tjoinType:'left',\n\tmatchType:'exact',\n\tignoreSpaces: false,\n\tbroadcast: 'auto')~> JoinAstsLob\nJoinAstsLob select(mapColumn(\n\t\tAstsLobId = SourceAstsLob@AstsLobId,\n\t\tDescription,\n\t\tAIModifiedDateTime,\n\t\tRequestFlag,\n\t\tAstsLobKey\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> FixAstsLob\nSourceAstsLob, selectDimAstsLob exists(SourceAstsLob@AstsLobId == selectDimAstsLob@AstsLobId,\n\tnegate:true,\n\tbroadcast: 'auto')~> DoesnotExist\nDoesnotExist derive(IsCurrentDefault = true()) ~> SetIsCurrentDefault\nAllowUpserts sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tAstsLobKey as integer,\n\t\tAstsLobId as integer,\n\t\tDescription as string,\n\t\tIsDeleted as boolean,\n\t\tIsCurrent as boolean,\n\t\tUpdatedDateDW as timestamp,\n\t\tCreatedDateDW as timestamp,\n\t\tCreatedByDW as string,\n\t\tSourceSystem as string\n\t),\n\tdeletable:false,\n\tinsertable:false,\n\tupdateable:false,\n\tupsertable:true,\n\tkeys:['AstsLobId'],\n\tformat: 'table',\n\tstaged: true,\n\tallowCopyCommand: true,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tAstsLobId,\n\t\tDescription,\n\t\tIsDeleted,\n\t\tIsCurrent,\n\t\tUpdatedDateDW,\n\t\tCreatedDateDW,\n\t\tCreatedByDW,\n\t\tSourceSystem\n\t),\n\tpreCommands: [],\n\tpostCommands: []) ~> SinkAstsLob"
+		}
+	}
+}

@@ -1,0 +1,68 @@
+{
+	"name": "DS_RateSRC",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_DataLakeEnriched",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "AstuteOnline/Billing/Rate",
+				"fileSystem": "immersive"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "RateId",
+				"type": "INT32"
+			},
+			{
+				"name": "RateBatchId",
+				"type": "INT32"
+			},
+			{
+				"name": "TransactionTypeId",
+				"type": "INT32"
+			},
+			{
+				"name": "SubscriptionBandId",
+				"type": "INT32"
+			},
+			{
+				"name": "RangeStart",
+				"type": "INT32"
+			},
+			{
+				"name": "RangeEnd",
+				"type": "INT32"
+			},
+			{
+				"name": "Value",
+				"type": "DECIMAL",
+				"precision": 19,
+				"scale": 4
+			},
+			{
+				"name": "LastChangedBy",
+				"type": "UTF8"
+			},
+			{
+				"name": "LastChangedDate",
+				"type": "INT96"
+			},
+			{
+				"name": "CreationDate",
+				"type": "INT96"
+			},
+			{
+				"name": "AIModifiedDateTime",
+				"type": "INT96"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
