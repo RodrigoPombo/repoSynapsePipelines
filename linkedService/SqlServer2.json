@@ -5,8 +5,8 @@
 		"annotations": [],
 		"type": "SqlServer",
 		"typeProperties": {
-			"connectionString": "integrated security=False;data source=sqlmipombo.public.66e47804c4b0.database.windows.net,3342;initial catalog=SAPdata;user id=pomboAdmin",
-			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkRBVEFGQUNUT1JZQDlGREMzNDE1LTA5MzQtNDU3Ri1BRjM1LTI4RjE2RDVBNTI1OF85OTA3MTViYS1lODIwLTRjYTctOTk0My02MGQzMjg5YTJmNDMiDQp9"
+			"connectionString": "integrated security=False;data source=sqlmipombo.public.66e47804c4b0.database.windows.net,3342;initial catalog=SAPdata2;user id=pomboAdmin",
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkRBVEFGQUNUT1JZQDlGREMzNDE1LTA5MzQtNDU3Ri1BRjM1LTI4RjE2RDVBNTI1OF9lYWExYzM5MC1jYzBiLTQzYTAtOTNmNS1kYTlmZmNlOWU2NjgiDQp9"
 		}
 	}
 }
